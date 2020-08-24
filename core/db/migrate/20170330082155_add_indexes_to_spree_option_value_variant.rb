@@ -1,6 +1,6 @@
 class AddIndexesToSpreeOptionValueVariant < ActiveRecord::Migration[5.0]
   def change
-    duplicates = Spree::OptionValueVariant.group(:variant_id, :option_value_id).having('sum(1) > 1').size
+    duplicates = Spree::OptionValueVariant.group(:variant_id, :option_value_id).having("sum(1) > 1").size
 
     duplicates.each do |f|
       variant_id, option_value_id = f.first

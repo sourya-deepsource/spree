@@ -1,12 +1,12 @@
-require_dependency 'spree/shipping_calculator'
+require_dependency "spree/shipping_calculator"
 
 module Spree
   module Calculator::Shipping
     class FlexiRate < ShippingCalculator
-      preference :first_item,      :decimal, default: 0.0
+      preference :first_item, :decimal, default: 0.0
       preference :additional_item, :decimal, default: 0.0
-      preference :max_items,       :integer, default: 0
-      preference :currency,        :string,  default: -> { Spree::Config[:currency] }
+      preference :max_items, :integer, default: 0
+      preference :currency, :string, default: -> { Spree::Config[:currency] }
 
       def self.description
         Spree.t(:shipping_flexible_rate)

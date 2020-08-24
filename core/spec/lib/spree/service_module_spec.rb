@@ -1,21 +1,21 @@
-require 'spec_helper'
+require "spec_helper"
 
 describe Spree::ServiceModule do
-  context 'noncallable thing passed to run' do
+  context "noncallable thing passed to run" do
     class ServiceObjectWithUncallableThing
       prepend ::Spree::ServiceModule::Base
 
       def call(_params)
-        run 'something_crazy'
+        run "something_crazy"
       end
     end
 
-    it 'raises NonCallablePassedToRun' do
+    it "raises NonCallablePassedToRun" do
       expect { ServiceObjectWithUncallableThing.new.call }.to raise_error(Spree::ServiceModule::NonCallablePassedToRun)
     end
   end
 
-  context 'unimplemented method' do
+  context "unimplemented method" do
     class ServiceObjectWithMissingMethod
       prepend ::Spree::ServiceModule::Base
 
@@ -24,20 +24,18 @@ describe Spree::ServiceModule do
       end
     end
 
-    it 'raises MethodNotImplemented' do
+    it "raises MethodNotImplemented" do
       expect { ServiceObjectWithMissingMethod.new.call }.to raise_error(Spree::ServiceModule::MethodNotImplemented)
     end
 
-    it 'returns message in exception' do
-      begin
-        ServiceObjectWithMissingMethod.new.call
-      rescue Spree::ServiceModule::MethodNotImplemented => e
-        expect(e.message).to eq("You didn't implement non_existing_method method. Implement it before calling this class")
-      end
+    it "returns message in exception" do
+      ServiceObjectWithMissingMethod.new.call
+    rescue Spree::ServiceModule::MethodNotImplemented => e
+      expect(e.message).to eq("You didn't implement non_existing_method method. Implement it before calling this class")
     end
   end
 
-  context 'non wrapped value' do
+  context "non wrapped value" do
     class ServiceObjectWithNonWrappedReturn
       prepend ::Spree::ServiceModule::Base
 
@@ -49,26 +47,25 @@ describe Spree::ServiceModule do
       private
 
       def first_method(_params)
-        'not wrapped return'
+        "not wrapped return"
       end
 
-      def second_method(params); end
+      def second_method(params)
+      end
     end
 
-    it 'raises WrongDataPassed' do
+    it "raises WrongDataPassed" do
       expect { ServiceObjectWithNonWrappedReturn.new.call }.to raise_error(Spree::ServiceModule::WrongDataPassed)
     end
 
-    it 'returns message in exception' do
-      begin
-        ServiceObjectWithNonWrappedReturn.new.call
-      rescue Spree::ServiceModule::WrongDataPassed => e
-        expect(e.message).to eq("You didn't use `success` or `failure` method to return value from method.")
-      end
+    it "returns message in exception" do
+      ServiceObjectWithNonWrappedReturn.new.call
+    rescue Spree::ServiceModule::WrongDataPassed => e
+      expect(e.message).to eq("You didn't use `success` or `failure` method to return value from method.")
     end
   end
 
-  context 'non wrapped value in last method' do
+  context "non wrapped value in last method" do
     class ServiceObjectWithNonWrappedReturn
       prepend ::Spree::ServiceModule::Base
 
@@ -79,16 +76,16 @@ describe Spree::ServiceModule do
       private
 
       def first_method(_params)
-        'not wrapped return'
+        "not wrapped return"
       end
     end
 
-    it 'raises WrongDataPassed' do
+    it "raises WrongDataPassed" do
       expect { ServiceObjectWithNonWrappedReturn.new.call }.to raise_error(Spree::ServiceModule::WrongDataPassed)
     end
   end
 
-  context 'first method failed' do
+  context "first method failed" do
     class ServiceObjectWithFailure
       prepend ::Spree::ServiceModule::Base
 
@@ -100,30 +97,30 @@ describe Spree::ServiceModule do
       private
 
       def first_method(_params)
-        failure('Failed!')
+        failure("Failed!")
       end
 
       def second_method(_params)
-        success('Success!')
+        success("Success!")
       end
     end
 
-    it 'returns result with success? false' do
+    it "returns result with success? false" do
       result = ServiceObjectWithFailure.new.call
       expect(result.success?).to eq(false)
     end
 
-    it 'returns result with failure? true' do
+    it "returns result with failure? true" do
       result = ServiceObjectWithFailure.new.call
       expect(result.failure?).to eq(true)
     end
 
-    it 'returns value from first failed method' do
+    it "returns value from first failed method" do
       result = ServiceObjectWithFailure.new.call
-      expect(result.value).to eq('Failed!')
+      expect(result.value).to eq("Failed!")
     end
 
-    it 'returns result which is instance of Result' do
+    it "returns result which is instance of Result" do
       result = ServiceObjectWithFailure.new.call
       expect(result).to be_an_instance_of(Spree::ServiceModule::Result)
     end
@@ -134,12 +131,12 @@ describe Spree::ServiceModule do
       service.call
     end
 
-    it 'returns Result instance' do
+    it "returns Result instance" do
       expect(ServiceObjectWithFailure.new.call).to be_an_instance_of(Spree::ServiceModule::Result)
     end
   end
 
-  context 'success' do
+  context "success" do
     class ServiceObjectWithSuccess
       prepend ::Spree::ServiceModule::Base
 
@@ -151,51 +148,51 @@ describe Spree::ServiceModule do
       private
 
       def first_method(_params)
-        success('First Method Success!')
+        success("First Method Success!")
       end
 
       def second_method(params)
-        success(params + ' Second Method Success!')
+        success(params + " Second Method Success!")
       end
     end
 
-    it 'returns result with success? true' do
+    it "returns result with success? true" do
       result = ServiceObjectWithSuccess.new.call
       expect(result.success?).to eq(true)
     end
 
-    it 'returns result with failure? false' do
+    it "returns result with failure? false" do
       result = ServiceObjectWithSuccess.new.call
       expect(result.failure?).to eq(false)
     end
 
-    it 'returns value from last method' do
+    it "returns value from last method" do
       result = ServiceObjectWithSuccess.new.call
-      expect(result.value).to include('Second Method Success!')
-      expect(result.value).to include('First Method Success!')
+      expect(result.value).to include("Second Method Success!")
+      expect(result.value).to include("First Method Success!")
     end
 
-    it 'calls second method' do
+    it "calls second method" do
       service = ServiceObjectWithSuccess.new
       expect(service).to receive(:second_method).and_call_original
       service.call
     end
 
-    it 'passes input from call to first run method' do
-      param = 'param'
+    it "passes input from call to first run method" do
+      param = "param"
       service = ServiceObjectWithSuccess.new
       expect(service).to receive(:first_method).with(param).and_call_original
       service.call(param)
     end
 
-    it 'passes empty hash if input was not provided' do
+    it "passes empty hash if input was not provided" do
       service = ServiceObjectWithSuccess.new
       expect(service).to receive(:first_method).with({}).and_call_original
       service.call
     end
   end
 
-  context 'not compatible params passed as result' do
+  context "not compatible params passed as result" do
     class ServiceObjectWithIncompatibleParams
       prepend ::Spree::ServiceModule::Base
 
@@ -207,15 +204,15 @@ describe Spree::ServiceModule do
       private
 
       def first_method(_params)
-        success(first_value: 'asd', second_value: 'qwe')
+        success(first_value: "asd", second_value: "qwe")
       end
 
-      def second_method(first_value: 'asd')
-        success(first_value + ' Second Method Success!')
+      def second_method(first_value: "asd")
+        success(first_value + " Second Method Success!")
       end
     end
 
-    it 'raises exception' do
+    it "raises exception" do
       service = ServiceObjectWithIncompatibleParams.new
       expect { service.call }.to raise_error(Spree::ServiceModule::IncompatibleParamsPassed)
     end

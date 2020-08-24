@@ -1,4 +1,4 @@
-require 'spec_helper'
+require "spec_helper"
 
 describe Spree::Core::TokenGenerator do
   class DummyClass
@@ -13,10 +13,10 @@ describe Spree::Core::TokenGenerator do
 
   let(:dummy_class_instance) { DummyClass.new }
 
-  describe 'generate_token' do
+  describe "generate_token" do
     let(:generated_token) { dummy_class_instance.generate_token }
 
-    it 'generates random token with timestamp' do
+    it "generates random token with timestamp" do
       expect(generated_token.size).to eq 35
       expect(generated_token).to include dummy_class_instance.created_at.to_s
     end

@@ -1,4 +1,4 @@
-require 'spec_helper'
+require "spec_helper"
 
 describe Spree::ReimbursementTaxCalculator, type: :model do
   subject do
@@ -11,10 +11,10 @@ describe Spree::ReimbursementTaxCalculator, type: :model do
   let(:return_item) { reimbursement.return_items.first }
   let(:line_item) { return_item.inventory_unit.line_item }
 
-  context 'without taxes' do
+  context "without taxes" do
     let!(:tax_rate) { nil }
 
-    it 'leaves the return items additional_tax_total and included_tax_total at zero' do
+    it "leaves the return items additional_tax_total and included_tax_total at zero" do
       subject
 
       expect(return_item.additional_tax_total).to eq 0
@@ -22,17 +22,17 @@ describe Spree::ReimbursementTaxCalculator, type: :model do
     end
   end
 
-  context 'with additional tax' do
+  context "with additional tax" do
     let!(:tax_rate) do
       create :tax_rate,
-             name: 'Sales Tax',
-             amount: 0.10,
-             included_in_price: false,
-             tax_category: create(:tax_category),
-             zone: create(:zone_with_country, default_tax: true)
+        name: "Sales Tax",
+        amount: 0.10,
+        included_in_price: false,
+        tax_category: create(:tax_category),
+        zone: create(:zone_with_country, default_tax: true)
     end
 
-    it 'sets additional_tax_total on the return items' do
+    it "sets additional_tax_total on the return items" do
       subject
       return_item.reload
 
@@ -41,17 +41,17 @@ describe Spree::ReimbursementTaxCalculator, type: :model do
     end
   end
 
-  context 'with included tax' do
+  context "with included tax" do
     let!(:tax_rate) do
       create :tax_rate,
-             name: 'VAT Tax',
-             amount: 0.10,
-             included_in_price: true,
-             tax_category: create(:tax_category),
-             zone: create(:zone_with_country, default_tax: true)
+        name: "VAT Tax",
+        amount: 0.10,
+        included_in_price: true,
+        tax_category: create(:tax_category),
+        zone: create(:zone_with_country, default_tax: true)
     end
 
-    it 'sets included_tax_total on the return items' do
+    it "sets included_tax_total on the return items" do
       subject
       return_item.reload
 

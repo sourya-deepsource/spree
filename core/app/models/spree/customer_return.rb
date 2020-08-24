@@ -1,6 +1,6 @@
 module Spree
   class CustomerReturn < Spree::Base
-    include Spree::Core::NumberGenerator.new(prefix: 'CR', length: 9)
+    include Spree::Core::NumberGenerator.new(prefix: "CR", length: 9)
     belongs_to :stock_location
 
     has_many :reimbursements, inverse_of: :customer_return
@@ -9,7 +9,7 @@ module Spree
 
     after_create :process_return!
 
-    validates :number, uniqueness: { case_sensitive: true }
+    validates :number, uniqueness: {case_sensitive: true}
     validates :return_items, :stock_location, presence: true
     validate :must_have_return_authorization, on: :create
     validate :return_items_belong_to_same_order
@@ -17,9 +17,9 @@ module Spree
     accepts_nested_attributes_for :return_items
 
     extend DisplayMoney
-    money_methods pre_tax_total: { currency: Spree::Config[:currency] }
+    money_methods pre_tax_total: {currency: Spree::Config[:currency]}
 
-    self.whitelisted_ransackable_attributes = ['number']
+    self.whitelisted_ransackable_attributes = ["number"]
 
     delegate :id, to: :order, prefix: true, allow_nil: true
 

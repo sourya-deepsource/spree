@@ -1,18 +1,18 @@
-Spree::Sample.load_sample('variants')
+Spree::Sample.load_sample("variants")
 
-country =  Spree::Country.find_by(iso: 'US')
-location = Spree::StockLocation.find_or_create_by!(name: 'default')
+country = Spree::Country.find_by(iso: "US")
+location = Spree::StockLocation.find_or_create_by!(name: "default")
 location.update_attributes!(
-  address1: 'Example Street',
-  city: 'City',
-  zipcode: '12345',
+  address1: "Example Street",
+  city: "City",
+  zipcode: "12345",
   country: country,
   state: country.states.first,
   active: true
 )
 
-product_1 = Spree::Product.find_by!(name: 'Denim Shirt')
-product_2 = Spree::Product.find_by!(name: 'Checked Shirt')
+product_1 = Spree::Product.find_by!(name: "Denim Shirt")
+product_2 = Spree::Product.find_by!(name: "Checked Shirt")
 
 product_1.master.stock_items.find_by!(stock_location: location).update!(count_on_hand: 1)
 product_2.master.stock_items.find_by!(stock_location: location).update!(count_on_hand: 1)

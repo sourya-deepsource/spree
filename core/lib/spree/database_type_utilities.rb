@@ -5,7 +5,7 @@ module Spree
       when :integer
         ActiveModel::Type::Integer.new.instance_eval { range.max }
       else
-        raise ArgumentError, 'Currently only :integer argument is acceptable'
+        raise ArgumentError, "Currently only :integer argument is acceptable"
       end
     end
   end

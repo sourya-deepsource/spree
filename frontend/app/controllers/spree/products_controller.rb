@@ -42,7 +42,7 @@ module Spree
       @related_products = related_products
 
       if @related_products.any?
-        render template: 'spree/products/related', layout: false
+        render template: "spree/products/related", layout: false
       else
         head :no_content
       end
@@ -59,15 +59,15 @@ module Spree
     end
 
     def load_product
-      @products = if try_spree_current_user.try(:has_spree_role?, 'admin')
-                    Product.with_deleted
-                  else
-                    Product.active(current_currency)
-                  end
+      @products = if try_spree_current_user.try(:has_spree_role?, "admin")
+        Product.with_deleted
+      else
+        Product.active(current_currency)
+      end
 
-      @product = @products.includes(:master).
-                 friendly.
-                 find(params[:id])
+      @product = @products.includes(:master)
+        .friendly
+        .find(params[:id])
     end
 
     def load_taxon
@@ -75,15 +75,15 @@ module Spree
     end
 
     def load_variants
-      @variants = @product.
-                  variants_including_master.
-                  spree_base_scopes.
-                  active(current_currency).
-                  includes(
-                    :default_price,
-                    option_values: [:option_value_variants],
-                    images: { attachment_attachment: :blob }
-                  )
+      @variants = @product
+        .variants_including_master
+        .spree_base_scopes
+        .active(current_currency)
+        .includes(
+          :default_price,
+          option_values: [:option_value_variants],
+          images: {attachment_attachment: :blob}
+        )
     end
 
     def redirect_if_legacy_path
@@ -102,7 +102,7 @@ module Spree
         @product,
         @taxon,
         @product.possible_promotion_ids,
-        @product.possible_promotions.maximum(:updated_at),
+        @product.possible_promotions.maximum(:updated_at)
       ]
     end
   end

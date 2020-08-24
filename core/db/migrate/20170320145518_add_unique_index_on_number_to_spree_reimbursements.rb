@@ -1,7 +1,7 @@
 class AddUniqueIndexOnNumberToSpreeReimbursements < ActiveRecord::Migration[5.0]
   def change
     unless index_exists?(:spree_reimbursements, :number, unique: true)
-      numbers = Spree::Reimbursement.group(:number).having('sum(1) > 1').pluck(:number)
+      numbers = Spree::Reimbursement.group(:number).having("sum(1) > 1").pluck(:number)
       reimbursements = Spree::Reimbursement.where(number: numbers)
 
       reimbursements.find_each do |reimbursement|

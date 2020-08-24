@@ -9,11 +9,11 @@ module Spree
 
     has_many :products, through: :product_option_types
 
-    has_many :option_type_prototypes, class_name: 'Spree::OptionTypePrototype'
-    has_many :prototypes, through: :option_type_prototypes, class_name: 'Spree::Prototype'
+    has_many :option_type_prototypes, class_name: "Spree::OptionTypePrototype"
+    has_many :prototypes, through: :option_type_prototypes, class_name: "Spree::Prototype"
 
     with_options presence: true do
-      validates :name, uniqueness: { case_sensitive: false, allow_blank: true }
+      validates :name, uniqueness: {case_sensitive: false, allow_blank: true}
       validates :presentation
     end
 
@@ -24,11 +24,11 @@ module Spree
     after_touch :touch_all_products
 
     def filter_param
-      name.titleize.delete(' ').downcase
+      name.titleize.delete(" ").downcase
     end
 
     def self.color
-      find_by(name: 'color')
+      find_by(name: "color")
     end
 
     private

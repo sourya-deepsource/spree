@@ -6,7 +6,7 @@ module Spree
 
     validates :type, presence: true
 
-    preference :server, :string, default: 'test'
+    preference :server, :string, default: "test"
     preference :test_mode, :boolean, default: true
 
     def payment_source_class
@@ -39,7 +39,7 @@ module Spree
     end
 
     def method_type
-      'gateway'
+      "gateway"
     end
 
     def exchange_multiplier
@@ -57,7 +57,7 @@ module Spree
       if source.is_a? CreditCard
         source.update_column :gateway_customer_profile_id, nil
       else
-        raise 'You must implement disable_customer_profile method for this gateway.'
+        raise "You must implement disable_customer_profile method for this gateway."
       end
     end
 

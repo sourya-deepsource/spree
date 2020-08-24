@@ -3,10 +3,10 @@ module Spree
     before_validation :ensure_valid_quantity
 
     with_options inverse_of: :line_items do
-      belongs_to :order, class_name: 'Spree::Order', touch: true
-      belongs_to :variant, class_name: 'Spree::Variant'
+      belongs_to :order, class_name: "Spree::Order", touch: true
+      belongs_to :variant, class_name: "Spree::Variant"
     end
-    belongs_to :tax_category, class_name: 'Spree::TaxCategory'
+    belongs_to :tax_category, class_name: "Spree::TaxCategory"
 
     has_one :product, through: :variant
 
@@ -22,7 +22,7 @@ module Spree
     #   https://github.com/spree/spree/issues/2695#issuecomment-143314161
     validates :quantity, numericality: {
       less_than_or_equal_to: DatabaseTypeUtilities.maximum_value_for(:integer),
-      only_integer: true, message: Spree.t('validation.must_be_int')
+      only_integer: true, message: Spree.t("validation.must_be_int")
     }
 
     validates :price, numericality: true
@@ -30,7 +30,7 @@ module Spree
     validates_with Spree::Stock::AvailabilityValidator
     validate :ensure_proper_currency, if: -> { order.present? }
 
-    before_destroy :verify_order_inventory_before_destroy, if: -> { order.has_checkout_step?('delivery') }
+    before_destroy :verify_order_inventory_before_destroy, if: -> { order.has_checkout_step?("delivery") }
 
     before_destroy :destroy_inventory_units
 
@@ -45,8 +45,8 @@ module Spree
 
     attr_accessor :target_shipment
 
-    self.whitelisted_ransackable_associations = ['variant']
-    self.whitelisted_ransackable_attributes = ['variant_id']
+    self.whitelisted_ransackable_associations = ["variant"]
+    self.whitelisted_ransackable_attributes = ["variant_id"]
 
     def copy_price
       if variant
@@ -75,7 +75,7 @@ module Spree
 
     extend DisplayMoney
     money_methods :amount, :subtotal, :discounted_amount, :final_amount, :total, :price,
-                  :adjustment_total, :additional_tax_total, :promo_total, :included_tax_total
+      :adjustment_total, :additional_tax_total, :promo_total, :included_tax_total
 
     alias single_money display_price
     alias single_display_amount display_price
@@ -144,7 +144,7 @@ module Spree
     end
 
     def update_inventory
-      if (saved_changes? || target_shipment.present?) && order.has_checkout_step?('delivery')
+      if (saved_changes? || target_shipment.present?) && order.has_checkout_step?("delivery")
         verify_order_inventory
       end
     end

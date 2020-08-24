@@ -1,4 +1,4 @@
-require 'spec_helper'
+require "spec_helper"
 
 module Spree
   describe Spree::PromotionRule, type: :model do
@@ -10,11 +10,11 @@ module Spree
       end
     end
 
-    it 'forces developer to implement eligible? method' do
+    it "forces developer to implement eligible? method" do
       expect { BadTestRule.new.eligible? }.to raise_error(ArgumentError)
     end
 
-    it 'validates unique rules for a promotion' do
+    it "validates unique rules for a promotion" do
       p1 = TestRule.new
       p1.promotion_id = 1
       p1.save

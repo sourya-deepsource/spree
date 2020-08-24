@@ -1,7 +1,7 @@
 module Spree
   class Promotion < Spree::Base
-    MATCH_POLICIES = %w(all any)
-    UNACTIVATABLE_ORDER_STATES = ['complete', 'awaiting_return', 'returned']
+    MATCH_POLICIES = %w[all any]
+    UNACTIVATABLE_ORDER_STATES = ["complete", "awaiting_return", "returned"]
 
     attr_reader :eligibility_errors, :generate_code
 
@@ -13,17 +13,17 @@ module Spree
     has_many :promotion_actions, autosave: true, dependent: :destroy
     alias actions promotion_actions
 
-    has_many :order_promotions, class_name: 'Spree::OrderPromotion'
-    has_many :orders, through: :order_promotions, class_name: 'Spree::Order'
+    has_many :order_promotions, class_name: "Spree::OrderPromotion"
+    has_many :orders, through: :order_promotions, class_name: "Spree::Order"
 
     accepts_nested_attributes_for :promotion_actions, :promotion_rules
 
     validates_associated :rules
 
     validates :name, presence: true
-    validates :path, :code, uniqueness: { case_sensitive: false, allow_blank: true }
-    validates :usage_limit, numericality: { greater_than: 0, allow_nil: true }
-    validates :description, length: { maximum: 255 }, allow_blank: true
+    validates :path, :code, uniqueness: {case_sensitive: false, allow_blank: true}
+    validates :usage_limit, numericality: {greater_than: 0, allow_nil: true}
+    validates :description, length: {maximum: 255}, allow_blank: true
     validate :expires_at_must_be_later_than_starts_at, if: -> { starts_at && expires_at }
 
     before_save :normalize_blank_values
@@ -37,17 +37,17 @@ module Spree
       SQL
     }
 
-    self.whitelisted_ransackable_attributes = ['path', 'promotion_category_id', 'code']
+    self.whitelisted_ransackable_attributes = ["path", "promotion_category_id", "code"]
 
     def self.with_coupon_code(coupon_code)
-      where("lower(#{table_name}.code) = ?", coupon_code.strip.downcase).
-        includes(:promotion_actions).where.not(spree_promotion_actions: { id: nil }).
-        first
+      where("lower(#{table_name}.code) = ?", coupon_code.strip.downcase)
+        .includes(:promotion_actions).where.not(spree_promotion_actions: {id: nil})
+        .first
     end
 
     def self.active
-      where('spree_promotions.starts_at IS NULL OR spree_promotions.starts_at < ?', Time.current).
-        where('spree_promotions.expires_at IS NULL OR spree_promotions.expires_at > ?', Time.current)
+      where("spree_promotions.starts_at IS NULL OR spree_promotions.starts_at < ?", Time.current)
+        .where("spree_promotions.expires_at IS NULL OR spree_promotions.expires_at > ?", Time.current)
     end
 
     def self.order_activatable?(order)
@@ -73,9 +73,9 @@ module Spree
       # Track results from actions to see if any action has been taken.
       # Actions should return nil/false if no action has been taken.
       # If an action returns true, then an action has been taken.
-      results = actions.map do |action|
+      results = actions.map { |action|
         action.perform(payload)
-      end
+      }
       # If an action has been taken, report back to whatever activated this promotion.
       action_taken = results.include?(true)
 
@@ -99,9 +99,9 @@ module Spree
       # Track results from actions to see if any action has been taken.
       # Actions should return nil/false if no action has been taken.
       # If an action returns true, then an action has been taken.
-      results = actions.map do |action|
+      results = actions.map { |action|
         action.revert(payload) if action.respond_to?(:revert)
-      end
+      }
 
       # If an action has been taken, report back to whatever `d this promotion.
       action_taken = results.include?(true)
@@ -133,9 +133,9 @@ module Spree
       specific_rules = rules.select { |rule| rule.applicable?(promotable) }
       return [] if specific_rules.none?
 
-      rule_eligibility = Hash[specific_rules.map do |rule|
+      rule_eligibility = Hash[specific_rules.map { |rule|
         [rule, rule.eligible?(promotable, options)]
-      end]
+      }]
 
       if match_all?
         # If there are rules for this promotion, but no rules for this
@@ -156,7 +156,7 @@ module Spree
     end
 
     def products
-      rules.where(type: 'Spree::Promotion::Rules::Product').map(&:products).flatten.uniq
+      rules.where(type: "Spree::Promotion::Rules::Product").map(&:products).flatten.uniq
     end
 
     def usage_limit_exceeded?(promotable)
@@ -199,7 +199,7 @@ module Spree
       ].any? do |adjustment_type|
         user.orders.complete.joins(adjustment_type).where(
           spree_adjustments: {
-            source_type: 'Spree::PromotionAction',
+            source_type: "Spree::PromotionAction",
             source_id: actions.map(&:id),
             eligible: true
           }
@@ -217,7 +217,7 @@ module Spree
         !promotable.product.promotionable?
       when Spree::Order
         promotable.line_items.any? &&
-          promotable.line_items.joins(:product).where(spree_products: { promotionable: true }).none?
+          promotable.line_items.joins(:product).where(spree_products: {promotionable: true}).none?
       end
     end
 
@@ -228,7 +228,7 @@ module Spree
     end
 
     def match_all?
-      match_policy == 'all'
+      match_policy == "all"
     end
 
     def expires_at_must_be_later_than_starts_at
@@ -236,10 +236,10 @@ module Spree
     end
 
     def random_code
-      coupon_code = loop do
+      coupon_code = loop {
         random_token = SecureRandom.hex(4)
         break random_token unless self.class.exists?(code: random_token)
-      end
+      }
       coupon_code
     end
   end

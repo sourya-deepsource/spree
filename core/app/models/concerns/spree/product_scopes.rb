@@ -24,19 +24,19 @@ module Spree
       def self.add_simple_scopes(scopes)
         scopes.each do |name|
           # We should not define price scopes here, as they require something slightly different
-          next if name.to_s.include?('master_price')
+          next if name.to_s.include?("master_price")
 
           parts = name.to_s.match(/(.*)_by_(.*)/)
-          scope(name.to_s, -> { order(Arel.sql("#{Product.quoted_table_name}.#{parts[2]} #{parts[1] == 'ascend' ? 'ASC' : 'DESC'}")) })
+          scope(name.to_s, -> { order(Arel.sql("#{Product.quoted_table_name}.#{parts[2]} #{parts[1] == "ascend" ? "ASC" : "DESC"}")) })
         end
       end
 
       def self.property_conditions(property)
         properties = Property.table_name
         case property
-        when String   then { "#{properties}.name" => property }
-        when Property then { "#{properties}.id" => property.id }
-        else { "#{properties}.id" => property.to_i }
+        when String then {"#{properties}.name" => property}
+        when Property then {"#{properties}.id" => property.id}
+        else {"#{properties}.id" => property.to_i}
         end
       end
 
@@ -51,7 +51,7 @@ module Spree
       end
 
       add_search_scope :price_between do |low, high|
-        joins(master: :default_price).where(Price.table_name => { amount: low..high })
+        joins(master: :default_price).where(Price.table_name => {amount: low..high})
       end
 
       add_search_scope :master_price_lte do |price|
@@ -80,9 +80,9 @@ module Spree
       #
       #   SELECT COUNT(*) ...
       add_search_scope :in_taxon do |taxon|
-        includes(:classifications).
-          where('spree_products_taxons.taxon_id' => taxon.cached_self_and_descendants_ids).
-          order('spree_products_taxons.position ASC')
+        includes(:classifications)
+          .where("spree_products_taxons.taxon_id" => taxon.cached_self_and_descendants_ids)
+          .order("spree_products_taxons.position ASC")
       end
 
       # This scope selects products in all taxons AND all its descendants
@@ -102,18 +102,18 @@ module Spree
       # a simple test for product with a certain property-value pairing
       # note that it can test for properties with NULL values, but not for absent values
       add_search_scope :with_property_value do |property, value|
-        joins(:properties).
-          where("#{ProductProperty.table_name}.value = ?", value).
-          where(property_conditions(property))
+        joins(:properties)
+          .where("#{ProductProperty.table_name}.value = ?", value)
+          .where(property_conditions(property))
       end
 
       add_search_scope :with_option do |option|
         option_types = OptionType.table_name
         conditions = case option
-                     when String     then { "#{option_types}.name" => option }
-                     when OptionType then { "#{option_types}.id" => option.id }
-                     else { "#{option_types}.id" => option.to_i }
-                     end
+                     when String then {"#{option_types}.name" => option}
+                     when OptionType then {"#{option_types}.id" => option.id}
+                     else {"#{option_types}.id" => option.to_i}
+        end
 
         joins(:option_types).where(conditions)
       end
@@ -124,19 +124,19 @@ module Spree
                          when String then OptionType.find_by(name: option) || option.to_i
                          when OptionType then option.id
                          else option.to_i
-                         end
+        end
 
         conditions = "#{option_values}.name = ? AND #{option_values}.option_type_id = ?", value, option_type_id
-        group('spree_products.id').joins(variants_including_master: :option_values).where(conditions)
+        group("spree_products.id").joins(variants_including_master: :option_values).where(conditions)
       end
 
       # Finds all products which have either:
       # 1) have an option value with the name matching the one given
       # 2) have a product property with a value matching the one given
       add_search_scope :with do |value|
-        includes(variants_including_master: :option_values).
-          includes(:product_properties).
-          where("#{OptionValue.table_name}.name = ? OR #{ProductProperty.table_name}.value = ?", value, value)
+        includes(variants_including_master: :option_values)
+          .includes(:product_properties)
+          .where("#{OptionValue.table_name}.name = ? OR #{ProductProperty.table_name}.value = ?", value, value)
       end
 
       # Finds all products that have a name containing the given words.
@@ -169,8 +169,8 @@ module Spree
       # joins: "LEFT OUTER JOIN (SELECT line_items.variant_id as vid, COUNT(*) as cnt FROM line_items GROUP BY line_items.variant_id) AS popularity_count ON variants.id = vid",
       # order: 'COALESCE(cnt, 0) DESC'
       add_search_scope :descend_by_popularity do
-        joins(:master).
-          order(%Q{
+        joins(:master)
+          .order(%{
              COALESCE((
                SELECT
                  COUNT(#{LineItem.quoted_table_name}.id)
@@ -191,7 +191,7 @@ module Spree
       end
 
       def self.not_discontinued(only_not_discontinued = true)
-        if only_not_discontinued != '0' && only_not_discontinued
+        if only_not_discontinued != "0" && only_not_discontinued
           where("#{Product.quoted_table_name}.discontinue_on IS NULL or #{Product.quoted_table_name}.discontinue_on >= ?", Time.zone.now)
         else
           all
@@ -211,7 +211,7 @@ module Spree
       search_scopes << :active
 
       add_search_scope :taxons_name_eq do |name|
-        group('spree_products.id').joins(:taxons).where(Taxon.arel_table[:name].eq(name))
+        group("spree_products.id").joins(:taxons).where(Taxon.arel_table[:name].eq(name))
       end
 
       def self.price_table_name
@@ -222,23 +222,23 @@ module Spree
       # specifically avoid having an order for taxon search (conflicts with main order)
       def self.prepare_taxon_conditions(taxons)
         ids = taxons.map(&:cached_self_and_descendants_ids).flatten.uniq
-        joins(:classifications).where(Classification.table_name => { taxon_id: ids })
+        joins(:classifications).where(Classification.table_name => {taxon_id: ids})
       end
       private_class_method :prepare_taxon_conditions
 
       # Produce an array of keywords for use in scopes.
       # Always return array with at least an empty string to avoid SQL errors
       def self.prepare_words(words)
-        return [''] if words.blank?
+        return [""] if words.blank?
 
         a = words.split(/[,\s]/).map(&:strip)
-        a.any? ? a : ['']
+        a.any? ? a : [""]
       end
       private_class_method :prepare_words
 
       def self.get_taxons(*ids_or_records_or_names)
         taxons = Taxon.table_name
-        ids_or_records_or_names.flatten.map do |t|
+        ids_or_records_or_names.flatten.map { |t|
           case t
           when Integer then Taxon.find_by(id: t)
           when ApplicationRecord then t
@@ -246,7 +246,7 @@ module Spree
             Taxon.find_by(name: t) ||
               Taxon.where("#{taxons}.permalink LIKE ? OR #{taxons}.permalink = ?", "%/#{t}/", "#{t}/").first
           end
-        end.compact.flatten.uniq
+        }.compact.flatten.uniq
       end
       private_class_method :get_taxons
     end

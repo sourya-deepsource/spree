@@ -1,16 +1,16 @@
 # This file is copied to ~/spec when you run 'ruby script/generate rspec'
 # from the project root directory.
-ENV['RAILS_ENV'] ||= 'test'
+ENV["RAILS_ENV"] ||= "test"
 
-require File.expand_path('../dummy/config/environment', __FILE__)
-require 'rspec/rails'
-require 'ffaker'
-require 'spree_sample'
+require File.expand_path("../dummy/config/environment", __FILE__)
+require "rspec/rails"
+require "ffaker"
+require "spree_sample"
 
 RSpec.configure do |config|
   config.color = true
-  config.default_formatter = 'doc'
-  config.fail_fast = ENV['FAIL_FAST'] || false
+  config.default_formatter = "doc"
+  config.fail_fast = ENV["FAIL_FAST"] || false
   config.infer_spec_type_from_file_location!
   config.mock_with :rspec
   config.raise_errors_for_deprecations!

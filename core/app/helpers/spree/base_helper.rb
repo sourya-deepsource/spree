@@ -3,30 +3,30 @@ module Spree
     def available_countries
       checkout_zone = Spree::Zone.find_by(name: Spree::Config[:checkout_zone])
 
-      countries = if checkout_zone && checkout_zone.kind == 'country'
-                    checkout_zone.country_list
-                  else
-                    Spree::Country.all
-                  end
+      countries = if checkout_zone && checkout_zone.kind == "country"
+        checkout_zone.country_list
+      else
+        Spree::Country.all
+      end
 
-      countries.collect do |country|
-        country.name = Spree.t(country.iso, scope: 'country_names', default: country.name)
+      countries.collect { |country|
+        country.name = Spree.t(country.iso, scope: "country_names", default: country.name)
         country
-      end.sort_by { |c| c.name.parameterize }
+      }.sort_by { |c| c.name.parameterize }
     end
 
     def display_price(product_or_variant)
-      product_or_variant.
-        price_in(current_currency).
-        display_price_including_vat_for(current_price_options).
-        to_html
+      product_or_variant
+        .price_in(current_currency)
+        .display_price_including_vat_for(current_price_options)
+        .to_html
     end
 
     def display_compare_at_price(product_or_variant)
-      product_or_variant.
-        price_in(current_currency).
-        display_compare_at_price_including_vat_for(current_price_options).
-        to_html
+      product_or_variant
+        .price_in(current_currency)
+        .display_compare_at_price_including_vat_for(current_price_options)
+        .to_html
     end
 
     def link_to_tracking(shipment, options = {})
@@ -43,12 +43,12 @@ module Spree
 
     def logo(image_path = nil, options = {})
       image_path ||= if current_store.logo.attached? && current_store.logo.variable?
-                       main_app.url_for(current_store.logo.variant(resize: '244x104>'))
-                     elsif current_store.logo.attached? && current_store.logo.image?
-                       main_app.url_for(current_store.logo)
-                     else
-                       Spree::Config[:logo]
-                     end
+        main_app.url_for(current_store.logo.variant(resize: "244x104>"))
+      elsif current_store.logo.attached? && current_store.logo.image?
+        main_app.url_for(current_store.logo)
+      else
+        Spree::Config[:logo]
+      end
 
       path = spree.respond_to?(:root_path) ? spree.root_path : main_app.root_path
 
@@ -58,7 +58,7 @@ module Spree
     end
 
     def meta_data
-      object = instance_variable_get('@' + controller_name.singularize)
+      object = instance_variable_get("@" + controller_name.singularize)
       meta = {}
 
       if object.is_a? ApplicationRecord
@@ -67,13 +67,13 @@ module Spree
       end
 
       if meta[:description].blank? && object.is_a?(Spree::Product)
-        meta[:description] = truncate(strip_tags(object.description), length: 160, separator: ' ')
+        meta[:description] = truncate(strip_tags(object.description), length: 160, separator: " ")
       end
 
       if meta[:keywords].blank? || meta[:description].blank?
         if object && object[:name].present?
-          meta.reverse_merge!(keywords: [object.name, current_store.meta_keywords].reject(&:blank?).join(', '),
-                              description: [object.name, current_store.meta_description].reject(&:blank?).join(', '))
+          meta.reverse_merge!(keywords: [object.name, current_store.meta_keywords].reject(&:blank?).join(", "),
+                              description: [object.name, current_store.meta_description].reject(&:blank?).join(", "))
         else
           meta.reverse_merge!(keywords: (current_store.meta_keywords || current_store.seo_title),
                               description: (current_store.meta_description || current_store.seo_title))
@@ -83,7 +83,7 @@ module Spree
     end
 
     def meta_image_url_path
-      object = instance_variable_get('@' + controller_name.singularize)
+      object = instance_variable_get("@" + controller_name.singularize)
       return unless object.is_a?(Spree::Product)
 
       image = default_image_for_product_or_variant(object)
@@ -91,13 +91,13 @@ module Spree
     end
 
     def meta_image_data_tag
-      tag('meta', property: 'og:image', content: meta_image_url_path) if meta_image_url_path
+      tag("meta", property: "og:image", content: meta_image_url_path) if meta_image_url_path
     end
 
     def meta_data_tags
-      meta_data.map do |name, content|
-        tag('meta', name: name, content: content) unless name.nil? || content.nil?
-      end.join("\n")
+      meta_data.map { |name, content|
+        tag("meta", name: name, content: content) unless name.nil? || content.nil?
+      }.join("\n")
     end
 
     def method_missing(method_name, *args, &block)
@@ -110,15 +110,15 @@ module Spree
     end
 
     def pretty_time(time)
-      return '' if time.blank?
+      return "" if time.blank?
 
-      [I18n.l(time.to_date, format: :long), time.strftime('%l:%M %p %Z')].join(' ')
+      [I18n.l(time.to_date, format: :long), time.strftime("%l:%M %p %Z")].join(" ")
     end
 
     def pretty_date(date)
-      return '' if date.blank?
+      return "" if date.blank?
 
-      [I18n.l(date.to_date, format: :long)].join(' ')
+      [I18n.l(date.to_date, format: :long)].join(" ")
     end
 
     def seo_url(taxon, options = nil)
@@ -185,7 +185,7 @@ module Spree
 
     # Returns style of image or nil
     def image_style_from_method_name(method_name)
-      if method_name.to_s.match(/_image$/) && style = method_name.to_s.sub(/_image$/, '')
+      if method_name.to_s.match(/_image$/) && style = method_name.to_s.sub(/_image$/, "")
         style if style.in? Spree::Image.styles.with_indifferent_access
       end
     end

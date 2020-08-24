@@ -1,4 +1,4 @@
-require 'spec_helper'
+require "spec_helper"
 
 describe Spree::Calculator::PercentOnLineItem, type: :model do
   let(:calculator) { Spree::Calculator::PercentOnLineItem.new }
@@ -6,8 +6,8 @@ describe Spree::Calculator::PercentOnLineItem, type: :model do
 
   before { allow(calculator).to receive_messages preferred_percent: 10 }
 
-  context 'compute' do
-    it 'rounds result correctly' do
+  context "compute" do
+    it "rounds result correctly" do
       allow(line_item).to receive_messages amount: 31.08
       expect(calculator.compute(line_item)).to eq 3.11
 
@@ -15,7 +15,7 @@ describe Spree::Calculator::PercentOnLineItem, type: :model do
       expect(calculator.compute(line_item)).to eq 3.10
     end
 
-    it 'returns object.amount if computed amount is greater' do
+    it "returns object.amount if computed amount is greater" do
       allow(line_item).to receive_messages amount: 30.00
       allow(calculator).to receive_messages preferred_percent: 110
 

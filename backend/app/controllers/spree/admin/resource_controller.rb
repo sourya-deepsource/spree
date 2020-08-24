@@ -11,14 +11,14 @@ class Spree::Admin::ResourceController < Spree::Admin::BaseController
     invoke_callbacks(:new_action, :before)
     respond_with(@object) do |format|
       format.html { render layout: !request.xhr? }
-      format.js   { render layout: false } if request.xhr?
+      format.js { render layout: false } if request.xhr?
     end
   end
 
   def edit
     respond_with(@object) do |format|
       format.html { render layout: !request.xhr? }
-      format.js   { render layout: false } if request.xhr?
+      format.js { render layout: false } if request.xhr?
     end
   end
 
@@ -50,7 +50,7 @@ class Spree::Admin::ResourceController < Spree::Admin::BaseController
       flash[:success] = flash_message_for(@object, :successfully_created)
       respond_with(@object) do |format|
         format.html { redirect_to location_after_save }
-        format.js   { render layout: false }
+        format.js { render layout: false }
       end
     else
       invoke_callbacks(:create, :fails)
@@ -80,12 +80,12 @@ class Spree::Admin::ResourceController < Spree::Admin::BaseController
       flash[:success] = flash_message_for(@object, :successfully_removed)
     else
       invoke_callbacks(:destroy, :fails)
-      flash[:error] = @object.errors.full_messages.join(', ')
+      flash[:error] = @object.errors.full_messages.join(", ")
     end
 
     respond_with(@object) do |format|
       format.html { redirect_to location_after_destroy }
-      format.js   { render_js_for_destroy }
+      format.js { render_js_for_destroy }
     end
   end
 
@@ -153,8 +153,8 @@ class Spree::Admin::ResourceController < Spree::Admin::BaseController
   def parent
     if parent_data.present?
       @parent ||= parent_data[:model_class].
-                  # Don't use `find_by_attribute_name` to workaround globalize/globalize#423 bug
-                  send(:find_by, parent_data[:find_by].to_s => params["#{resource.model_name}_id"])
+        # Don't use `find_by_attribute_name` to workaround globalize/globalize#423 bug
+        send(:find_by, parent_data[:find_by].to_s => params["#{resource.model_name}_id"])
       instance_variable_set("@#{resource.model_name}", @parent)
     end
   end
@@ -207,7 +207,7 @@ class Spree::Admin::ResourceController < Spree::Admin::BaseController
   def edit_object_url(object, options = {})
     if parent_data.present?
       spree.send "edit_admin_#{resource.model_name}_#{resource.object_name}_url",
-                 parent, object, options
+        parent, object, options
     else
       spree.send "edit_admin_#{resource.object_name}_url", object, options
     end
@@ -231,7 +231,8 @@ class Spree::Admin::ResourceController < Spree::Admin::BaseController
   end
 
   # This method should be overridden when object_name does not match the controller name
-  def object_name; end
+  def object_name
+  end
 
   # Allow all attributes to be updatable.
   #

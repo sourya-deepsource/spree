@@ -4,7 +4,7 @@ module Spree
 
     before_destroy :validate_not_used
 
-    GIFT_CARD_CATEGORY_NAME = 'Gift Card'.freeze
+    GIFT_CARD_CATEGORY_NAME = "Gift Card".freeze
     DEFAULT_NON_EXPIRING_TYPES = [GIFT_CARD_CATEGORY_NAME]
 
     def non_expiring?

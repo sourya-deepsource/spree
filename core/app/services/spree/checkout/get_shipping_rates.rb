@@ -18,13 +18,13 @@ module Spree
       end
 
       def ensure_shipping_address(order:)
-        return failure([], Spree.t('errors.services.get_shipping_rates.no_shipping_address')) if order.ship_address.blank?
+        return failure([], Spree.t("errors.services.get_shipping_rates.no_shipping_address")) if order.ship_address.blank?
 
         success(order: order)
       end
 
       def ensure_line_items_present(order:)
-        return failure([], Spree.t('errors.services.get_shipping_rates.no_line_items')) if order.line_items.empty?
+        return failure([], Spree.t("errors.services.get_shipping_rates.no_line_items")) if order.line_items.empty?
 
         success(order: order)
       end

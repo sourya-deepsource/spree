@@ -1,7 +1,7 @@
 module Spree
   module Admin
     class ReimbursementsController < ResourceController
-      belongs_to 'spree/order', find_by: :number
+      belongs_to "spree/order", find_by: :number
 
       before_action :load_simulated_refunds, only: :edit
 

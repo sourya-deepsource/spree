@@ -1,8 +1,8 @@
 module Spree
   class ReturnAuthorization < Spree::Base
-    include Spree::Core::NumberGenerator.new(prefix: 'RA', length: 9)
+    include Spree::Core::NumberGenerator.new(prefix: "RA", length: 9)
 
-    belongs_to :order, class_name: 'Spree::Order', inverse_of: :return_authorizations
+    belongs_to :order, class_name: "Spree::Order", inverse_of: :return_authorizations
 
     has_many :return_items, inverse_of: :return_authorization, dependent: :destroy
     with_options through: :return_items do
@@ -11,7 +11,7 @@ module Spree
     end
 
     belongs_to :stock_location
-    belongs_to :reason, class_name: 'Spree::ReturnAuthorizationReason', foreign_key: :return_authorization_reason_id
+    belongs_to :reason, class_name: "Spree::ReturnAuthorizationReason", foreign_key: :return_authorization_reason_id
 
     after_save :generate_expedited_exchange_reimbursements
 
@@ -37,7 +37,7 @@ module Spree
     extend DisplayMoney
     money_methods :pre_tax_total
 
-    self.whitelisted_ransackable_attributes = ['memo', 'number', 'state']
+    self.whitelisted_ransackable_attributes = ["memo", "number", "state"]
 
     def pre_tax_total
       return_items.sum(:pre_tax_amount)

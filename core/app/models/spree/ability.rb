@@ -2,7 +2,7 @@
 # using the special +register_ability+ method which allows extensions to add their own abilities.
 #
 # See http://github.com/ryanb/cancan for more details on cancan.
-require 'cancan'
+require "cancan"
 module Spree
   class Ability
     include CanCan::Ability
@@ -29,7 +29,7 @@ module Spree
 
       user ||= Spree.user_class.new
 
-      if user.respond_to?(:has_spree_role?) && user.has_spree_role?('admin')
+      if user.respond_to?(:has_spree_role?) && user.has_spree_role?("admin")
         can :manage, :all
       else
         can :read, Country
@@ -67,7 +67,7 @@ module Spree
       end
 
       # Protect admin role
-      cannot [:update, :destroy], Role, name: ['admin']
+      cannot [:update, :destroy], Role, name: ["admin"]
     end
 
     private

@@ -5,12 +5,12 @@ module Spree
   class Promotion
     module Rules
       class Product < PromotionRule
-        has_many :product_promotion_rules, class_name: 'Spree::ProductPromotionRule',
+        has_many :product_promotion_rules, class_name: "Spree::ProductPromotionRule",
                                            foreign_key: :promotion_rule_id,
                                            dependent: :destroy
-        has_many :products, through: :product_promotion_rules, class_name: 'Spree::Product'
+        has_many :products, through: :product_promotion_rules, class_name: "Spree::Product"
 
-        MATCH_POLICIES = %w(any all none)
+        MATCH_POLICIES = %w[any all none]
         preference :match_policy, :string, default: MATCH_POLICIES.first
 
         # scope/association that is used to test eligibility
@@ -25,11 +25,11 @@ module Spree
         def eligible?(order, _options = {})
           return true if eligible_products.empty?
 
-          if preferred_match_policy == 'all'
+          if preferred_match_policy == "all"
             unless eligible_products.all? { |p| order.products.include?(p) }
               eligibility_errors.add(:base, eligibility_error_message(:missing_product))
             end
-          elsif preferred_match_policy == 'any'
+          elsif preferred_match_policy == "any"
             unless order.products.any? { |p| eligible_products.include?(p) }
               eligibility_errors.add(:base, eligibility_error_message(:no_applicable_products))
             end
@@ -44,9 +44,9 @@ module Spree
 
         def actionable?(line_item)
           case preferred_match_policy
-          when 'any', 'all'
+          when "any", "all"
             product_ids.include? line_item.variant.product_id
-          when 'none'
+          when "none"
             product_ids.exclude? line_item.variant.product_id
           else
             raise "unexpected match policy: #{preferred_match_policy.inspect}"
@@ -54,11 +54,11 @@ module Spree
         end
 
         def product_ids_string
-          product_ids.join(',')
+          product_ids.join(",")
         end
 
         def product_ids_string=(s)
-          self.product_ids = s.to_s.split(',').map(&:strip)
+          self.product_ids = s.to_s.split(",").map(&:strip)
         end
       end
     end

@@ -1,126 +1,126 @@
-require 'spec_helper'
+require "spec_helper"
 
 describe Spree::Money do
   before do
     configure_spree_preferences do |config|
-      config.currency = 'USD'
+      config.currency = "USD"
     end
   end
 
-  let(:money)    { described_class.new(10) }
-  let(:currency) { Money::Currency.new('USD') }
+  let(:money) { described_class.new(10) }
+  let(:currency) { Money::Currency.new("USD") }
 
-  it 'formats correctly' do
-    expect(money.to_s).to eq('$10.00')
+  it "formats correctly" do
+    expect(money.to_s).to eq("$10.00")
   end
 
-  it 'can get cents' do
+  it "can get cents" do
     expect(money.cents).to eq(1000)
   end
 
-  it 'can get currency' do
+  it "can get currency" do
     expect(money.currency).to eq(currency)
   end
 
-  context 'with currency' do
-    it 'passed in option' do
+  context "with currency" do
+    it "passed in option" do
       money = described_class.new(10, with_currency: true, html_wrap: false)
-      expect(money.to_s).to eq('$10.00 USD')
+      expect(money.to_s).to eq("$10.00 USD")
     end
   end
 
-  context 'hide cents' do
-    it 'hides cents suffix' do
+  context "hide cents" do
+    it "hides cents suffix" do
       money = described_class.new(10, no_cents: true)
-      expect(money.to_s).to eq('$10')
+      expect(money.to_s).to eq("$10")
     end
 
-    it 'shows cents suffix' do
+    it "shows cents suffix" do
       money = described_class.new(10)
-      expect(money.to_s).to eq('$10.00')
+      expect(money.to_s).to eq("$10.00")
     end
   end
 
-  context 'currency parameter' do
-    context 'when currency is specified in Canadian Dollars' do
-      it 'uses the currency param over the global configuration' do
-        money = described_class.new(10, currency: 'CAD', with_currency: true, html_wrap: false)
-        expect(money.to_s).to eq('$10.00 CAD')
+  context "currency parameter" do
+    context "when currency is specified in Canadian Dollars" do
+      it "uses the currency param over the global configuration" do
+        money = described_class.new(10, currency: "CAD", with_currency: true, html_wrap: false)
+        expect(money.to_s).to eq("$10.00 CAD")
       end
     end
 
-    context 'when currency is specified in Japanese Yen' do
-      it 'uses the currency param over the global configuration' do
-        money = described_class.new(100, currency: 'JPY', html_wrap: false)
-        expect(money.to_s).to eq('¥100')
+    context "when currency is specified in Japanese Yen" do
+      it "uses the currency param over the global configuration" do
+        money = described_class.new(100, currency: "JPY", html_wrap: false)
+        expect(money.to_s).to eq("¥100")
       end
     end
   end
 
-  context 'format' do
-    it 'passed in option' do
-      money = described_class.new(10, format: '%n %u', html_wrap: false)
-      expect(money.to_s).to eq('10.00 $')
+  context "format" do
+    it "passed in option" do
+      money = described_class.new(10, format: "%n %u", html_wrap: false)
+      expect(money.to_s).to eq("10.00 $")
     end
   end
 
-  context 'sign before symbol' do
-    it 'defaults to -$10.00' do
+  context "sign before symbol" do
+    it "defaults to -$10.00" do
       money = described_class.new(-10)
-      expect(money.to_s).to eq('-$10.00')
+      expect(money.to_s).to eq("-$10.00")
     end
 
-    it 'passed in option' do
+    it "passed in option" do
       money = described_class.new(-10, sign_before_symbol: false)
-      expect(money.to_s).to eq('$-10.00')
+      expect(money.to_s).to eq("$-10.00")
     end
   end
 
-  context 'JPY' do
+  context "JPY" do
     before do
       configure_spree_preferences do |config|
-        config.currency = 'JPY'
+        config.currency = "JPY"
       end
     end
 
-    it 'formats correctly' do
+    it "formats correctly" do
       money = described_class.new(1000, html_wrap: false)
-      expect(money.to_s).to eq('¥1,000')
+      expect(money.to_s).to eq("¥1,000")
     end
   end
 
-  context 'EUR' do
+  context "EUR" do
     before do
       configure_spree_preferences do |config|
-        config.currency = 'EUR'
+        config.currency = "EUR"
       end
     end
 
     # Regression test for #2634
-    it 'formats as plain by default' do
-      money = described_class.new(10, format: '%n %u')
-      expect(money.to_s).to eq('10.00 €')
+    it "formats as plain by default" do
+      money = described_class.new(10, format: "%n %u")
+      expect(money.to_s).to eq("10.00 €")
     end
 
     # rubocop:disable Style/AsciiComments
-    it 'formats as HTML if asked (nicely) to' do
-      money = described_class.new(10, format: '%n %u')
+    it "formats as HTML if asked (nicely) to" do
+      money = described_class.new(10, format: "%n %u")
       # The HTML'ified version of "10.00 €"
-      expect(money.to_html).to eq('10.00&nbsp;&#x20AC;')
+      expect(money.to_html).to eq("10.00&nbsp;&#x20AC;")
     end
 
-    it 'formats as HTML with currency' do
-      money = described_class.new(10, format: '%n %u', with_currency: true)
+    it "formats as HTML with currency" do
+      money = described_class.new(10, format: "%n %u", with_currency: true)
       # The HTML'ified version of "10.00 €"
-      expect(money.to_html).to eq('10.00&nbsp;&#x20AC; EUR')
+      expect(money.to_html).to eq("10.00&nbsp;&#x20AC; EUR")
     end
     # rubocop:enable Style/AsciiComments
   end
 
-  context 'Money formatting rules' do
+  context "Money formatting rules" do
     before do
       configure_spree_preferences do |config|
-        config.currency = 'EUR'
+        config.currency = "EUR"
       end
     end
 
@@ -131,40 +131,40 @@ describe Spree::Money do
 
     let(:money) { described_class.new(10) }
 
-    describe '#decimal_mark' do
-      it 'uses decimal mark set in Monetize gem' do
-        expect(money.decimal_mark).to eq('.')
+    describe "#decimal_mark" do
+      it "uses decimal mark set in Monetize gem" do
+        expect(money.decimal_mark).to eq(".")
       end
 
-      it 'favors decimal mark set in default_formatting_rules' do
-        described_class.default_formatting_rules[:decimal_mark] = ','
-        expect(money.decimal_mark).to eq(',')
+      it "favors decimal mark set in default_formatting_rules" do
+        described_class.default_formatting_rules[:decimal_mark] = ","
+        expect(money.decimal_mark).to eq(",")
       end
 
-      it 'favors decimal mark passed in as a parameter on initialization' do
-        money = described_class.new(10, decimal_mark: ',')
-        expect(money.decimal_mark).to eq(',')
+      it "favors decimal mark passed in as a parameter on initialization" do
+        money = described_class.new(10, decimal_mark: ",")
+        expect(money.decimal_mark).to eq(",")
       end
     end
 
-    describe '#thousands_separator' do
-      it 'uses thousands separator set in Monetize gem' do
-        expect(money.thousands_separator).to eq(',')
+    describe "#thousands_separator" do
+      it "uses thousands separator set in Monetize gem" do
+        expect(money.thousands_separator).to eq(",")
       end
 
-      it 'favors decimal mark set in default_formatting_rules' do
-        described_class.default_formatting_rules[:thousands_separator] = '.'
-        expect(money.thousands_separator).to eq('.')
+      it "favors decimal mark set in default_formatting_rules" do
+        described_class.default_formatting_rules[:thousands_separator] = "."
+        expect(money.thousands_separator).to eq(".")
       end
 
-      it 'favors decimal mark passed in as a parameter on initialization' do
-        money = described_class.new(10, thousands_separator: '.')
-        expect(money.thousands_separator).to eq('.')
+      it "favors decimal mark passed in as a parameter on initialization" do
+        money = described_class.new(10, thousands_separator: ".")
+        expect(money.thousands_separator).to eq(".")
       end
     end
   end
 
-  describe '#amount_in_cents' do
+  describe "#amount_in_cents" do
     %w[USD JPY KRW].each do |currency_name|
       context "when currency is #{currency_name}" do
         let(:money) { described_class.new(100, currency: currency_name) }
@@ -174,12 +174,12 @@ describe Spree::Money do
     end
   end
 
-  describe '#as_json' do
-    let(:options) { double('options') }
+  describe "#as_json" do
+    let(:options) { double("options") }
 
-    it 'returns the expected string' do
+    it "returns the expected string" do
       money = described_class.new(10)
-      expect(money.as_json(options)).to eq('$10.00')
+      expect(money.as_json(options)).to eq("$10.00")
     end
   end
 end

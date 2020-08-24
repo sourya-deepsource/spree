@@ -16,7 +16,7 @@ module Spree
               currency: current_currency
             }
 
-            order   = spree_current_order if spree_current_order.present?
+            order = spree_current_order if spree_current_order.present?
             order ||= create_service.call(order_params).value
 
             render_serialized_payload(201) { serialize_order(order) }
@@ -91,7 +91,7 @@ module Spree
 
             coupon_codes = select_coupon_codes
 
-            return render_error_payload(Spree.t('v2.cart.no_coupon_code', scope: 'api')) if coupon_codes.empty?
+            return render_error_payload(Spree.t("v2.cart.no_coupon_code", scope: "api")) if coupon_codes.empty?
 
             result_errors = coupon_codes.count > 1 ? select_errors(coupon_codes) : select_error(coupon_codes)
 
@@ -153,7 +153,7 @@ module Spree
           end
 
           def render_error_item_quantity
-            render json: { error: I18n.t(:wrong_quantity, scope: 'spree.api.v2.cart') }, status: 422
+            render json: {error: I18n.t(:wrong_quantity, scope: "spree.api.v2.cart")}, status: 422
           end
 
           def estimate_shipping_rates_serializer
@@ -163,7 +163,7 @@ module Spree
           def serialize_estimated_shipping_rates(shipping_rates)
             estimate_shipping_rates_serializer.new(
               shipping_rates,
-              params: { currency: spree_current_order.currency }
+              params: {currency: spree_current_order.currency}
             ).serializable_hash
           end
 

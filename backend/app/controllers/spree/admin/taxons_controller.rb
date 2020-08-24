@@ -6,7 +6,8 @@ module Spree
       before_action :set_permalink_part, only: [:edit, :update]
       respond_to :html, :js
 
-      def index; end
+      def index
+      end
 
       def create
         @taxon = @taxonomy.taxons.build(params[:taxon].except(:icon))
@@ -16,14 +17,15 @@ module Spree
             format.json { render json: @taxon.to_json }
           end
         else
-          flash[:error] = Spree.t('errors.messages.could_not_create_taxon')
+          flash[:error] = Spree.t("errors.messages.could_not_create_taxon")
           respond_with(@taxon) do |format|
             format.html { redirect_to @taxonomy ? edit_admin_taxonomy_url(@taxonomy) : admin_taxonomies_url }
           end
         end
       end
 
-      def edit; end
+      def edit
+      end
 
       def update
         successful = @taxon.transaction do
@@ -65,7 +67,7 @@ module Spree
       private
 
       def set_permalink_part
-        @permalink_part = @taxon.permalink.split('/').last
+        @permalink_part = @taxon.permalink.split("/").last
       end
 
       def taxon_params
@@ -78,10 +80,10 @@ module Spree
 
       def load_taxonomy
         @taxonomy = if defined?(SpreeGlobalize)
-                      Taxonomy.includes(:translations, taxons: [:translations]).find(params[:taxonomy_id])
-                    else
-                      Taxonomy.find(params[:taxonomy_id])
-                    end
+          Taxonomy.includes(:translations, taxons: [:translations]).find(params[:taxonomy_id])
+        else
+          Taxonomy.find(params[:taxonomy_id])
+        end
       end
 
       def set_position
@@ -94,9 +96,9 @@ module Spree
       end
 
       def set_permalink_params
-        if params.key? 'permalink_part'
-          parent_permalink = @taxon.permalink.split('/')[0...-1].join('/')
-          parent_permalink += '/' unless parent_permalink.blank?
+        if params.key? "permalink_part"
+          parent_permalink = @taxon.permalink.split("/")[0...-1].join("/")
+          parent_permalink += "/" unless parent_permalink.blank?
           params[:taxon][:permalink] = parent_permalink + params[:permalink_part]
         end
       end

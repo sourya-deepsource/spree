@@ -67,8 +67,8 @@ module Spree
       end
 
       def shipping_categories
-        Spree::ShippingCategory.joins(products: :variants_including_master).
-          where(spree_variants: { id: variant_ids }).distinct
+        Spree::ShippingCategory.joins(products: :variants_including_master)
+          .where(spree_variants: {id: variant_ids}).distinct
       end
 
       def shipping_methods
@@ -76,9 +76,9 @@ module Spree
       end
 
       def inspect
-        contents.map do |content_item|
+        contents.map { |content_item|
           "#{content_item.variant.name} #{content_item.state}"
-        end.join(' / ')
+        }.join(" / ")
       end
 
       def to_shipment

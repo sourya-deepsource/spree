@@ -1,5 +1,5 @@
 taxonomies = [
-  { name: I18n.t('spree.taxonomy_categories_name') }
+  {name: I18n.t("spree.taxonomy_categories_name")}
 ]
 
 taxonomies.each do |taxonomy_attrs|

@@ -7,8 +7,8 @@ module Spree
         belongs_to :category
         has_many :store_credit_events
         belongs_to :credit_type,
-                   id_method_name: :type_id,
-                   serializer: :store_credit_type
+          id_method_name: :type_id,
+          serializer: :store_credit_type
 
         attributes :amount, :amount_used, :created_at
       end

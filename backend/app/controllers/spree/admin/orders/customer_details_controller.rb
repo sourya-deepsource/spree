@@ -26,7 +26,7 @@ module Spree
             @order.refresh_shipment_rates(Spree::ShippingMethod::DISPLAY_ON_BACK_END)
 
             if @order.errors.empty?
-              flash[:success] = Spree.t('customer_details_updated')
+              flash[:success] = Spree.t("customer_details_updated")
               redirect_to edit_admin_order_url(@order)
             else
               render action: :edit
@@ -65,7 +65,7 @@ module Spree
         end
 
         def guest_checkout?
-          params[:guest_checkout] == 'true'
+          params[:guest_checkout] == "true"
         end
       end
     end

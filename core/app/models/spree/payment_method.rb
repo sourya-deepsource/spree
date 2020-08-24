@@ -5,18 +5,18 @@ module Spree
 
     DISPLAY = [:both, :front_end, :back_end].freeze
 
-    scope :active,                 -> { where(active: true).order(position: :asc) }
-    scope :available,              -> { active.where(display_on: [:front_end, :back_end, :both]) }
+    scope :active, -> { where(active: true).order(position: :asc) }
+    scope :available, -> { active.where(display_on: [:front_end, :back_end, :both]) }
     scope :available_on_front_end, -> { active.where(display_on: [:front_end, :both]) }
-    scope :available_on_back_end,  -> { active.where(display_on: [:back_end, :both]) }
+    scope :available_on_back_end, -> { active.where(display_on: [:back_end, :both]) }
 
     validates :name, presence: true
 
     belongs_to :store
 
     with_options dependent: :restrict_with_error do
-      has_many :payments, class_name: 'Spree::Payment', inverse_of: :payment_method
-      has_many :credit_cards, class_name: 'Spree::CreditCard'
+      has_many :payments, class_name: "Spree::Payment", inverse_of: :payment_method
+      has_many :credit_cards, class_name: "Spree::CreditCard"
     end
 
     def self.providers
@@ -24,14 +24,14 @@ module Spree
     end
 
     def provider_class
-      raise ::NotImplementedError, 'You must implement provider_class method for this gateway.'
+      raise ::NotImplementedError, "You must implement provider_class method for this gateway."
     end
 
     # The class that will process payments for this payment type, used for @payment.source
     # e.g. CreditCard in the case of a the Gateway payment type
     # nil means the payment method doesn't require a source e.g. check
     def payment_source_class
-      raise ::NotImplementedError, 'You must implement payment_source_class method for this gateway.'
+      raise ::NotImplementedError, "You must implement payment_source_class method for this gateway."
     end
 
     def method_type
@@ -65,7 +65,7 @@ module Spree
     end
 
     def cancel(_response)
-      raise ::NotImplementedError, 'You must implement cancel method for this payment method.'
+      raise ::NotImplementedError, "You must implement cancel method for this payment method."
     end
 
     def store_credit?

@@ -1,7 +1,7 @@
 class AddUniqueIndexOnNumberToSpreeShipment < ActiveRecord::Migration[5.0]
   def change
     unless index_exists?(:spree_shipments, :number, unique: true)
-      numbers = Spree::Shipment.group(:number).having('sum(1) > 1').pluck(:number)
+      numbers = Spree::Shipment.group(:number).having("sum(1) > 1").pluck(:number)
       shipments = Spree::Shipment.where(number: numbers)
 
       shipments.find_each do |shipment|

@@ -6,9 +6,9 @@ module Spree
           Spree::PermittedAttributes
         end
 
-        delegate *Spree::PermittedAttributes::ATTRIBUTES,
-                 to: :permitted_attributes,
-                 prefix: :permitted
+        delegate(*Spree::PermittedAttributes::ATTRIBUTES,
+          to: :permitted_attributes,
+          prefix: :permitted)
 
         def permitted_payment_attributes
           permitted_attributes.payment_attributes + [

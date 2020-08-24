@@ -53,7 +53,7 @@ module Spree
         params[:q] ||= {}
         @search = Spree::Order.includes(
           line_items: {
-            variant: [:product, { option_values: :option_type }]
+            variant: [:product, {option_values: :option_type}]
           }
         ).ransack(params[:q].merge(user_id_eq: @user.id))
         @orders = @search.result.page(params[:page])
@@ -61,14 +61,14 @@ module Spree
 
       def generate_api_key
         if @user.generate_spree_api_key!
-          flash[:success] = Spree.t('api.key_generated')
+          flash[:success] = Spree.t("api.key_generated")
         end
         redirect_to edit_admin_user_path(@user)
       end
 
       def clear_api_key
         if @user.clear_spree_api_key!
-          flash[:success] = Spree.t('api.key_cleared')
+          flash[:success] = Spree.t("api.key_cleared")
         end
         redirect_to edit_admin_user_path(@user)
       end
@@ -92,9 +92,9 @@ module Spree
       def user_params
         params.require(:user).permit(permitted_user_attributes |
                                      [:use_billing,
-                                      spree_role_ids: [],
-                                      ship_address_attributes: permitted_address_attributes,
-                                      bill_address_attributes: permitted_address_attributes])
+                                       spree_role_ids: [],
+                                       ship_address_attributes: permitted_address_attributes,
+                                       bill_address_attributes: permitted_address_attributes])
       end
 
       # handling raise from Spree::Admin::ResourceController#destroy

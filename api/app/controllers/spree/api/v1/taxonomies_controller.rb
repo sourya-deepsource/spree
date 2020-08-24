@@ -15,7 +15,8 @@ module Spree
           show
         end
 
-        def new; end
+        def new
+        end
 
         def create
           authorize! :create, Taxonomy
@@ -45,9 +46,9 @@ module Spree
         private
 
         def taxonomies
-          @taxonomies = Taxonomy.accessible_by(current_ability).order('name').includes(root: :children).
-                        ransack(params[:q]).result.
-                        page(params[:page]).per(params[:per_page])
+          @taxonomies = Taxonomy.accessible_by(current_ability).order("name").includes(root: :children)
+            .ransack(params[:q]).result
+            .page(params[:page]).per(params[:per_page])
         end
 
         def taxonomy

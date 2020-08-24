@@ -5,8 +5,8 @@ class RemoveSpreeConfigurations < ActiveRecord::Migration[4.2]
 
   def down
     create_table "spree_configurations", force: true do |t|
-      t.string   "name"
-      t.string   "type",       limit: 50
+      t.string "name"
+      t.string "type", limit: 50
       t.datetime "created_at"
       t.datetime "updated_at"
     end

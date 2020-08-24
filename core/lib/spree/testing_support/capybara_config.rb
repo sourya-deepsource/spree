@@ -1,9 +1,9 @@
-require 'capybara-screenshot/rspec'
+require "capybara-screenshot/rspec"
 
-Capybara.save_path = ENV['CIRCLE_ARTIFACTS'] if ENV['CIRCLE_ARTIFACTS']
+Capybara.save_path = ENV["CIRCLE_ARTIFACTS"] if ENV["CIRCLE_ARTIFACTS"]
 
-if ENV['WEBDRIVER'] == 'accessible'
-  require 'capybara/accessible'
+if ENV["WEBDRIVER"] == "accessible"
+  require "capybara/accessible"
   Capybara.javascript_driver = :accessible
 else
   Capybara.register_driver :chrome do |app|

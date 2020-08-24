@@ -1,4 +1,4 @@
-require 'spec_helper'
+require "spec_helper"
 
 module Spree
   module Stock
@@ -16,7 +16,7 @@ module Spree
           package.add_multiple(build_stubbed_list(:inventory_unit, 5, :without_assoc), :backordered)
         end
 
-        it 'splits packages by status' do
+        it "splits packages by status" do
           expect(result.count).to eq 2
 
           expect(result[0].quantity).to eq 4

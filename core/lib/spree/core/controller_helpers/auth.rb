@@ -20,8 +20,8 @@ module Spree
         end
 
         def redirect_back_or_default(default)
-          redirect_to(session['spree_user_return_to'] || request.env['HTTP_REFERER'] || default)
-          session['spree_user_return_to'] = nil
+          redirect_to(session["spree_user_return_to"] || request.env["HTTP_REFERER"] || default)
+          session["spree_user_return_to"] = nil
         end
 
         def set_token
@@ -50,7 +50,7 @@ module Spree
 
           disallowed_urls.map! { |url| url[/\/\w+$/] }
           unless disallowed_urls.include?(request.fullpath)
-            session['spree_user_return_to'] = request.fullpath.gsub('//', '/')
+            session["spree_user_return_to"] = request.fullpath.gsub("//", "/")
           end
         end
 
@@ -81,7 +81,7 @@ module Spree
             elsif spree.respond_to?(:root_path)
               redirect_to spree.root_path
             else
-              redirect_to main_app.respond_to?(:root_path) ? main_app.root_path : '/'
+              redirect_to main_app.respond_to?(:root_path) ? main_app.root_path : "/"
             end
           end
         end

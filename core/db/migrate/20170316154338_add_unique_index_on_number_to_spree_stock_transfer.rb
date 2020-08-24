@@ -1,7 +1,7 @@
 class AddUniqueIndexOnNumberToSpreeStockTransfer < ActiveRecord::Migration[5.0]
   def change
     unless index_exists?(:spree_stock_transfers, :number, unique: true)
-      numbers = Spree::StockTransfer.group(:number).having('sum(1) > 1').pluck(:number)
+      numbers = Spree::StockTransfer.group(:number).having("sum(1) > 1").pluck(:number)
       transfers = Spree::StockTransfer.where(number: numbers)
 
       transfers.find_each do |transfer|

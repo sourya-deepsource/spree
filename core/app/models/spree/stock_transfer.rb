@@ -1,11 +1,11 @@
 module Spree
   class StockTransfer < Spree::Base
-    include Spree::Core::NumberGenerator.new(prefix: 'T')
+    include Spree::Core::NumberGenerator.new(prefix: "T")
 
     has_many :stock_movements, as: :originator
 
-    belongs_to :source_location, class_name: 'StockLocation', optional: true
-    belongs_to :destination_location, class_name: 'StockLocation'
+    belongs_to :source_location, class_name: "StockLocation", optional: true
+    belongs_to :destination_location, class_name: "StockLocation"
 
     validates :number, uniqueness: true
 
@@ -44,7 +44,7 @@ module Spree
     private
 
     def find_stock_location_with_location_id(location_id)
-      stock_movements.joins(:stock_item).where('spree_stock_items.stock_location_id' => location_id)
+      stock_movements.joins(:stock_item).where("spree_stock_items.stock_location_id" => location_id)
     end
   end
 end

@@ -4,7 +4,7 @@ module Spree
       belongs_to :payment
       belongs_to :reimbursement, optional: true
     end
-    belongs_to :reason, class_name: 'Spree::RefundReason', foreign_key: :refund_reason_id
+    belongs_to :reason, class_name: "Spree::RefundReason", foreign_key: :refund_reason_id
 
     has_many :log_entries, as: :source
 
@@ -12,7 +12,7 @@ module Spree
       validates :payment, :reason
       # can't require this on create because the perform! in after_create needs to run first
       validates :transaction_id, on: :update
-      validates :amount, numericality: { greater_than: 0, allow_nil: true }
+      validates :amount, numericality: {greater_than: 0, allow_nil: true}
     end
     validate :amount_is_less_than_or_equal_to_allowed_amount, on: :create, if: :amount
 
@@ -55,14 +55,14 @@ module Spree
     # return an activemerchant response object if successful or else raise an error
     def process!(credit_cents)
       response = if payment.payment_method.payment_profiles_supported?
-                   payment.payment_method.credit(credit_cents, payment.source, payment.transaction_id, originator: self)
-                 else
-                   payment.payment_method.credit(credit_cents, payment.transaction_id, originator: self)
-                 end
+        payment.payment_method.credit(credit_cents, payment.source, payment.transaction_id, originator: self)
+      else
+        payment.payment_method.credit(credit_cents, payment.transaction_id, originator: self)
+      end
 
       unless response.success?
         logger.error(Spree.t(:gateway_error) + "  #{response.to_yaml}")
-        text = response.params['message'] || response.params['response_reason_text'] || response.message
+        text = response.params["message"] || response.params["response_reason_text"] || response.message
         raise Core::GatewayError, text
       end
 

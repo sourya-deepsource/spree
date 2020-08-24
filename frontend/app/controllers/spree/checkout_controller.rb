@@ -23,11 +23,11 @@ module Spree
     before_action :setup_for_current_state
     before_action :add_store_credit_payments, :remove_store_credit_payments, only: [:update]
 
-    helper 'spree/orders'
+    helper "spree/orders"
 
     rescue_from Spree::Core::GatewayError, with: :rescue_from_spree_gateway_error
 
-    layout 'spree/layouts/checkout'
+    layout "spree/layouts/checkout"
 
     # Updates the order and advances to the next state (when possible.)
     def update
@@ -40,7 +40,7 @@ module Spree
 
         if @order.completed?
           @current_order = nil
-          flash['order_completed'] = true
+          flash["order_completed"] = true
           redirect_to completion_route
         else
           redirect_to checkout_state_path(@order.state)
@@ -58,7 +58,7 @@ module Spree
     end
 
     def insufficient_payment?
-      params[:state] == 'confirm' &&
+      params[:state] == "confirm" &&
         @order.payment_required? &&
         @order.payments.valid.sum(:amount) != @order.total
     end
@@ -67,7 +67,7 @@ module Spree
       if unknown_state?
         @order.checkout_steps.first
       elsif insufficient_payment?
-        'payment'
+        "payment"
       else
         @order.state
       end
@@ -142,7 +142,7 @@ module Spree
       # if the user has a default address, a callback takes care of setting
       # that; but if he doesn't, we need to build an empty one here
       @order.bill_address ||= Address.build_default
-      @order.ship_address ||= Address.build_default if @order.checkout_steps.include?('delivery')
+      @order.ship_address ||= Address.build_default if @order.checkout_steps.include?("delivery")
     end
 
     def before_delivery
@@ -153,7 +153,7 @@ module Spree
     end
 
     def before_payment
-      if @order.checkout_steps.include? 'delivery'
+      if @order.checkout_steps.include? "delivery"
         packages = @order.shipments.map(&:to_package)
         @differentiator = Spree::Stock::Differentiator.new(@order, packages)
         @differentiator.missing.each do |variant, quantity|
@@ -174,14 +174,14 @@ module Spree
         params.delete(:payment_source)
 
         # Return to the Payments page if additional payment is needed.
-        redirect_to checkout_state_path(@order.state) and return if @order.payments.valid.sum(:amount) < @order.total
+        redirect_to(checkout_state_path(@order.state)) && return if @order.payments.valid.sum(:amount) < @order.total
       end
     end
 
     def remove_store_credit_payments
       if params.key?(:remove_store_credit)
         remove_store_credit_service.call(order: @order)
-        redirect_to checkout_state_path(@order.state) and return
+        redirect_to(checkout_state_path(@order.state)) && return
       end
     end
 
@@ -196,7 +196,7 @@ module Spree
     end
 
     def set_cache_header
-      response.headers['Cache-Control'] = 'no-store'
+      response.headers["Cache-Control"] = "no-store"
     end
 
     def add_store_credit_service

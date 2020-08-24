@@ -14,7 +14,7 @@ module Spree
       :products_finder, :taxon_finder, :line_item_by_variant_finder, :cart_estimate_shipping_rates_service
     ].freeze
 
-    attr_accessor *INJECTION_POINTS
+    attr_accessor(*INJECTION_POINTS)
 
     def initialize
       set_default_ability
@@ -25,50 +25,50 @@ module Spree
     private
 
     def set_default_ability
-      @ability_class = 'Spree::Ability'
+      @ability_class = "Spree::Ability"
     end
 
     def set_default_services
       # cart
-      @cart_compare_line_items_service = 'Spree::CompareLineItems'
-      @cart_create_service = 'Spree::Cart::Create'
-      @cart_add_item_service = 'Spree::Cart::AddItem'
-      @cart_update_service = 'Spree::Cart::Update'
-      @cart_recalculate_service = 'Spree::Cart::Recalculate'
-      @cart_remove_item_service = 'Spree::Cart::RemoveItem'
-      @cart_remove_line_item_service = 'Spree::Cart::RemoveLineItem'
-      @cart_set_item_quantity_service = 'Spree::Cart::SetQuantity'
-      @cart_estimate_shipping_rates_service = 'Spree::Cart::EstimateShippingRates'
+      @cart_compare_line_items_service = "Spree::CompareLineItems"
+      @cart_create_service = "Spree::Cart::Create"
+      @cart_add_item_service = "Spree::Cart::AddItem"
+      @cart_update_service = "Spree::Cart::Update"
+      @cart_recalculate_service = "Spree::Cart::Recalculate"
+      @cart_remove_item_service = "Spree::Cart::RemoveItem"
+      @cart_remove_line_item_service = "Spree::Cart::RemoveLineItem"
+      @cart_set_item_quantity_service = "Spree::Cart::SetQuantity"
+      @cart_estimate_shipping_rates_service = "Spree::Cart::EstimateShippingRates"
 
       # checkout
-      @checkout_next_service = 'Spree::Checkout::Next'
-      @checkout_advance_service = 'Spree::Checkout::Advance'
-      @checkout_update_service = 'Spree::Checkout::Update'
-      @checkout_complete_service = 'Spree::Checkout::Complete'
-      @checkout_add_store_credit_service = 'Spree::Checkout::AddStoreCredit'
-      @checkout_remove_store_credit_service = 'Spree::Checkout::RemoveStoreCredit'
-      @checkout_get_shipping_rates_service = 'Spree::Checkout::GetShippingRates'
+      @checkout_next_service = "Spree::Checkout::Next"
+      @checkout_advance_service = "Spree::Checkout::Advance"
+      @checkout_update_service = "Spree::Checkout::Update"
+      @checkout_complete_service = "Spree::Checkout::Complete"
+      @checkout_add_store_credit_service = "Spree::Checkout::AddStoreCredit"
+      @checkout_remove_store_credit_service = "Spree::Checkout::RemoveStoreCredit"
+      @checkout_get_shipping_rates_service = "Spree::Checkout::GetShippingRates"
 
       # sorter
-      @order_sorter = 'Spree::Orders::Sort'
-      @products_sorter = 'Spree::Products::Sort'
+      @order_sorter = "Spree::Orders::Sort"
+      @products_sorter = "Spree::Products::Sort"
 
       # paginator
-      @collection_paginator = 'Spree::Shared::Paginate'
+      @collection_paginator = "Spree::Shared::Paginate"
 
       # coupons
       # TODO: we should split this service into 2 seperate - Add and Remove
-      @coupon_handler = 'Spree::PromotionHandler::Coupon'
+      @coupon_handler = "Spree::PromotionHandler::Coupon"
     end
 
     def set_default_finders
-      @country_finder = 'Spree::Countries::Find'
-      @current_order_finder = 'Spree::Orders::FindCurrent'
-      @completed_order_finder = 'Spree::Orders::FindComplete'
-      @credit_card_finder = 'Spree::CreditCards::Find'
-      @products_finder = 'Spree::Products::Find'
-      @taxon_finder = 'Spree::Taxons::Find'
-      @line_item_by_variant_finder = 'Spree::LineItems::FindByVariant'
+      @country_finder = "Spree::Countries::Find"
+      @current_order_finder = "Spree::Orders::FindCurrent"
+      @completed_order_finder = "Spree::Orders::FindComplete"
+      @credit_card_finder = "Spree::CreditCards::Find"
+      @products_finder = "Spree::Products::Find"
+      @taxon_finder = "Spree::Taxons::Find"
+      @line_item_by_variant_finder = "Spree::LineItems::FindByVariant"
     end
   end
 end

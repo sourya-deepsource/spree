@@ -14,12 +14,12 @@ module Spree
         flash[:notice] = I18n.t(:successfully_created, scope: :address_book)
         redirect_to spree.account_path
       else
-        render action: 'new'
+        render action: "new"
       end
     end
 
     def edit
-      session['spree_user_return_to'] = request.env['HTTP_REFERER']
+      session["spree_user_return_to"] = request.env["HTTP_REFERER"]
     end
 
     def new
@@ -51,7 +51,7 @@ module Spree
       @address.destroy
 
       flash[:notice] = Spree.t(:successfully_removed, scope: :address_book)
-      redirect_to(request.env['HTTP_REFERER'] || addresses_path) unless request.xhr?
+      redirect_to(request.env["HTTP_REFERER"] || addresses_path) unless request.xhr?
     end
 
     private

@@ -1,4 +1,4 @@
-require 'spec_helper'
+require "spec_helper"
 
 Spree::Order.class_eval do
   attr_accessor :did_transition
@@ -7,7 +7,7 @@ end
 module Spree
   describe OrdersController, type: :controller do
     # Regression test for #2004
-    context 'with a transition callback on first state' do
+    context "with a transition callback on first state" do
       let(:order) { Spree::Order.new }
 
       before do
@@ -20,10 +20,10 @@ module Spree
         end
       end
 
-      it 'correctly calls the transition callback' do
+      it "correctly calls the transition callback" do
         expect(order.did_transition).to be_nil
         order.line_items << FactoryBot.create(:line_item)
-        put :update, params: { checkout: 'checkout', order_id: 1 }
+        put :update, params: {checkout: "checkout", order_id: 1}
         expect(order.did_transition).to be true
       end
     end

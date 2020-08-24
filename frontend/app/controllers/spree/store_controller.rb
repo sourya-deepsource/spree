@@ -5,20 +5,20 @@ module Spree
     skip_before_action :verify_authenticity_token, only: :ensure_cart, raise: false
 
     def forbidden
-      render 'spree/shared/forbidden', layout: Spree::Config[:layout], status: 403
+      render "spree/shared/forbidden", layout: Spree::Config[:layout], status: 403
     end
 
     def unauthorized
-      render 'spree/shared/unauthorized', layout: Spree::Config[:layout], status: 401
+      render "spree/shared/unauthorized", layout: Spree::Config[:layout], status: 401
     end
 
     def account_link
-      render partial: 'spree/shared/link_to_account'
+      render partial: "spree/shared/link_to_account"
       fresh_when(try_spree_current_user)
     end
 
     def cart_link
-      render partial: 'spree/shared/link_to_cart'
+      render partial: "spree/shared/link_to_cart"
       fresh_when(simple_current_order)
     end
 

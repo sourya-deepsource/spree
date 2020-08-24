@@ -1,4 +1,4 @@
-require 'spec_helper'
+require "spec_helper"
 
 module Spree
   module Stock
@@ -23,11 +23,11 @@ module Spree
         package
       end
 
-      it 'keeps a single package' do
-        package1 = pack do |package|
+      it "keeps a single package" do
+        package1 = pack { |package|
           package.add build_inventory_unit
           package.add build_inventory_unit
-        end
+        }
 
         packages = [package1]
         prioritizer = Prioritizer.new(packages)
@@ -35,16 +35,16 @@ module Spree
         expect(packages.size).to eq 1
       end
 
-      it 'removes duplicate packages' do
-        package1 = pack do |package|
+      it "removes duplicate packages" do
+        package1 = pack { |package|
           package.add build_inventory_unit
           package.add build_inventory_unit
-        end
+        }
 
-        package2 = pack do |package|
+        package2 = pack { |package|
           package.add inventory_units.first
           package.add inventory_units.last
-        end
+        }
 
         packages = [package1, package2]
         prioritizer = Prioritizer.new(packages)
@@ -52,13 +52,13 @@ module Spree
         expect(packages.size).to eq 1
       end
 
-      it 'split over 2 packages' do
-        package1 = pack do |package|
+      it "split over 2 packages" do
+        package1 = pack { |package|
           package.add build_inventory_unit
-        end
-        package2 = pack do |package|
+        }
+        package2 = pack { |package|
           package.add build_inventory_unit
-        end
+        }
 
         packages = [package1, package2]
         prioritizer = Prioritizer.new(packages)
@@ -66,15 +66,15 @@ module Spree
         expect(packages.size).to eq 2
       end
 
-      it '1st has some, 2nd has remaining' do
+      it "1st has some, 2nd has remaining" do
         5.times { build_inventory_unit }
 
-        package1 = pack do |package|
+        package1 = pack { |package|
           2.times { |i| package.add inventory_units[i] }
-        end
-        package2 = pack do |package|
+        }
+        package2 = pack { |package|
           5.times { |i| package.add inventory_units[i] }
-        end
+        }
 
         packages = [package1, package2]
         prioritizer = Prioritizer.new(packages)
@@ -84,15 +84,15 @@ module Spree
         expect(packages[1].quantity).to eq 3
       end
 
-      it '1st has backorder, 2nd has some' do
+      it "1st has backorder, 2nd has some" do
         5.times { build_inventory_unit }
 
-        package1 = pack do |package|
+        package1 = pack { |package|
           5.times { |i| package.add inventory_units[i], :backordered }
-        end
-        package2 = pack do |package|
+        }
+        package2 = pack { |package|
           2.times { |i| package.add inventory_units[i] }
-        end
+        }
 
         packages = [package1, package2]
         prioritizer = Prioritizer.new(packages)
@@ -102,15 +102,15 @@ module Spree
         expect(packages[1].quantity(:on_hand)).to eq 2
       end
 
-      it '1st has backorder, 2nd has all' do
+      it "1st has backorder, 2nd has all" do
         5.times { build_inventory_unit }
 
-        package1 = pack do |package|
+        package1 = pack { |package|
           3.times { |i| package.add inventory_units[i], :backordered }
-        end
-        package2 = pack do |package|
+        }
+        package2 = pack { |package|
           5.times { |i| package.add inventory_units[i] }
-        end
+        }
 
         packages = [package1, package2]
         prioritizer = Prioritizer.new(packages)

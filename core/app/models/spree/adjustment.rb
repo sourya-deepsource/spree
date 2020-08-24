@@ -26,7 +26,7 @@ module Spree
       belongs_to :adjustable, touch: true
       belongs_to :source
     end
-    belongs_to :order, class_name: 'Spree::Order', inverse_of: :all_adjustments
+    belongs_to :order, class_name: "Spree::Order", inverse_of: :all_adjustments
 
     validates :adjustable, :order, :label, presence: true
     validates :amount, numericality: true
@@ -46,24 +46,24 @@ module Spree
 
     class_attribute :competing_promos_source_types
 
-    self.competing_promos_source_types = ['Spree::PromotionAction']
+    self.competing_promos_source_types = ["Spree::PromotionAction"]
 
-    scope :not_finalized, -> { where(state: 'open') }
-    scope :finalized, -> { where(state: 'closed') }
-    scope :tax, -> { where(source_type: 'Spree::TaxRate') }
+    scope :not_finalized, -> { where(state: "open") }
+    scope :finalized, -> { where(state: "closed") }
+    scope :tax, -> { where(source_type: "Spree::TaxRate") }
     scope :non_tax, -> do
       source_type = arel_table[:source_type]
-      where(source_type.not_eq('Spree::TaxRate').or(source_type.eq(nil)))
+      where(source_type.not_eq("Spree::TaxRate").or(source_type.eq(nil)))
     end
-    scope :price, -> { where(adjustable_type: 'Spree::LineItem') }
-    scope :shipping, -> { where(adjustable_type: 'Spree::Shipment') }
+    scope :price, -> { where(adjustable_type: "Spree::LineItem") }
+    scope :shipping, -> { where(adjustable_type: "Spree::Shipment") }
     scope :optional, -> { where(mandatory: false) }
     scope :eligible, -> { where(eligible: true) }
     scope :charge, -> { where("#{quoted_table_name}.amount >= 0") }
     scope :credit, -> { where("#{quoted_table_name}.amount < 0") }
     scope :nonzero, -> { where("#{quoted_table_name}.amount != 0") }
-    scope :promotion, -> { where(source_type: 'Spree::PromotionAction') }
-    scope :return_authorization, -> { where(source_type: 'Spree::ReturnAuthorization') }
+    scope :promotion, -> { where(source_type: "Spree::PromotionAction") }
+    scope :return_authorization, -> { where(source_type: "Spree::ReturnAuthorization") }
     scope :is_included, -> { where(included: true) }
     scope :additional, -> { where(included: false) }
     scope :competing_promos, -> { where(source_type: competing_promos_source_types) }
@@ -82,7 +82,7 @@ module Spree
     end
 
     def promotion?
-      source_type == 'Spree::PromotionAction'
+      source_type == "Spree::PromotionAction"
     end
 
     # Passing a target here would always be recommended as it would avoid
@@ -92,7 +92,7 @@ module Spree
       return amount if closed? || source.blank?
 
       amount = source.compute_amount(target)
-      attributes = { amount: amount, updated_at: Time.current }
+      attributes = {amount: amount, updated_at: Time.current}
       attributes[:eligible] = source.promotion.eligible?(target) if promotion?
       update_columns(attributes)
       amount

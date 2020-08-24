@@ -1,6 +1,6 @@
 class FixAdjustmentOrderId < ActiveRecord::Migration[4.2]
   def change
-    say 'Populate order_id from adjustable_id where appropriate'
+    say "Populate order_id from adjustable_id where appropriate"
     execute(<<-SQL.squish)
       UPDATE
         spree_adjustments
@@ -17,8 +17,8 @@ class FixAdjustmentOrderId < ActiveRecord::Migration[4.2]
     #
     # Whoever runs a big enough MySQL installation where the AR solution hurts:
     # Will have to write a better MySQL specific equivalent.
-    if Spree::Order.connection.adapter_name.eql?('MySQL')
-      Spree::Adjustment.where(adjustable_type: 'Spree::LineItem').find_each do |adjustment|
+    if Spree::Order.connection.adapter_name.eql?("MySQL")
+      Spree::Adjustment.where(adjustable_type: "Spree::LineItem").find_each do |adjustment|
         adjustment.update_columns(order_id: Spree::LineItem.find(adjustment.adjustable_id).order_id)
       end
     else
@@ -33,7 +33,7 @@ class FixAdjustmentOrderId < ActiveRecord::Migration[4.2]
       SQL
     end
 
-    say 'Fix schema for spree_adjustments order_id column'
+    say "Fix schema for spree_adjustments order_id column"
     change_table :spree_adjustments do |t|
       t.change :order_id, :integer, null: false
     end

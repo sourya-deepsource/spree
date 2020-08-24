@@ -68,10 +68,10 @@ module Spree
       def self.price_filter
         v = Spree::Price.arel_table
         conds = [[Spree.t(:under_price, price: format_price(10)), v[:amount].lteq(10)],
-                 ["#{format_price(10)} - #{format_price(15)}", v[:amount].in(10..15)],
-                 ["#{format_price(15)} - #{format_price(18)}", v[:amount].in(15..18)],
-                 ["#{format_price(18)} - #{format_price(20)}", v[:amount].in(18..20)],
-                 [Spree.t(:or_over_price, price: format_price(20)), v[:amount].gteq(20)]]
+          ["#{format_price(10)} - #{format_price(15)}", v[:amount].in(10..15)],
+          ["#{format_price(15)} - #{format_price(18)}", v[:amount].in(15..18)],
+          ["#{format_price(18)} - #{format_price(20)}", v[:amount].in(18..20)],
+          [Spree.t(:or_over_price, price: format_price(20)), v[:amount].gteq(20)]]
         {
           name: Spree.t(:price_range),
           scope: :price_range_any,
@@ -98,16 +98,16 @@ module Spree
         conds.each do |new_scope|
           scope = scope.or(new_scope)
         end
-        Spree::Product.with_property('brand').where(scope)
+        Spree::Product.with_property("brand").where(scope)
       end
 
       def self.brand_filter
-        brand_property = Spree::Property.find_by(name: 'brand')
+        brand_property = Spree::Property.find_by(name: "brand")
         brands = brand_property ? Spree::ProductProperty.where(property_id: brand_property.id).pluck(:value).uniq.map(&:to_s) : []
         pp = Spree::ProductProperty.arel_table
         conds = Hash[*brands.map { |b| [b, pp[:value].eq(b)] }.flatten]
         {
-          name: I18n.t('spree.taxonomy_brands_name'),
+          name: I18n.t("spree.taxonomy_brands_name"),
           scope: :brand_any,
           conds: conds,
           labels: brands.sort.map { |k| [k, k] }
@@ -139,13 +139,13 @@ module Spree
 
       def self.selective_brand_filter(taxon = nil)
         taxon ||= Spree::Taxonomy.first.root
-        brand_property = Spree::Property.find_by(name: 'brand')
-        scope = Spree::ProductProperty.where(property: brand_property).
-                joins(product: :taxons).
-                where("#{Spree::Taxon.table_name}.id" => [taxon] + taxon.descendants)
+        brand_property = Spree::Property.find_by(name: "brand")
+        scope = Spree::ProductProperty.where(property: brand_property)
+          .joins(product: :taxons)
+          .where("#{Spree::Taxon.table_name}.id" => [taxon] + taxon.descendants)
         brands = scope.pluck(:value).uniq
         {
-          name: 'Applicable Brands',
+          name: "Applicable Brands",
           scope: :selective_brand_any,
           labels: brands.sort.map { |k| [k, k] }
         }
@@ -167,7 +167,7 @@ module Spree
         return Spree::Core::ProductFilters.all_taxons if taxon.nil?
 
         {
-          name: 'Taxons under ' + taxon.name,
+          name: "Taxons under " + taxon.name,
           scope: :taxons_id_in_tree_any,
           labels: taxon.children.sort_by(&:position).map { |t| [t.name, t.id] },
           conds: nil
@@ -183,7 +183,7 @@ module Spree
       def self.all_taxons
         taxons = Spree::Taxonomy.all.map { |t| [t.root] + t.root.descendants }.flatten
         {
-          name: 'All taxons',
+          name: "All taxons",
           scope: :taxons_id_equals_any,
           labels: taxons.sort_by(&:name).map { |t| [t.name, t.id] },
           conds: nil # not needed

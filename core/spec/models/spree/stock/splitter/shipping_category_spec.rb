@@ -1,4 +1,4 @@
-require 'spec_helper'
+require "spec_helper"
 
 module Spree
   module Stock
@@ -19,8 +19,8 @@ module Spree
         let(:variant2) { build_stubbed(:variant, product: product2) }
         let(:product2) { build_stubbed(:product, shipping_category: shipping_category_2) }
 
-        let(:shipping_category_1) { build_stubbed(:shipping_category, name: 'A') }
-        let(:shipping_category_2) { build_stubbed(:shipping_category, name: 'B') }
+        let(:shipping_category_1) { build_stubbed(:shipping_category, name: "A") }
+        let(:shipping_category_2) { build_stubbed(:shipping_category, name: "B") }
 
         before do
           package1.add_multiple(build_stubbed_list(:inventory_unit, 4, :without_assoc, variant: variant1))
@@ -30,7 +30,7 @@ module Spree
           package2.add_multiple(build_stubbed_list(:inventory_unit, 9, :without_assoc, variant: variant2), :backordered)
         end
 
-        it 'splits each package by shipping category' do
+        it "splits each package by shipping category" do
           expect(result[0].quantity).to eq 4
           expect(result[1].quantity).to eq 8
           expect(result[2].quantity).to eq 6

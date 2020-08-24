@@ -5,7 +5,7 @@ module Spree
         # Do we have a specialized shipping-method-specific handler? e.g:
         # Given shipment.shipping_method = Spree::ShippingMethod::DigitalDownload
         # do we have Spree::ShipmentHandler::DigitalDownload?
-        if sm_handler = "Spree::ShipmentHandler::#{shipment.shipping_method.name.split('::').last}".safe_constantize
+        if sm_handler = "Spree::ShipmentHandler::#{shipment.shipping_method.name.split("::").last}".safe_constantize
           sm_handler.new(shipment)
         else
           new(shipment)
@@ -18,7 +18,7 @@ module Spree
     end
 
     def perform
-      @shipment.inventory_units.each &:ship!
+      @shipment.inventory_units.each(&:ship!)
       @shipment.process_order_payments if Spree::Config[:auto_capture_on_dispatch]
       @shipment.touch :shipped_at
       update_order_shipment_state

@@ -17,8 +17,8 @@ module Spree
           curr_page = page || 1
 
           unless Spree::Config.show_products_without_price
-            @products = @products.where('spree_prices.amount IS NOT NULL').
-                        where('spree_prices.currency' => current_currency)
+            @products = @products.where("spree_prices.amount IS NOT NULL")
+              .where("spree_prices.currency" => current_currency)
           end
           @products = @products.page(curr_page).per(per_page)
         end
@@ -57,11 +57,11 @@ module Spree
           scope = scope.includes(
             :tax_category,
             variants: [
-              { images: { attachment_attachment: :blob } }
+              {images: {attachment_attachment: :blob}}
             ],
             master: [
               :prices,
-              { images: { attachment_attachment: :blob } }
+              {images: {attachment_attachment: :blob}}
             ]
           )
           scope
@@ -73,10 +73,10 @@ module Spree
               scope_name = name.to_sym
 
               base_scope = if base_scope.respond_to?(:search_scopes) && base_scope.search_scopes.include?(scope_name.to_sym)
-                             base_scope.send(scope_name, *scope_attribute)
-                           else
-                             base_scope.merge(Spree::Product.ransack(scope_name => scope_attribute).result)
-                           end
+                base_scope.send(scope_name, *scope_attribute)
+              else
+                base_scope.merge(Spree::Product.ransack(scope_name => scope_attribute).result)
+              end
             end
           end
           base_scope
@@ -92,7 +92,7 @@ module Spree
 
         def get_products_option_values_conditions(base_scope, option_value_ids)
           unless option_value_ids.blank?
-            base_scope = base_scope.joins(variants: :option_values).where(spree_option_values: { id: option_value_ids })
+            base_scope = base_scope.joins(variants: :option_values).where(spree_option_values: {id: option_value_ids})
           end
           base_scope
         end
@@ -100,7 +100,7 @@ module Spree
         def get_price_range(price_param)
           return if price_param.blank?
 
-          less_than_string = I18n.t('activerecord.attributes.spree/product.less_than')
+          less_than_string = I18n.t("activerecord.attributes.spree/product.less_than")
 
           if price_param.include? less_than_string
             low_price = 0
@@ -116,7 +116,7 @@ module Spree
           filter_params = Spree::OptionType.all.map(&:filter_param)
 
           filter_params.reduce([]) do |acc, filter_param|
-            acc + params[filter_param].to_s.split(',')
+            acc + params[filter_param].to_s.split(",")
           end
         end
 
@@ -126,16 +126,16 @@ module Spree
           @properties[:option_value_ids] = build_option_value_ids(params)
           @properties[:price] = get_price_range(params[:price])
           @properties[:search] = params[:search]
-          @properties[:sort_by] = params[:sort_by] || 'default'
+          @properties[:sort_by] = params[:sort_by] || "default"
           @properties[:include_images] = params[:include_images]
 
           per_page = params[:per_page].to_i
           @properties[:per_page] = per_page > 0 ? per_page : Spree::Config[:products_per_page]
           @properties[:page] = if params[:page].respond_to?(:to_i)
-                                 params[:page].to_i <= 0 ? 1 : params[:page].to_i
-                               else
-                                 1
-                               end
+            params[:page].to_i <= 0 ? 1 : params[:page].to_i
+          else
+            1
+          end
         end
       end
     end

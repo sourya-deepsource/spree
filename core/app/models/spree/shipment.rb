@@ -1,16 +1,16 @@
-require 'ostruct'
+require "ostruct"
 
 module Spree
   class Shipment < Spree::Base
-    include Spree::Core::NumberGenerator.new(prefix: 'H', length: 11)
+    include Spree::Core::NumberGenerator.new(prefix: "H", length: 11)
 
     include NumberAsParam
 
     with_options inverse_of: :shipments do
-      belongs_to :address, class_name: 'Spree::Address'
-      belongs_to :order, class_name: 'Spree::Order', touch: true
+      belongs_to :address, class_name: "Spree::Address"
+      belongs_to :order, class_name: "Spree::Order", touch: true
     end
-    belongs_to :stock_location, class_name: 'Spree::StockLocation'
+    belongs_to :stock_location, class_name: "Spree::StockLocation"
 
     with_options dependent: :delete_all do
       has_many :adjustments, as: :adjustable
@@ -26,20 +26,20 @@ module Spree
     before_validation :set_cost_zero_when_nil
 
     validates :stock_location, presence: true
-    validates :number, uniqueness: { case_sensitive: true }
+    validates :number, uniqueness: {case_sensitive: true}
 
     attr_accessor :special_instructions
 
     accepts_nested_attributes_for :address
     accepts_nested_attributes_for :inventory_units
 
-    scope :pending, -> { with_state('pending') }
-    scope :ready,   -> { with_state('ready') }
-    scope :shipped, -> { with_state('shipped') }
+    scope :pending, -> { with_state("pending") }
+    scope :ready, -> { with_state("ready") }
+    scope :shipped, -> { with_state("shipped") }
     scope :trackable, -> { where("tracking IS NOT NULL AND tracking != ''") }
     scope :with_state, ->(*s) { where(state: s) }
     # sort by most recent shipped_at, falling back to created_at. add "id desc" to make specs that involve this scope more deterministic.
-    scope :reverse_chronological, -> { order(Arel.sql('coalesce(spree_shipments.shipped_at, spree_shipments.created_at) desc'), id: :desc) }
+    scope :reverse_chronological, -> { order(Arel.sql("coalesce(spree_shipments.shipped_at, spree_shipments.created_at) desc"), id: :desc) }
     scope :valid, -> { where.not(state: :canceled) }
 
     delegate :store, :currency, to: :order
@@ -49,7 +49,7 @@ module Spree
       event :ready do
         transition from: :pending, to: :ready, if: lambda { |shipment|
           # Fix for #2040
-          shipment.determine_state(shipment.order) == 'ready'
+          shipment.determine_state(shipment.order) == "ready"
         }
       end
 
@@ -58,33 +58,33 @@ module Spree
       end
 
       event :ship do
-        transition from: %i(ready canceled), to: :shipped
+        transition from: %i[ready canceled], to: :shipped
       end
       after_transition to: :shipped, do: :after_ship
 
       event :cancel do
-        transition to: :canceled, from: %i(pending ready)
+        transition to: :canceled, from: %i[pending ready]
       end
       after_transition to: :canceled, do: :after_cancel
 
       event :resume do
         transition from: :canceled, to: :ready, if: lambda { |shipment|
-          shipment.determine_state(shipment.order) == 'ready'
+          shipment.determine_state(shipment.order) == "ready"
         }
         transition from: :canceled, to: :pending
       end
-      after_transition from: :canceled, to: %i(pending ready shipped), do: :after_resume
+      after_transition from: :canceled, to: %i[pending ready shipped], do: :after_resume
 
       after_transition do |shipment, transition|
         shipment.state_changes.create!(
           previous_state: transition.from,
           next_state: transition.to,
-          name: 'shipment'
+          name: "shipment"
         )
       end
     end
 
-    self.whitelisted_ransackable_attributes = ['number']
+    self.whitelisted_ransackable_attributes = ["number"]
 
     extend DisplayMoney
     money_methods :cost, :discounted_cost, :final_price, :item_cost
@@ -112,12 +112,12 @@ module Spree
     # shipped    if already shipped (ie. does not change the state)
     # ready      all other cases
     def determine_state(order)
-      return 'canceled' if order.canceled?
-      return 'pending' unless order.can_ship?
-      return 'pending' if inventory_units.any? &:backordered?
-      return 'shipped' if shipped?
+      return "canceled" if order.canceled?
+      return "pending" unless order.can_ship?
+      return "pending" if inventory_units.any?(&:backordered?)
+      return "shipped" if shipped?
 
-      order.paid? || Spree::Config[:auto_capture_on_dispatch] ? 'ready' : 'pending'
+      order.paid? || Spree::Config[:auto_capture_on_dispatch] ? "ready" : "pending"
     end
 
     def discounted_cost
@@ -136,7 +136,7 @@ module Spree
     def free?
       return true if final_price == BigDecimal(0)
 
-      adjustments.promotion.any? { |p| p.source.type == 'Spree::Promotion::Actions::FreeShipping' }
+      adjustments.promotion.any? { |p| p.source.type == "Spree::Promotion::Actions::FreeShipping" }
     end
 
     def finalize!
@@ -169,7 +169,7 @@ module Spree
     def manifest
       # Grouping by the ID means that we don't have to call out to the association accessor
       # This makes the grouping by faster because it results in less SQL cache hits.
-      inventory_units.group_by(&:variant_id).map do |_variant_id, units|
+      inventory_units.group_by(&:variant_id).map { |_variant_id, units|
         units.group_by(&:line_item_id).map do |_line_item_id, units|
           states = {}
           units.group_by(&:state).each { |state, iu| states[state] = iu.sum(&:quantity) }
@@ -178,29 +178,29 @@ module Spree
           variant = units.first.variant
           ManifestItem.new(line_item, variant, units.sum(&:quantity), states)
         end
-      end.flatten
+      }.flatten
     end
 
     def process_order_payments
-      pending_payments = order.pending_payments.
-                         sort_by(&:uncaptured_amount).reverse
+      pending_payments = order.pending_payments
+        .sort_by(&:uncaptured_amount).reverse
 
       shipment_to_pay = final_price_with_items
       payments_amount = 0
 
-      payments_pool = pending_payments.each_with_object([]) do |payment, pool|
+      payments_pool = pending_payments.each_with_object([]) { |payment, pool|
         break if payments_amount >= shipment_to_pay
 
         payments_amount += payment.uncaptured_amount
         pool << payment
-      end
+      }
 
       payments_pool.each do |payment|
         capturable_amount = if payment.amount >= shipment_to_pay
-                              shipment_to_pay
-                            else
-                              payment.amount
-                            end
+          shipment_to_pay
+        else
+          payment.amount
+        end
 
         cents = (capturable_amount * 100).to_i
         payment.capture!(cents)
@@ -219,17 +219,17 @@ module Spree
       # StockEstimator.new assigment below will replace the current shipping_method
       original_shipping_method_id = shipping_method.try(:id)
 
-      self.shipping_rates = Stock::Estimator.new(order).
-                            shipping_rates(to_package, shipping_method_filter)
+      self.shipping_rates = Stock::Estimator.new(order)
+        .shipping_rates(to_package, shipping_method_filter)
 
       if shipping_method
-        selected_rate = shipping_rates.detect do |rate|
+        selected_rate = shipping_rates.detect { |rate|
           if original_shipping_method_id
             rate.shipping_method_id == original_shipping_method_id
           else
             rate.selected
           end
-        end
+        }
         save!
         self.selected_shipping_rate_id = selected_rate.id if selected_rate
         reload
@@ -261,7 +261,7 @@ module Spree
     end
 
     def shipped=(value)
-      return unless value == '1' && shipped_at.nil?
+      return unless value == "1" && shipped_at.nil?
 
       self.shipped_at = Time.current
     end
@@ -343,7 +343,7 @@ module Spree
         state: new_state,
         updated_at: Time.current
       )
-      after_ship if new_state == 'shipped' && old_state != 'shipped'
+      after_ship if new_state == "shipped" && old_state != "shipped"
     end
 
     def transfer_to_location(variant, quantity, stock_location)
@@ -376,12 +376,12 @@ module Spree
     end
 
     def manifest_restock(item)
-      if item.states['on_hand'].to_i.positive?
-        stock_location.restock item.variant, item.states['on_hand'], self
+      if item.states["on_hand"].to_i.positive?
+        stock_location.restock item.variant, item.states["on_hand"], self
       end
 
-      if item.states['backordered'].to_i.positive?
-        stock_location.restock_backordered item.variant, item.states['backordered']
+      if item.states["backordered"].to_i.positive?
+        stock_location.restock_backordered item.variant, item.states["backordered"]
       end
     end
 
@@ -398,7 +398,7 @@ module Spree
     end
 
     def update_adjustments
-      recalculate_adjustments if saved_change_to_cost? && state != 'shipped'
+      recalculate_adjustments if saved_change_to_cost? && state != "shipped"
     end
   end
 end

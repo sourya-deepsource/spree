@@ -1,6 +1,6 @@
 FactoryBot.define do
   factory :promotion, class: Spree::Promotion do
-    name { 'Promo' }
+    name { "Promo" }
 
     trait :with_line_item_adjustment do
       transient do
@@ -37,8 +37,8 @@ FactoryBot.define do
 
       after(:create) do |promotion, evaluator|
         rule = Spree::Promotion::Rules::ItemTotal.create!(
-          preferred_operator_min: 'gte',
-          preferred_operator_max: 'lte',
+          preferred_operator_min: "gte",
+          preferred_operator_max: "lte",
           preferred_amount_min: evaluator.item_total_threshold_amount,
           preferred_amount_max: evaluator.item_total_threshold_amount + 100
         )
@@ -50,7 +50,7 @@ FactoryBot.define do
   end
 
   factory :free_shipping_promotion, class: Spree::Promotion do
-    name { 'Free Shipping Promotion' }
+    name { "Free Shipping Promotion" }
 
     after(:create) do |promotion|
       action = Spree::Promotion::Actions::FreeShipping.new

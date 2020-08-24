@@ -1,33 +1,33 @@
-require_dependency 'spree/order/checkout'
-require_dependency 'spree/order/currency_updater'
-require_dependency 'spree/order/payments'
-require_dependency 'spree/order/store_credit'
+require_dependency "spree/order/checkout"
+require_dependency "spree/order/currency_updater"
+require_dependency "spree/order/payments"
+require_dependency "spree/order/store_credit"
 
 module Spree
   class Order < Spree::Base
-    PAYMENT_STATES = %w(balance_due credit_owed failed paid void)
-    SHIPMENT_STATES = %w(backorder canceled partial pending ready shipped)
+    PAYMENT_STATES = %w[balance_due credit_owed failed paid void]
+    SHIPMENT_STATES = %w[backorder canceled partial pending ready shipped]
 
     include Spree::Order::Checkout
     include Spree::Order::CurrencyUpdater
     include Spree::Order::Payments
     include Spree::Order::StoreCredit
     include Spree::Order::AddressBook
-    include Spree::Core::NumberGenerator.new(prefix: 'R')
+    include Spree::Core::NumberGenerator.new(prefix: "R")
     include Spree::Core::TokenGenerator
 
     include NumberAsParam
 
     extend Spree::DisplayMoney
-    money_methods :outstanding_balance, :item_total,           :adjustment_total,
-                  :included_tax_total,  :additional_tax_total, :tax_total,
-                  :shipment_total,      :promo_total,          :total,
-                  :cart_promo_total
+    money_methods :outstanding_balance, :item_total, :adjustment_total,
+      :included_tax_total, :additional_tax_total, :tax_total,
+      :shipment_total, :promo_total, :total,
+      :cart_promo_total
 
     alias display_ship_total display_shipment_total
     alias_attribute :ship_total, :shipment_total
 
-    MONEY_THRESHOLD  = 100_000_000
+    MONEY_THRESHOLD = 100_000_000
     MONEY_VALIDATION = {
       presence: true,
       numericality: {
@@ -35,7 +35,7 @@ module Spree
         less_than: MONEY_THRESHOLD,
         allow_blank: true
       },
-      format: { with: /\A-?\d+(?:\.\d{1,2})?\z/, allow_blank: true }
+      format: {with: /\A-?\d+(?:\.\d{1,2})?\z/, allow_blank: true}
     }.freeze
 
     POSITIVE_MONEY_VALIDATION = MONEY_VALIDATION.deep_dup.tap do |validation|
@@ -73,39 +73,39 @@ module Spree
       belongs_to :canceler, optional: true
     end
 
-    belongs_to :bill_address, foreign_key: :bill_address_id, class_name: 'Spree::Address',
+    belongs_to :bill_address, foreign_key: :bill_address_id, class_name: "Spree::Address",
                               optional: true, dependent: :destroy
     alias_attribute :billing_address, :bill_address
 
-    belongs_to :ship_address, foreign_key: :ship_address_id, class_name: 'Spree::Address',
+    belongs_to :ship_address, foreign_key: :ship_address_id, class_name: "Spree::Address",
                               optional: true, dependent: :destroy
     alias_attribute :shipping_address, :ship_address
 
-    belongs_to :store, class_name: 'Spree::Store'
+    belongs_to :store, class_name: "Spree::Store"
 
     with_options dependent: :destroy do
-      has_many :state_changes, as: :stateful, class_name: 'Spree::StateChange'
-      has_many :line_items, -> { order(:created_at) }, inverse_of: :order, class_name: 'Spree::LineItem'
-      has_many :payments, class_name: 'Spree::Payment'
-      has_many :return_authorizations, inverse_of: :order, class_name: 'Spree::ReturnAuthorization'
-      has_many :adjustments, -> { order(:created_at) }, as: :adjustable, class_name: 'Spree::Adjustment'
+      has_many :state_changes, as: :stateful, class_name: "Spree::StateChange"
+      has_many :line_items, -> { order(:created_at) }, inverse_of: :order, class_name: "Spree::LineItem"
+      has_many :payments, class_name: "Spree::Payment"
+      has_many :return_authorizations, inverse_of: :order, class_name: "Spree::ReturnAuthorization"
+      has_many :adjustments, -> { order(:created_at) }, as: :adjustable, class_name: "Spree::Adjustment"
     end
-    has_many :reimbursements, inverse_of: :order, class_name: 'Spree::Reimbursement'
+    has_many :reimbursements, inverse_of: :order, class_name: "Spree::Reimbursement"
     has_many :line_item_adjustments, through: :line_items, source: :adjustments
-    has_many :inventory_units, inverse_of: :order, class_name: 'Spree::InventoryUnit'
+    has_many :inventory_units, inverse_of: :order, class_name: "Spree::InventoryUnit"
     has_many :variants, through: :line_items
     has_many :products, through: :variants
     has_many :refunds, through: :payments
     has_many :all_adjustments,
-             class_name: 'Spree::Adjustment',
-             foreign_key: :order_id,
-             dependent: :destroy,
-             inverse_of: :order
+      class_name: "Spree::Adjustment",
+      foreign_key: :order_id,
+      dependent: :destroy,
+      inverse_of: :order
 
-    has_many :order_promotions, class_name: 'Spree::OrderPromotion'
-    has_many :promotions, through: :order_promotions, class_name: 'Spree::Promotion'
+    has_many :order_promotions, class_name: "Spree::OrderPromotion"
+    has_many :promotions, through: :order_promotions, class_name: "Spree::Promotion"
 
-    has_many :shipments, class_name: 'Spree::Shipment', dependent: :destroy, inverse_of: :order do
+    has_many :shipments, class_name: "Spree::Shipment", dependent: :destroy, inverse_of: :order do
       def states
         pluck(:state).uniq
       end
@@ -129,22 +129,22 @@ module Spree
     before_update :homogenize_line_item_currencies, if: :currency_changed?
 
     with_options presence: true do
-      validates :number, length: { maximum: 32, allow_blank: true }, uniqueness: { allow_blank: true, case_sensitive: false }
-      validates :email, length: { maximum: 254, allow_blank: true }, email: { allow_blank: true }, if: :require_email
-      validates :item_count, numericality: { greater_than_or_equal_to: 0, less_than: 2**31, only_integer: true, allow_blank: true }
+      validates :number, length: {maximum: 32, allow_blank: true}, uniqueness: {allow_blank: true, case_sensitive: false}
+      validates :email, length: {maximum: 254, allow_blank: true}, email: {allow_blank: true}, if: :require_email
+      validates :item_count, numericality: {greater_than_or_equal_to: 0, less_than: 2**31, only_integer: true, allow_blank: true}
       validates :store
       validates :currency
     end
-    validates :payment_state,        inclusion:    { in: PAYMENT_STATES, allow_blank: true }
-    validates :shipment_state,       inclusion:    { in: SHIPMENT_STATES, allow_blank: true }
-    validates :item_total,           POSITIVE_MONEY_VALIDATION
-    validates :adjustment_total,     MONEY_VALIDATION
-    validates :included_tax_total,   POSITIVE_MONEY_VALIDATION
+    validates :payment_state, inclusion: {in: PAYMENT_STATES, allow_blank: true}
+    validates :shipment_state, inclusion: {in: SHIPMENT_STATES, allow_blank: true}
+    validates :item_total, POSITIVE_MONEY_VALIDATION
+    validates :adjustment_total, MONEY_VALIDATION
+    validates :included_tax_total, POSITIVE_MONEY_VALIDATION
     validates :additional_tax_total, POSITIVE_MONEY_VALIDATION
-    validates :payment_total,        MONEY_VALIDATION
-    validates :shipment_total,       MONEY_VALIDATION
-    validates :promo_total,          NEGATIVE_MONEY_VALIDATION
-    validates :total,                MONEY_VALIDATION
+    validates :payment_total, MONEY_VALIDATION
+    validates :shipment_total, MONEY_VALIDATION
+    validates :promo_total, NEGATIVE_MONEY_VALIDATION
+    validates :total, MONEY_VALIDATION
 
     delegate :update_totals, :persist_totals, to: :updater
     delegate :merge!, to: :merger
@@ -159,7 +159,7 @@ module Spree
     scope :incomplete, -> { where(completed_at: nil) }
 
     # shows completed orders first, by their completed_at date, then uncompleted orders by their created_at
-    scope :reverse_chronological, -> { order(Arel.sql('spree_orders.completed_at IS NULL'), completed_at: :desc, created_at: :desc) }
+    scope :reverse_chronological, -> { order(Arel.sql("spree_orders.completed_at IS NULL"), completed_at: :desc, created_at: :desc) }
 
     # Use this method in other gems that wish to register their own custom logic
     # that should be called after Order#update
@@ -242,7 +242,7 @@ module Spree
     def allow_cancel?
       return false if !completed? || canceled?
 
-      shipment_state.nil? || %w{ready backorder pending}.include?(shipment_state)
+      shipment_state.nil? || %w[ready backorder pending].include?(shipment_state)
     end
 
     def all_inventory_units_returned?
@@ -251,9 +251,9 @@ module Spree
 
     # Associates the specified user with the order.
     def associate_user!(user, override_email = true)
-      self.user           = user
-      self.email          = user.email if override_email
-      self.created_by   ||= user
+      self.user = user
+      self.email = user.email if override_email
+      self.created_by ||= user
       self.bill_address ||= user.bill_address.try(:clone)
       self.ship_address ||= user.ship_address.try(:clone)
 
@@ -369,7 +369,7 @@ module Spree
 
     # Helper methods for checkout steps
     def paid?
-      payment_state == 'paid' || payment_state == 'credit_owed'
+      payment_state == "paid" || payment_state == "credit_owed"
     end
 
     def available_payment_methods(store = nil)
@@ -448,7 +448,7 @@ module Spree
     def coupon_code=(code)
       @coupon_code = begin
                        code.strip.downcase
-                     rescue StandardError
+                     rescue
                        nil
                      end
     end
@@ -458,14 +458,14 @@ module Spree
     end
 
     def shipped?
-      %w(partial shipped).include?(shipment_state)
+      %w[partial shipped].include?(shipment_state)
     end
 
     def create_proposed_shipments
       all_adjustments.shipping.delete_all
 
       shipment_ids = shipments.map(&:id)
-      StateChange.where(stateful_type: 'Spree::Shipment', stateful_id: shipment_ids).delete_all
+      StateChange.where(stateful_type: "Spree::Shipment", stateful_id: shipment_ids).delete_all
       ShippingRate.where(shipment_id: shipment_ids).delete_all
 
       shipments.delete_all
@@ -504,7 +504,7 @@ module Spree
 
     def restart_checkout_flow
       update_columns(
-        state: 'cart',
+        state: "cart",
         updated_at: Time.current
       )
       next! unless line_items.empty?
@@ -629,18 +629,18 @@ module Spree
     end
 
     def valid_coupon_promotions
-      promotions.
-        where(id: valid_promotion_ids).
-        coupons
+      promotions
+        .where(id: valid_promotion_ids)
+        .coupons
     end
 
     # Returns item and whole order discount amount for Order
     # without Shipment disccounts (eg. Free Shipping)
     # @return [BigDecimal]
     def cart_promo_total
-      all_adjustments.eligible.nonzero.promotion.
-        where.not(adjustable_type: 'Spree::Shipment').
-        sum(:amount)
+      all_adjustments.eligible.nonzero.promotion
+        .where.not(adjustable_type: "Spree::Shipment")
+        .sum(:amount)
     end
 
     private
@@ -651,7 +651,7 @@ module Spree
 
     # Determine if email is required (we don't want validation errors before we hit the checkout)
     def require_email
-      true unless new_record? || ['cart', 'address'].include?(state)
+      true unless new_record? || ["cart", "address"].include?(state)
     end
 
     def ensure_line_items_present
@@ -690,7 +690,7 @@ module Spree
     end
 
     def use_billing?
-      use_billing.in?([true, 'true', '1'])
+      use_billing.in?([true, "true", "1"])
     end
 
     def ensure_currency_presence

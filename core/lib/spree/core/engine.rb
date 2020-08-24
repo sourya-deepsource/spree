@@ -2,29 +2,29 @@ module Spree
   module Core
     class Engine < ::Rails::Engine
       Environment = Struct.new(:calculators,
-                               :preferences,
-                               :dependencies,
-                               :payment_methods,
-                               :adjusters,
-                               :stock_splitters,
-                               :promotions,
-                               :line_item_comparison_hooks)
+        :preferences,
+        :dependencies,
+        :payment_methods,
+        :adjusters,
+        :stock_splitters,
+        :promotions,
+        :line_item_comparison_hooks)
       SpreeCalculators = Struct.new(:shipping_methods, :tax_rates, :promotion_actions_create_adjustments, :promotion_actions_create_item_adjustments)
       PromoEnvironment = Struct.new(:rules, :actions)
       isolate_namespace Spree
-      engine_name 'spree'
+      engine_name "spree"
 
       rake_tasks do
-        load File.join(root, 'lib', 'tasks', 'exchanges.rake')
+        load File.join(root, "lib", "tasks", "exchanges.rake")
       end
 
-      initializer 'spree.environment', before: :load_config_initializers do |app|
+      initializer "spree.environment", before: :load_config_initializers do |app|
         app.config.spree = Environment.new(SpreeCalculators.new, Spree::AppConfiguration.new, Spree::AppDependencies.new)
         Spree::Config = app.config.spree.preferences
         Spree::Dependencies = app.config.spree.dependencies
       end
 
-      initializer 'spree.register.calculators' do |app|
+      initializer "spree.register.calculators" do |app|
         app.config.spree.calculators.shipping_methods = [
           Spree::Calculator::Shipping::FlatPercentItemTotal,
           Spree::Calculator::Shipping::FlatRate,
@@ -38,18 +38,18 @@ module Spree
         ]
       end
 
-      initializer 'spree.register.stock_splitters', before: :load_config_initializers do |app|
+      initializer "spree.register.stock_splitters", before: :load_config_initializers do |app|
         app.config.spree.stock_splitters = [
           Spree::Stock::Splitter::ShippingCategory,
           Spree::Stock::Splitter::Backordered
         ]
       end
 
-      initializer 'spree.register.line_item_comparison_hooks', before: :load_config_initializers do |app|
+      initializer "spree.register.line_item_comparison_hooks", before: :load_config_initializers do |app|
         app.config.spree.line_item_comparison_hooks = Set.new
       end
 
-      initializer 'spree.register.payment_methods', after: 'acts_as_list.insert_into_active_record' do |app|
+      initializer "spree.register.payment_methods", after: "acts_as_list.insert_into_active_record" do |app|
         app.config.spree.payment_methods = [
           Spree::Gateway::Bogus,
           Spree::Gateway::BogusSimple,
@@ -58,7 +58,7 @@ module Spree
         ]
       end
 
-      initializer 'spree.register.adjustable_adjusters' do |app|
+      initializer "spree.register.adjustable_adjusters" do |app|
         app.config.spree.adjusters = [
           Spree::Adjustable::Adjuster::Promotion,
           Spree::Adjustable::Adjuster::Tax
@@ -67,12 +67,12 @@ module Spree
 
       # We need to define promotions rules here so extensions and existing apps
       # can add their custom classes on their initializer files
-      initializer 'spree.promo.environment' do |app|
+      initializer "spree.promo.environment" do |app|
         app.config.spree.promotions = PromoEnvironment.new
         app.config.spree.promotions.rules = []
       end
 
-      initializer 'spree.promo.register.promotion.calculators' do |app|
+      initializer "spree.promo.register.promotion.calculators" do |app|
         app.config.spree.calculators.promotion_actions_create_adjustments = [
           Spree::Calculator::FlatPercentItemTotal,
           Spree::Calculator::FlatRate,
@@ -106,7 +106,7 @@ module Spree
         ]
       end
 
-      initializer 'spree.promo.register.promotions.actions' do |app|
+      initializer "spree.promo.register.promotions.actions" do |app|
         app.config.spree.promotions.actions = [
           Promotion::Actions::CreateAdjustment,
           Promotion::Actions::CreateItemAdjustments,
@@ -116,7 +116,7 @@ module Spree
       end
 
       # filter sensitive information during logging
-      initializer 'spree.params.filter' do |app|
+      initializer "spree.params.filter" do |app|
         app.config.filter_parameters += [
           :password,
           :password_confirmation,
@@ -125,7 +125,7 @@ module Spree
         ]
       end
 
-      initializer 'spree.core.checking_migrations' do
+      initializer "spree.core.checking_migrations" do
         Migrations.new(config, engine_name).check
       end
 
@@ -133,12 +133,12 @@ module Spree
         # Ensure spree locale paths are present before decorators
         I18n.load_path.unshift(*(Dir.glob(
           File.join(
-            File.dirname(__FILE__), '../../../config/locales', '*.{rb,yml}'
+            File.dirname(__FILE__), "../../../config/locales", "*.{rb,yml}"
           )
         ) - I18n.load_path))
 
         # Load application's model / class decorators
-        Dir.glob(File.join(File.dirname(__FILE__), '../../../app/**/*_decorator*.rb')) do |c|
+        Dir.glob(File.join(File.dirname(__FILE__), "../../../app/**/*_decorator*.rb")) do |c|
           Rails.configuration.cache_classes ? require(c) : load(c)
         end
       end
@@ -146,5 +146,5 @@ module Spree
   end
 end
 
-require 'spree/core/routes'
-require 'spree/core/components'
+require "spree/core/routes"
+require "spree/core/components"

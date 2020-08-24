@@ -3,8 +3,8 @@ module Spree
     acts_as_list scope: :product
 
     with_options inverse_of: :product_properties do
-      belongs_to :product, touch: true, class_name: 'Spree::Product'
-      belongs_to :property, class_name: 'Spree::Property'
+      belongs_to :product, touch: true, class_name: "Spree::Product"
+      belongs_to :property, class_name: "Spree::Property"
     end
 
     validates :property, presence: true
@@ -13,8 +13,8 @@ module Spree
 
     default_scope { order(:position) }
 
-    self.whitelisted_ransackable_attributes = ['value']
-    self.whitelisted_ransackable_associations = ['property']
+    self.whitelisted_ransackable_attributes = ["value"]
+    self.whitelisted_ransackable_associations = ["property"]
 
     # virtual attributes for use with AJAX completion stuff
     delegate :name, :presentation, to: :property, prefix: true, allow_nil: true

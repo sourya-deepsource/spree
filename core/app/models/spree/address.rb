@@ -1,22 +1,22 @@
 module Spree
   class Address < Spree::Base
-    require 'twitter_cldr'
+    require "twitter_cldr"
 
     NO_ZIPCODE_ISO_CODES ||= [
-      'AO', 'AG', 'AW', 'BS', 'BZ', 'BJ', 'BM', 'BO', 'BW', 'BF', 'BI', 'CM', 'CF', 'KM', 'CG',
-      'CD', 'CK', 'CUW', 'CI', 'DJ', 'DM', 'GQ', 'ER', 'FJ', 'TF', 'GAB', 'GM', 'GH', 'GD', 'GN',
-      'GY', 'HK', 'IE', 'KI', 'KP', 'LY', 'MO', 'MW', 'ML', 'MR', 'NR', 'AN', 'NU', 'KP', 'PA',
-      'QA', 'RW', 'KN', 'LC', 'ST', 'SC', 'SL', 'SB', 'SO', 'SR', 'SY', 'TZ', 'TL', 'TK', 'TG',
-      'TO', 'TV', 'UG', 'AE', 'VU', 'YE', 'ZW'
+      "AO", "AG", "AW", "BS", "BZ", "BJ", "BM", "BO", "BW", "BF", "BI", "CM", "CF", "KM", "CG",
+      "CD", "CK", "CUW", "CI", "DJ", "DM", "GQ", "ER", "FJ", "TF", "GAB", "GM", "GH", "GD", "GN",
+      "GY", "HK", "IE", "KI", "KP", "LY", "MO", "MW", "ML", "MR", "NR", "AN", "NU", "KP", "PA",
+      "QA", "RW", "KN", "LC", "ST", "SC", "SL", "SB", "SO", "SR", "SY", "TZ", "TL", "TK", "TG",
+      "TO", "TV", "UG", "AE", "VU", "YE", "ZW"
     ].freeze
 
     # we're not freezing this on purpose so developers can extend and manage
     # those attributes depending of the logic of their applications
-    ADDRESS_FIELDS = %w(firstname lastname company address1 address2 city state zipcode country phone)
-    EXCLUDED_KEYS_FOR_COMPARISION = %w(id updated_at created_at deleted_at user_id)
+    ADDRESS_FIELDS = %w[firstname lastname company address1 address2 city state zipcode country phone]
+    EXCLUDED_KEYS_FOR_COMPARISION = %w[id updated_at created_at deleted_at user_id]
 
-    belongs_to :country, class_name: 'Spree::Country'
-    belongs_to :state, class_name: 'Spree::State', optional: true
+    belongs_to :country, class_name: "Spree::Country"
+    belongs_to :state, class_name: "Spree::State", optional: true
     belongs_to :user, class_name: Spree.user_class.name, optional: true
 
     has_many :shipments, inverse_of: :address
@@ -43,7 +43,7 @@ module Spree
       new(country: Spree::Country.default)
     end
 
-    def self.default(user = nil, kind = 'bill')
+    def self.default(user = nil, kind = "bill")
       if user && user_address = user.public_send(:"#{kind}_address")
         user_address.clone
       else
@@ -52,9 +52,9 @@ module Spree
     end
 
     def self.required_fields
-      Spree::Address.validators.map do |v|
+      Spree::Address.validators.map { |v|
         v.is_a?(ActiveModel::Validations::PresenceValidator) ? v.attributes : []
-      end.flatten
+      }.flatten
     end
 
     def full_name
@@ -77,7 +77,7 @@ module Spree
         address2,
         "#{city}, #{state_text} #{zipcode}",
         country.to_s
-      ].reject(&:blank?).map { |attribute| ERB::Util.html_escape(attribute) }.join('<br/>')
+      ].reject(&:blank?).map { |attribute| ERB::Util.html_escape(attribute) }.join("<br/>")
     end
 
     def clone
@@ -95,7 +95,7 @@ module Spree
     end
 
     def empty?
-      attributes.except('id', 'created_at', 'updated_at', 'country_id').all? { |_, v| v.nil? }
+      attributes.except("id", "created_at", "updated_at", "country_id").all? { |_, v| v.nil? }
     end
 
     # Generates an ActiveMerchant compatible address hash
@@ -121,15 +121,15 @@ module Spree
     end
 
     def editable?
-      new_record? || (shipments.empty? && !Order.complete.where('bill_address_id = ? OR ship_address_id = ?', id, id).exists?)
+      new_record? || (shipments.empty? && !Order.complete.where("bill_address_id = ? OR ship_address_id = ?", id, id).exists?)
     end
 
     def can_be_deleted?
-      shipments.empty? && !Order.where('bill_address_id = ? OR ship_address_id = ?', id, id).exists?
+      shipments.empty? && !Order.where("bill_address_id = ? OR ship_address_id = ?", id, id).exists?
     end
 
     def check
-      attrs = attributes.except('id', 'updated_at', 'created_at')
+      attrs = attributes.except("id", "updated_at", "created_at")
       the_same_address = user&.addresses&.find_by(attrs)
       the_same_address || self
     end

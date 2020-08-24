@@ -59,7 +59,7 @@ module Spree
             variant: [
               :images,
               option_values: :option_type,
-              product: :product_properties,
+              product: :product_properties
             ]
           ]
         }

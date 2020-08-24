@@ -40,8 +40,8 @@ module Spree
           # Implements worst fit, add to package with most space left over after addition.
           # See: http://www.labri.fr/perso/eyraud/pmwiki/uploads/Main/BinPackingSurvey.pdf,
           # for survey of other techniques
-          package_to_use     = nil
-          available_space    = -1
+          package_to_use = nil
+          available_space = -1
 
           generated_packages.each do |generated_package|
             generated_package_weight = generated_package.weight

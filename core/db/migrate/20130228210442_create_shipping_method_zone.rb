@@ -1,6 +1,6 @@
 class CreateShippingMethodZone < ActiveRecord::Migration[4.2]
   class ShippingMethodZone < ApplicationRecord
-    self.table_name = 'shipping_methods_zones'
+    self.table_name = "shipping_methods_zones"
   end
   def up
     create_table :shipping_methods_zones, id: false do |t|

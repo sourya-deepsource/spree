@@ -1,7 +1,7 @@
 module Spree
   module Admin
     class VariantsController < ResourceController
-      belongs_to 'spree/product', find_by: :slug
+      belongs_to "spree/product", find_by: :slug
       new_action.before :new_before
       before_action :redirect_on_empty_option_values, only: [:new]
       before_action :load_data, only: [:new, :create, :edit, :update]
@@ -11,9 +11,9 @@ module Spree
       def destroy
         @variant = Variant.find(params[:id])
         if @variant.destroy
-          flash[:success] = Spree.t('notice_messages.variant_deleted')
+          flash[:success] = Spree.t("notice_messages.variant_deleted")
         else
-          flash[:error] = Spree.t('notice_messages.variant_not_deleted', error: @variant.errors.full_messages.to_sentence)
+          flash[:error] = Spree.t("notice_messages.variant_not_deleted", error: @variant.errors.full_messages.to_sentence)
         end
 
         respond_with(@variant) do |format|
@@ -27,7 +27,7 @@ module Spree
       def new_before
         master = @object.product.master
         @object.attributes = master.attributes.except(
-          'id', 'created_at', 'deleted_at', 'sku', 'is_master'
+          "id", "created_at", "deleted_at", "sku", "is_master"
         )
 
         # Shallow Clone of the default price to populate the price field.
@@ -39,7 +39,7 @@ module Spree
       end
 
       def collection
-        @deleted = params.key?(:deleted) && params[:deleted] == 'on' ? 'checked' : ''
+        @deleted = params.key?(:deleted) && params[:deleted] == "on" ? "checked" : ""
 
         @collection ||=
           if @deleted.blank?

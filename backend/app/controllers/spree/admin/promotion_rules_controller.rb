@@ -1,5 +1,5 @@
 class Spree::Admin::PromotionRulesController < Spree::Admin::BaseController
-  helper 'spree/admin/promotion_rules'
+  helper "spree/admin/promotion_rules"
 
   before_action :load_promotion, only: [:create, :destroy]
   before_action :validate_promotion_rule_type, only: :create
@@ -12,7 +12,7 @@ class Spree::Admin::PromotionRulesController < Spree::Admin::BaseController
     end
     respond_to do |format|
       format.html { redirect_to spree.edit_admin_promotion_path(@promotion) }
-      format.js   { render layout: false }
+      format.js { render layout: false }
     end
   end
 
@@ -23,7 +23,7 @@ class Spree::Admin::PromotionRulesController < Spree::Admin::BaseController
     end
     respond_to do |format|
       format.html { redirect_to spree.edit_admin_promotion_path(@promotion) }
-      format.js   { render layout: false }
+      format.js { render layout: false }
     end
   end
 
@@ -36,14 +36,14 @@ class Spree::Admin::PromotionRulesController < Spree::Admin::BaseController
   def validate_promotion_rule_type
     requested_type = params[:promotion_rule].delete(:type)
     promotion_rule_types = Rails.application.config.spree.promotions.rules
-    @promotion_rule_type = promotion_rule_types.detect do |klass|
+    @promotion_rule_type = promotion_rule_types.detect { |klass|
       klass.name == requested_type
-    end
+    }
     unless @promotion_rule_type
       flash[:error] = Spree.t(:invalid_promotion_rule)
       respond_to do |format|
         format.html { redirect_to spree.edit_admin_promotion_path(@promotion) }
-        format.js   { render layout: false }
+        format.js { render layout: false }
       end
     end
   end

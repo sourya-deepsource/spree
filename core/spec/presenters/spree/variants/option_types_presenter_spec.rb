@@ -1,4 +1,4 @@
-require 'spec_helper'
+require "spec_helper"
 
 describe Spree::Variants::OptionTypesPresenter do
   let(:option_type_1) { create :option_type, position: 2 }
@@ -22,74 +22,74 @@ describe Spree::Variants::OptionTypesPresenter do
   let!(:option_value_2_2) { create :option_value, option_type: option_type_2, position: 1 }
 
   let(:option_types) do
-    Spree::OptionType.
-      eager_load(:option_values).
-      reorder('spree_option_types.position ASC, spree_option_values.position ASC')
+    Spree::OptionType
+      .eager_load(:option_values)
+      .reorder("spree_option_types.position ASC, spree_option_values.position ASC")
   end
 
-  describe '#default_variant' do
+  describe "#default_variant" do
     subject(:default_variant) { described_class.new(option_types, variants, product).default_variant }
 
     before { variant_0.stock_items.first.update(backorderable: false, count_on_hand: 0) }
 
-    context 'default variant of product' do
-      context 'backorderable' do
+    context "default variant of product" do
+      context "backorderable" do
         before { variant_0.stock_items.first.update(backorderable: true) }
 
-        it 'returns the same Variant as Product#default_variant' do
+        it "returns the same Variant as Product#default_variant" do
           expect(default_variant).to eq(variant_0)
           expect(product.default_variant).to eq(variant_0)
         end
       end
 
-      context 'in stock' do
+      context "in stock" do
         before { variant_0.stock_items.first.adjust_count_on_hand(1) }
 
-        it 'returns the same Variant as Product#default_variant' do
+        it "returns the same Variant as Product#default_variant" do
           expect(default_variant).to eq(variant_0)
           expect(product.default_variant).to eq(variant_0)
         end
       end
     end
 
-    it 'returns first Variant of first Option Value of first Option Type' do
+    it "returns first Variant of first Option Value of first Option Type" do
       expect(default_variant).to eq(variant_1)
     end
 
-    context 'with in-stock Variant' do
+    context "with in-stock Variant" do
       before do
         variant_0.stock_items.first.update(backorderable: false, count_on_hand: 0)
         variant_1.stock_items.first.update(backorderable: false, count_on_hand: 0)
         variant_2.stock_items.first.adjust_count_on_hand(1)
       end
 
-      it 'returns first in-stock Variant' do
+      it "returns first in-stock Variant" do
         expect(default_variant).to eq(variant_2)
       end
     end
 
-    context 'with backorderable Variant' do
+    context "with backorderable Variant" do
       before do
         variant_1.stock_items.first.update!(backorderable: false)
         variant_2.stock_items.first.update!(backorderable: true)
       end
 
-      it 'returns first backorderable Variant' do
+      it "returns first backorderable Variant" do
         expect(default_variant).to eq(variant_2)
       end
     end
 
-    context 'without Option Types' do
+    context "without Option Types" do
       let(:option_types) { [] }
 
       it { is_expected.to eq(nil) }
     end
   end
 
-  describe '#options' do
+  describe "#options" do
     subject(:options) { described_class.new(option_types, variants, product).options }
 
-    it 'returns serialized options for Option Types and Option Values' do
+    it "returns serialized options for Option Types and Option Values" do
       expect(options).to eq(
         [
           {
@@ -160,7 +160,7 @@ describe Spree::Variants::OptionTypesPresenter do
       )
     end
 
-    context 'without Option Types' do
+    context "without Option Types" do
       let(:option_types) { [] }
 
       it { is_expected.to eq([]) }

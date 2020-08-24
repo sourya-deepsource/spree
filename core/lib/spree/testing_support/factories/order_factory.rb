@@ -4,8 +4,8 @@ FactoryBot.define do
     bill_address
     store
     completed_at { nil }
-    email        { user.email }
-    currency     { 'USD' }
+    email { user.email }
+    currency { "USD" }
 
     transient do
       line_items_price { BigDecimal(10) }
@@ -34,9 +34,9 @@ FactoryBot.define do
       ship_address
 
       transient do
-        line_items_count       { 1 }
-        without_line_items     { false }
-        shipment_cost          { 100 }
+        line_items_count { 1 }
+        without_line_items { false }
+        shipment_cost { 100 }
         shipping_method_filter { Spree::ShippingMethod::DISPLAY_ON_FRONT_END }
       end
 
@@ -53,7 +53,7 @@ FactoryBot.define do
       end
 
       factory :completed_order_with_totals do
-        state { 'complete' }
+        state { "complete" }
 
         after(:create) do |order, evaluator|
           order.refresh_shipment_rates(evaluator.shipping_method_filter)
@@ -73,14 +73,14 @@ FactoryBot.define do
         end
 
         factory :order_ready_to_ship do
-          payment_state  { 'paid' }
-          shipment_state { 'ready' }
+          payment_state { "paid" }
+          shipment_state { "ready" }
 
           after(:create) do |order|
-            create(:payment, amount: order.total, order: order, state: 'completed')
+            create(:payment, amount: order.total, order: order, state: "completed")
             order.shipments.each do |shipment|
-              shipment.inventory_units.update_all state: 'on_hand'
-              shipment.update_column('state', 'ready')
+              shipment.inventory_units.update_all state: "on_hand"
+              shipment.update_column("state", "ready")
             end
             order.reload
           end
@@ -88,10 +88,10 @@ FactoryBot.define do
           factory :shipped_order do
             after(:create) do |order|
               order.shipments.each do |shipment|
-                shipment.inventory_units.update_all state: 'shipped'
-                shipment.update_column('state', 'shipped')
+                shipment.inventory_units.update_all state: "shipped"
+                shipment.update_column("state", "shipped")
               end
-              order.update_column('shipment_state', 'shipped')
+              order.update_column("shipment_state", "shipped")
               order.reload
             end
           end

@@ -1,6 +1,6 @@
 module Spree
   class ReturnItem < Spree::Base
-    COMPLETED_RECEPTION_STATUSES = %w(received given_to_customer)
+    COMPLETED_RECEPTION_STATUSES = %w[received given_to_customer]
 
     class_attribute :return_eligibility_validator
     self.return_eligibility_validator = ReturnItem::EligibilityValidator::Default
@@ -25,37 +25,37 @@ module Spree
       belongs_to :customer_return
       belongs_to :reimbursement
     end
-    has_many :exchange_inventory_units, class_name: 'Spree::InventoryUnit',
+    has_many :exchange_inventory_units, class_name: "Spree::InventoryUnit",
                                         foreign_key: :original_return_item_id,
                                         inverse_of: :original_return_item
-    belongs_to :exchange_variant, class_name: 'Spree::Variant'
-    belongs_to :preferred_reimbursement_type, class_name: 'Spree::ReimbursementType'
-    belongs_to :override_reimbursement_type, class_name: 'Spree::ReimbursementType'
+    belongs_to :exchange_variant, class_name: "Spree::Variant"
+    belongs_to :preferred_reimbursement_type, class_name: "Spree::ReimbursementType"
+    belongs_to :override_reimbursement_type, class_name: "Spree::ReimbursementType"
 
     validate :eligible_exchange_variant
     validate :belongs_to_same_customer_order
     validate :validate_acceptance_status_for_reimbursement
     validates :inventory_unit, presence: true
     validate :validate_no_other_completed_return_items, on: :create
-    validates :return_quantity, numericality: { greater_than_or_equal_to: 1 }
+    validates :return_quantity, numericality: {greater_than_or_equal_to: 1}
     validate :sufficient_quantity_for_return
 
     after_create :cancel_others, unless: :cancelled?
 
-    scope :awaiting_return, -> { where(reception_status: 'awaiting') }
-    scope :received, -> { where(reception_status: 'received') }
-    scope :not_cancelled, -> { where.not(reception_status: 'cancelled') }
-    scope :pending, -> { where(acceptance_status: 'pending') }
-    scope :accepted, -> { where(acceptance_status: 'accepted') }
-    scope :rejected, -> { where(acceptance_status: 'rejected') }
-    scope :manual_intervention_required, -> { where(acceptance_status: 'manual_intervention_required') }
-    scope :undecided, -> { where(acceptance_status: %w(pending manual_intervention_required)) }
-    scope :decided, -> { where.not(acceptance_status: %w(pending manual_intervention_required)) }
+    scope :awaiting_return, -> { where(reception_status: "awaiting") }
+    scope :received, -> { where(reception_status: "received") }
+    scope :not_cancelled, -> { where.not(reception_status: "cancelled") }
+    scope :pending, -> { where(acceptance_status: "pending") }
+    scope :accepted, -> { where(acceptance_status: "accepted") }
+    scope :rejected, -> { where(acceptance_status: "rejected") }
+    scope :manual_intervention_required, -> { where(acceptance_status: "manual_intervention_required") }
+    scope :undecided, -> { where(acceptance_status: %w[pending manual_intervention_required]) }
+    scope :decided, -> { where.not(acceptance_status: %w[pending manual_intervention_required]) }
     scope :reimbursed, -> { where.not(reimbursement_id: nil) }
     scope :not_reimbursed, -> { where(reimbursement_id: nil) }
     scope :exchange_requested, -> { where.not(exchange_variant: nil) }
     scope :exchange_processed, -> { joins(:exchange_inventory_units).distinct }
-    scope :exchange_required, -> { eager_load(:exchange_inventory_units).where(spree_inventory_units: { original_return_item_id: nil }).distinct }
+    scope :exchange_required, -> { eager_load(:exchange_inventory_units).where(spree_inventory_units: {original_return_item_id: nil}).distinct }
     scope :resellable, -> { where resellable: true }
 
     serialize :acceptance_status_errors
@@ -116,7 +116,7 @@ module Spree
         transition to: :manual_intervention_required, from: [:accepted, :pending, :manual_intervention_required]
       end
 
-      after_transition any => any, do: :persist_acceptance_status_errors
+      after_transition any => any, :do => :persist_acceptance_status_errors
     end
 
     def self.from_inventory_unit(inventory_unit)
@@ -244,14 +244,14 @@ module Spree
                                                   reception_status: COMPLETED_RECEPTION_STATUSES).first
 
       if other_return_item
-        errors.add(:inventory_unit, :other_completed_return_item_exists,           inventory_unit_id: inventory_unit_id,
-                                                                                   return_item_id: other_return_item.id)
+        errors.add(:inventory_unit, :other_completed_return_item_exists, inventory_unit_id: inventory_unit_id,
+                                                                         return_item_id: other_return_item.id)
       end
     end
 
     def cancel_others
-      Spree::ReturnItem.where(inventory_unit_id: inventory_unit_id).where.not(id: id).
-        not_cancelled.each(&:cancel!)
+      Spree::ReturnItem.where(inventory_unit_id: inventory_unit_id).where.not(id: id)
+        .not_cancelled.each(&:cancel!)
     end
 
     def should_restock?

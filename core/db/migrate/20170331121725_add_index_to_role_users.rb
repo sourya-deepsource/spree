@@ -1,7 +1,6 @@
 class AddIndexToRoleUsers < ActiveRecord::Migration[5.0]
   def change
-
-    duplicates = Spree::RoleUser.group(:role_id, :user_id).having('sum(1) > 1').size
+    duplicates = Spree::RoleUser.group(:role_id, :user_id).having("sum(1) > 1").size
 
     duplicates.each do |f|
       role_id, user_id = f.first

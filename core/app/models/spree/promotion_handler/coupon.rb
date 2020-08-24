@@ -66,11 +66,11 @@ module Spree
       def remove_promotion_adjustments(promotion)
         promotion_actions_ids = promotion.actions.pluck(:id)
         order.all_adjustments.where(source_id: promotion_actions_ids,
-                                    source_type: 'Spree::PromotionAction').destroy_all
+                                    source_type: "Spree::PromotionAction").destroy_all
       end
 
       def remove_promotion_line_items(promotion)
-        create_line_item_actions_ids = promotion.actions.where(type: 'Spree::Promotion::Actions::CreateLineItems').pluck(:id)
+        create_line_item_actions_ids = promotion.actions.where(type: "Spree::Promotion::Actions::CreateLineItems").pluck(:id)
 
         Spree::PromotionActionLineItem.where(promotion_action: create_line_item_actions_ids).find_each do |item|
           line_item = order.find_line_item_by_variant(item.variant)
@@ -116,16 +116,16 @@ module Spree
 
       def determine_promotion_application_result
         # Check for applied adjustments.
-        discount = order.all_adjustments.promotion.eligible.detect do |p|
+        discount = order.all_adjustments.promotion.eligible.detect { |p|
           p.source.promotion.code.try(:downcase) == order.coupon_code.downcase
-        end
+        }
 
         # Check for applied line items.
-        created_line_items = promotion.actions.detect do |a|
+        created_line_items = promotion.actions.detect { |a|
           Object.const_get(a.type).ancestors.include?(
             Spree::Promotion::Actions::CreateLineItems
           )
-        end
+        }
 
         if discount || created_line_items
           order.update_totals

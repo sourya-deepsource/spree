@@ -2,7 +2,7 @@ class AddUniqueIndexOnNumberToSpreePayments < ActiveRecord::Migration[5.0]
   def change
     unless index_exists?(:spree_payments, :number, unique: true)
       # default scope in Spree::Payment disturbs Postgres, hence `unscoped` is needed.
-      numbers = Spree::Payment.unscoped.group(:number).having('sum(1) > 1').pluck(:number)
+      numbers = Spree::Payment.unscoped.group(:number).having("sum(1) > 1").pluck(:number)
       payments = Spree::Payment.where(number: numbers)
 
       payments.find_each do |payment|

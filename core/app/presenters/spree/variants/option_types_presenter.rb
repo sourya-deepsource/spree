@@ -47,7 +47,7 @@ module Spree
         option_types.first.option_values.each do |option_value|
           variant = option_value.variants.where(id: @variant_ids).order(:position).find(&block)
 
-          return { variant: variant, option_value: option_value } if variant
+          return {variant: variant, option_value: option_value} if variant
         end
 
         nil
@@ -57,7 +57,7 @@ module Spree
         option_types.first.option_values.each do |option_value|
           variant = option_value.variants.where(id: @product.default_variant_id).first
 
-          return { variant: variant, option_value: option_value } if variant
+          return {variant: variant, option_value: option_value} if variant
         end
 
         nil
@@ -67,7 +67,7 @@ module Spree
         option_value = option_types.first.option_values.first
         variant = option_value.variants.where(id: @variant_ids).order(:position).first
 
-        { variant: variant, option_value: option_value }
+        {variant: variant, option_value: option_value}
       end
 
       def option_values_options(option_values)

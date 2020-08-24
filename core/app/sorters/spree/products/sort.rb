@@ -2,8 +2,8 @@ module Spree
   module Products
     class Sort
       def initialize(scope, params, current_currency)
-        @scope    = scope
-        @sort     = params[:sort]
+        @scope = scope
+        @sort = params[:sort]
         @currency = params[:currency] || current_currency
       end
 
@@ -19,7 +19,7 @@ module Spree
       attr_reader :sort, :scope, :currency
 
       def desc_order
-        @desc_order ||= String(sort)[0] == '-'
+        @desc_order ||= String(sort)[0] == "-"
       end
 
       def sort_field
@@ -27,11 +27,11 @@ module Spree
       end
 
       def updated_at?
-        sort_field == 'updated_at'
+        sort_field == "updated_at"
       end
 
       def price?
-        sort_field == 'price'
+        sort_field == "price"
       end
 
       def order_direction
@@ -47,11 +47,11 @@ module Spree
       def price(products)
         return products unless price?
 
-        products.joins(master: :prices).
-          select("#{Spree::Product.table_name}.*, #{Spree::Price.table_name}.amount").
-          distinct.
-          where(spree_prices: { currency: currency }).
-          order("#{Spree::Price.table_name}.amount #{order_direction}")
+        products.joins(master: :prices)
+          .select("#{Spree::Product.table_name}.*, #{Spree::Price.table_name}.amount")
+          .distinct
+          .where(spree_prices: {currency: currency})
+          .order("#{Spree::Price.table_name}.amount #{order_direction}")
       end
     end
   end

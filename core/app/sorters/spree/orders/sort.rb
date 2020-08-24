@@ -17,7 +17,7 @@ module Spree
       private
 
       def desc_order
-        @desc_order ||= String(sort)[0] == '-'
+        @desc_order ||= String(sort)[0] == "-"
       end
 
       def sort_field
@@ -29,7 +29,7 @@ module Spree
       end
 
       def completed_at?
-        sort_field.eql?('completed_at')
+        sort_field.eql?("completed_at")
       end
 
       def completed_at(orders)

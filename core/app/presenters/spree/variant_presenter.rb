@@ -23,7 +23,7 @@ module Spree
           backorderable: backorderable?(variant),
           in_stock: in_stock?(variant),
           images: images(variant),
-          option_values: option_values(variant),
+          option_values: option_values(variant)
         }.merge(
           variant_attributes(variant)
         )
@@ -44,7 +44,7 @@ module Spree
         {
           id: option_value.id,
           name: option_value.name,
-          presentation: option_value.presentation,
+          presentation: option_value.presentation
         }
       end
     end

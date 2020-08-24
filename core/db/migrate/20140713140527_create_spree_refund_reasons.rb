@@ -9,6 +9,6 @@ class CreateSpreeRefundReasons < ActiveRecord::Migration[4.2]
     end
 
     add_column :spree_refunds, :refund_reason_id, :integer
-    add_index :spree_refunds, :refund_reason_id, name: 'index_refunds_on_refund_reason_id'
+    add_index :spree_refunds, :refund_reason_id, name: "index_refunds_on_refund_reason_id"
   end
 end

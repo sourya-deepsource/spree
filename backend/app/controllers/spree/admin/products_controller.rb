@@ -1,7 +1,7 @@
 module Spree
   module Admin
     class ProductsController < ResourceController
-      helper 'spree/products'
+      helper "spree/products"
 
       before_action :load_data, except: :index
       create.before :create_before
@@ -20,10 +20,10 @@ module Spree
 
       def update
         if params[:product][:taxon_ids].present?
-          params[:product][:taxon_ids] = params[:product][:taxon_ids].split(',')
+          params[:product][:taxon_ids] = params[:product][:taxon_ids].split(",")
         end
         if params[:product][:option_type_ids].present?
-          params[:product][:option_type_ids] = params[:product][:option_type_ids].split(',')
+          params[:product][:option_type_ids] = params[:product][:option_type_ids].split(",")
         end
         invoke_callbacks(:update, :before)
         if @object.update(permitted_resource_params)
@@ -31,7 +31,7 @@ module Spree
           flash[:success] = flash_message_for(@object, :successfully_updated)
           respond_with(@object) do |format|
             format.html { redirect_to location_after_save }
-            format.js   { render layout: false }
+            format.js { render layout: false }
           end
         else
           # Stops people submitting blank slugs, causing errors when they try to
@@ -48,12 +48,12 @@ module Spree
         begin
           # TODO: why is @product.destroy raising ActiveRecord::RecordNotDestroyed instead of failing with false result
           if @product.destroy
-            flash[:success] = Spree.t('notice_messages.product_deleted')
+            flash[:success] = Spree.t("notice_messages.product_deleted")
           else
-            flash[:error] = Spree.t('notice_messages.product_not_deleted', error: @product.errors.full_messages.to_sentence)
+            flash[:error] = Spree.t("notice_messages.product_not_deleted", error: @product.errors.full_messages.to_sentence)
           end
         rescue ActiveRecord::RecordNotDestroyed => e
-          flash[:error] = Spree.t('notice_messages.product_not_deleted', error: e.message)
+          flash[:error] = Spree.t("notice_messages.product_not_deleted", error: e.message)
         end
 
         respond_with(@product) do |format|
@@ -66,15 +66,15 @@ module Spree
         @new = @product.duplicate
 
         if @new.persisted?
-          flash[:success] = Spree.t('notice_messages.product_cloned')
+          flash[:success] = Spree.t("notice_messages.product_cloned")
           redirect_to edit_admin_product_url(@new)
         else
-          flash[:error] = Spree.t('notice_messages.product_not_cloned', error: @new.errors.full_messages.to_sentence)
+          flash[:error] = Spree.t("notice_messages.product_not_cloned", error: @new.errors.full_messages.to_sentence)
           redirect_to admin_products_url
         end
       rescue ActiveRecord::RecordInvalid => e
         # Handle error on uniqueness validation on product fields
-        flash[:error] = Spree.t('notice_messages.product_not_cloned', error: e.message)
+        flash[:error] = Spree.t("notice_messages.product_not_cloned", error: e.message)
         redirect_to admin_products_url
       end
 
@@ -109,24 +109,24 @@ module Spree
         return @collection if @collection.present?
 
         params[:q] ||= {}
-        params[:q][:deleted_at_null] ||= '1'
-        params[:q][:not_discontinued] ||= '1'
+        params[:q][:deleted_at_null] ||= "1"
+        params[:q][:not_discontinued] ||= "1"
 
-        params[:q][:s] ||= 'name asc'
+        params[:q][:s] ||= "name asc"
         @collection = super
         # Don't delete params[:q][:deleted_at_null] here because it is used in view to check the
         # checkbox for 'q[deleted_at_null]'. This also messed with pagination when deleted_at_null is checked.
-        if params[:q][:deleted_at_null] == '0'
+        if params[:q][:deleted_at_null] == "0"
           @collection = @collection.with_deleted
         end
         # @search needs to be defined as this is passed to search_form_for
         # Temporarily remove params[:q][:deleted_at_null] from params[:q] to ransack products.
         # This is to include all products and not just deleted products.
-        @search = @collection.ransack(params[:q].reject { |k, _v| k.to_s == 'deleted_at_null' })
-        @collection = @search.result.
-                      includes(product_includes).
-                      page(params[:page]).
-                      per(params[:per_page] || Spree::Config[:admin_products_per_page])
+        @search = @collection.ransack(params[:q].reject { |k, _v| k.to_s == "deleted_at_null" })
+        @collection = @search.result
+          .includes(product_includes)
+          .page(params[:page])
+          .per(params[:per_page] || Spree::Config[:admin_products_per_page])
         @collection
       end
 
@@ -145,7 +145,7 @@ module Spree
       end
 
       def product_includes
-        [{ variants: [:images], master: [:images, :default_price] }]
+        [{variants: [:images], master: [:images, :default_price]}]
       end
 
       def clone_object_url(resource)

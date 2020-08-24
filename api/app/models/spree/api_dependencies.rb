@@ -16,7 +16,7 @@ module Spree
       :storefront_cart_update_service, :storefront_cart_estimate_shipping_rates_service, :storefront_estimated_shipment_serializer
     ].freeze
 
-    attr_accessor *INJECTION_POINTS
+    attr_accessor(*INJECTION_POINTS)
 
     def initialize
       set_storefront_defaults
@@ -49,15 +49,15 @@ module Spree
       @storefront_checkout_get_shipping_rates_service = Spree::Dependencies.checkout_get_shipping_rates_service
 
       # serializers
-      @storefront_cart_serializer = 'Spree::V2::Storefront::CartSerializer'
-      @storefront_credit_card_serializer = 'Spree::V2::Storefront::CreditCardSerializer'
-      @storefront_country_serializer = 'Spree::V2::Storefront::CountrySerializer'
-      @storefront_user_serializer = 'Spree::V2::Storefront::UserSerializer'
-      @storefront_shipment_serializer = 'Spree::V2::Storefront::ShipmentSerializer'
-      @storefront_taxon_serializer = 'Spree::V2::Storefront::TaxonSerializer'
-      @storefront_payment_method_serializer = 'Spree::V2::Storefront::PaymentMethodSerializer'
-      @storefront_product_serializer = 'Spree::V2::Storefront::ProductSerializer'
-      @storefront_estimated_shipment_serializer = 'Spree::V2::Storefront::EstimatedShippingRateSerializer'
+      @storefront_cart_serializer = "Spree::V2::Storefront::CartSerializer"
+      @storefront_credit_card_serializer = "Spree::V2::Storefront::CreditCardSerializer"
+      @storefront_country_serializer = "Spree::V2::Storefront::CountrySerializer"
+      @storefront_user_serializer = "Spree::V2::Storefront::UserSerializer"
+      @storefront_shipment_serializer = "Spree::V2::Storefront::ShipmentSerializer"
+      @storefront_taxon_serializer = "Spree::V2::Storefront::TaxonSerializer"
+      @storefront_payment_method_serializer = "Spree::V2::Storefront::PaymentMethodSerializer"
+      @storefront_product_serializer = "Spree::V2::Storefront::ProductSerializer"
+      @storefront_estimated_shipment_serializer = "Spree::V2::Storefront::EstimatedShippingRateSerializer"
 
       # sorters
       @storefront_order_sorter = Spree::Dependencies.order_sorter

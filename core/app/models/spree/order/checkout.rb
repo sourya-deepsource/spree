@@ -47,7 +47,7 @@ module Spree
                 order.state_changes.create(
                   previous_state: transition.from,
                   next_state: transition.to,
-                  name: 'order',
+                  name: "order",
                   user_id: order.user_id
                 )
                 order.save
@@ -123,7 +123,7 @@ module Spree
 
           def self.go_to_state(name, options = {})
             self.checkout_steps[name] = options
-            self.previous_states.each { |state| add_transition({ from: state, to: name }.merge(options)) }
+            self.previous_states.each { |state| add_transition({from: state, to: name}.merge(options)) }
             return self.previous_states << name if options[:if]
 
             self.previous_states = [name]
@@ -179,17 +179,17 @@ module Spree
           end
 
           def self.add_transition(options)
-            self.next_event_transitions << { options.delete(:from) => options.delete(:to) }.merge(options)
+            self.next_event_transitions << {options.delete(:from) => options.delete(:to)}.merge(options)
           end
 
           def checkout_steps
-            steps = (self.class.checkout_steps.each_with_object([]) do |(step, options), checkout_steps|
+            steps = (self.class.checkout_steps.each_with_object([]) { |(step, options), checkout_steps|
               next if options.include?(:if) && !options[:if].call(self)
 
               checkout_steps << step
-            end).map(&:to_s)
+            }).map(&:to_s)
             # Ensure there is always a complete step
-            steps << 'complete' unless steps.include?('complete')
+            steps << "complete" unless steps.include?("complete")
             steps
           end
 
@@ -224,10 +224,10 @@ module Spree
               existing_card_id = @updating_params[:order] ? @updating_params[:order].delete(:existing_card) : nil
 
               attributes = if @updating_params[:order]
-                             @updating_params[:order].permit(permitted_params).delete_if { |_k, v| v.nil? }
-                           else
-                             {}
-                           end
+                @updating_params[:order].permit(permitted_params).delete_if { |_k, v| v.nil? }
+              else
+                {}
+              end
 
               if existing_card_id.present?
                 credit_card = CreditCard.find existing_card_id
@@ -259,7 +259,7 @@ module Spree
               self.bill_address = user.bill_address if !bill_address_id && user.bill_address&.valid?
               # Skip setting ship address if order doesn't have a delivery checkout step
               # to avoid triggering validations on shipping address
-              self.ship_address = user.ship_address if !ship_address_id && user.ship_address&.valid? && checkout_steps.include?('delivery')
+              self.ship_address = user.ship_address if !ship_address_id && user.ship_address&.valid? && checkout_steps.include?("delivery")
             end
           end
 
@@ -297,9 +297,9 @@ module Spree
           #
           def update_params_payment_source
             if @updating_params[:payment_source].present?
-              source_params = @updating_params.
-                              delete(:payment_source)[@updating_params[:order][:payments_attributes].
-                              first[:payment_method_id].to_s]
+              source_params = @updating_params
+                .delete(:payment_source)[@updating_params[:order][:payments_attributes]
+                .first[:payment_method_id].to_s]
 
               if source_params
                 @updating_params[:order][:payments_attributes].first[:source_attributes] = source_params

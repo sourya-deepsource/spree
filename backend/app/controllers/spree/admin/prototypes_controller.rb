@@ -10,7 +10,7 @@ module Spree
       end
 
       def available
-        @prototypes = Prototype.order('name asc')
+        @prototypes = Prototype.order("name asc")
         respond_with(@prototypes) do |format|
           format.html { render layout: !request.xhr? }
           format.js

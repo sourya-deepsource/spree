@@ -11,17 +11,17 @@ module Spree
           request = Rack::Request.new(env)
           params = request.params
 
-          taxon_id = params['taxon']
+          taxon_id = params["taxon"]
 
           # redirect requests using taxon id's to their permalinks
           if !taxon_id.blank? && !taxon_id.is_a?(Hash) && taxon = Taxon.find(taxon_id)
-            params.delete('taxon')
+            params.delete("taxon")
 
             return build_response(params, "#{request.script_name}t/#{taxon.permalink}")
-          elsif env['PATH_INFO'] =~ /^\/(t|products)(\/\S+)?\/$/
+          elsif /^\/(t|products)(\/\S+)?\/$/.match?(env["PATH_INFO"])
             # ensures no trailing / for taxon and product urls
 
-            return build_response(params, env['PATH_INFO'][0...-1])
+            return build_response(params, env["PATH_INFO"][0...-1])
           end
 
           @app.call(env)
@@ -31,18 +31,18 @@ module Spree
 
         def build_response(params, location)
           query = build_query(params)
-          location += '?' + query unless query.blank?
-          [301, { 'Location' => location }, []]
+          location += "?" + query unless query.blank?
+          [301, {"Location" => location}, []]
         end
 
         def build_query(params)
-          params.map do |k, v|
+          params.map { |k, v|
             if v.class == Array
               build_query(v.map { |x| ["#{k}[]", x] })
             else
-              k + '=' + Rack::Utils.escape(v)
+              k + "=" + Rack::Utils.escape(v)
             end
-          end.join('&')
+          }.join("&")
         end
       end
     end

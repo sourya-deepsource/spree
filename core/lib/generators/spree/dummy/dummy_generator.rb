@@ -1,17 +1,17 @@
-require 'rails/generators/rails/app/app_generator'
-require 'active_support/core_ext/hash'
-require 'spree/core/version'
+require "rails/generators/rails/app/app_generator"
+require "active_support/core_ext/hash"
+require "spree/core/version"
 
 module Spree
   class DummyGenerator < Rails::Generators::Base
-    desc 'Creates blank Rails application, installs Spree and all sample data'
+    desc "Creates blank Rails application, installs Spree and all sample data"
 
-    class_option :lib_name, default: ''
-    class_option :database, default: ''
+    class_option :lib_name, default: ""
+    class_option :database, default: ""
 
     def self.source_paths
       paths = superclass.source_paths
-      paths << File.expand_path('templates', __dir__)
+      paths << File.expand_path("templates", __dir__)
       paths.flatten
     end
 
@@ -27,7 +27,7 @@ module Spree
       # calling slice on a Thor::CoreExtensions::HashWithIndifferentAccess
       # object has been known to return nil
       opts = {}.merge(options).slice(*PASSTHROUGH_OPTIONS)
-      opts[:database] = 'sqlite3' if opts[:database].blank?
+      opts[:database] = "sqlite3" if opts[:database].blank?
       opts[:force] = true
       opts[:skip_bundle] = true
       opts[:skip_gemfile] = true
@@ -41,7 +41,7 @@ module Spree
       opts[:skip_javascript] = true
       opts[:skip_bootsnap] = true
 
-      puts 'Generating dummy Rails application...'
+      puts "Generating dummy Rails application..."
       invoke Rails::Generators::AppGenerator,
         [File.expand_path(dummy_path, destination_root)], opts
     end
@@ -50,48 +50,48 @@ module Spree
       @lib_name = options[:lib_name]
       @database = options[:database]
 
-      template 'rails/database.yml', "#{dummy_path}/config/database.yml", force: true
-      template 'rails/boot.rb', "#{dummy_path}/config/boot.rb", force: true
-      template 'rails/application.rb', "#{dummy_path}/config/application.rb", force: true
-      template 'rails/routes.rb', "#{dummy_path}/config/routes.rb", force: true
-      template 'rails/test.rb', "#{dummy_path}/config/environments/test.rb", force: true
-      template 'rails/script/rails', "#{dummy_path}/spec/dummy/script/rails", force: true
-      template 'initializers/devise.rb', "#{dummy_path}/config/initializers/devise.rb", force: true
-      template 'initializers/bullet.rb', "#{dummy_path}/config/initializers/bullet.rb", force: true
+      template "rails/database.yml", "#{dummy_path}/config/database.yml", force: true
+      template "rails/boot.rb", "#{dummy_path}/config/boot.rb", force: true
+      template "rails/application.rb", "#{dummy_path}/config/application.rb", force: true
+      template "rails/routes.rb", "#{dummy_path}/config/routes.rb", force: true
+      template "rails/test.rb", "#{dummy_path}/config/environments/test.rb", force: true
+      template "rails/script/rails", "#{dummy_path}/spec/dummy/script/rails", force: true
+      template "initializers/devise.rb", "#{dummy_path}/config/initializers/devise.rb", force: true
+      template "initializers/bullet.rb", "#{dummy_path}/config/initializers/bullet.rb", force: true
     end
 
     def test_dummy_inject_extension_requirements
       if DummyGeneratorHelper.inject_extension_requirements
         inside dummy_path do
-          inject_require_for('spree_frontend')
-          inject_require_for('spree_backend')
-          inject_require_for('spree_api')
+          inject_require_for("spree_frontend")
+          inject_require_for("spree_backend")
+          inject_require_for("spree_api")
         end
       end
     end
 
     def test_dummy_clean
       inside dummy_path do
-        remove_file '.gitignore'
-        remove_file 'doc'
-        remove_file 'Gemfile'
-        remove_file 'lib/tasks'
-        remove_file 'app/assets/images/rails.png'
-        remove_file 'app/assets/javascripts/application.js'
-        remove_file 'public/index.html'
-        remove_file 'public/robots.txt'
-        remove_file 'README'
-        remove_file 'test'
-        remove_file 'vendor'
-        remove_file 'spec'
+        remove_file ".gitignore"
+        remove_file "doc"
+        remove_file "Gemfile"
+        remove_file "lib/tasks"
+        remove_file "app/assets/images/rails.png"
+        remove_file "app/assets/javascripts/application.js"
+        remove_file "public/index.html"
+        remove_file "public/robots.txt"
+        remove_file "README"
+        remove_file "test"
+        remove_file "vendor"
+        remove_file "spec"
       end
     end
 
     def inject_content_security_policy
       inside dummy_path do
-        inject_into_file 'config/initializers/content_security_policy.rb', %Q[
+        inject_into_file "config/initializers/content_security_policy.rb", %(
   p.script_src  :self, :https, :unsafe_inline, :http, :unsafe_eval
-        ], before: /^end/, verbose: true
+        ), before: /^end/, verbose: true
       end
     end
 
@@ -101,21 +101,21 @@ module Spree
     protected
 
     def inject_require_for(requirement)
-      inject_into_file 'config/application.rb', %Q[
+      inject_into_file "config/application.rb", %(
 begin
   require '#{requirement}'
 rescue LoadError
   # #{requirement} is not available.
 end
-      ], before: /require '#{@lib_name}'/, verbose: true
+      ), before: /require '#{@lib_name}'/, verbose: true
     end
 
     def dummy_path
-      ENV['DUMMY_PATH'] || 'spec/dummy'
+      ENV["DUMMY_PATH"] || "spec/dummy"
     end
 
     def module_name
-      'Dummy'
+      "Dummy"
     end
 
     def application_definition
@@ -130,7 +130,7 @@ end
     alias store_application_definition! application_definition
 
     def camelized
-      @camelized ||= name.gsub(/\W/, '_').squeeze('_').camelize
+      @camelized ||= name.gsub(/\W/, "_").squeeze("_").camelize
     end
 
     def remove_directory_if_exists(path)
@@ -138,12 +138,12 @@ end
     end
 
     def gemfile_path
-      core_gems = ['spree/core', 'spree/api', 'spree/backend', 'spree/frontend', 'spree/sample']
+      core_gems = ["spree/core", "spree/api", "spree/backend", "spree/frontend", "spree/sample"]
 
       if core_gems.include?(lib_name)
-        '../../../../../Gemfile'
+        "../../../../../Gemfile"
       else
-        '../../../../Gemfile'
+        "../../../../Gemfile"
       end
     end
   end

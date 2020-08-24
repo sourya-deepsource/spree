@@ -1,4 +1,4 @@
-require 'spec_helper'
+require "spec_helper"
 
 module Spree
   describe Admin::StockTransfersController, type: :controller do
@@ -8,7 +8,7 @@ module Spree
       StockTransfer.create do |transfer|
         transfer.source_location_id = 1
         transfer.destination_location_id = 2
-        transfer.reference = 'PO 666'
+        transfer.reference = "PO 666"
       end
     end
 
@@ -16,24 +16,24 @@ module Spree
       StockTransfer.create do |transfer|
         transfer.source_location_id = 3
         transfer.destination_location_id = 4
-        transfer.reference = 'PO 666'
+        transfer.reference = "PO 666"
       end
     end
 
-    context '#index' do
-      it 'gets all transfers without search criteria' do
+    context "#index" do
+      it "gets all transfers without search criteria" do
         get :index
         expect(assigns[:stock_transfers].count).to eq 2
       end
 
-      it 'searches by source location' do
-        get :index, params: { q: { source_location_id_eq: 1 } }
+      it "searches by source location" do
+        get :index, params: {q: {source_location_id_eq: 1}}
         expect(assigns[:stock_transfers].count).to eq 1
         expect(assigns[:stock_transfers]).to include(stock_transfer1)
       end
 
-      it 'searches by destination location' do
-        get :index, params: { q: { destination_location_id_eq: 4 } }
+      it "searches by destination location" do
+        get :index, params: {q: {destination_location_id_eq: 4}}
         expect(assigns[:stock_transfers].count).to eq 1
         expect(assigns[:stock_transfers]).to include(stock_transfer2)
       end

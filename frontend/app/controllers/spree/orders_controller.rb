@@ -3,7 +3,7 @@ module Spree
     before_action :set_current_order
     before_action :check_authorization
 
-    helper 'spree/products', 'spree/orders'
+    helper "spree/products", "spree/orders"
 
     respond_to :html
 
@@ -33,9 +33,9 @@ module Spree
 
     # Shows the current incomplete order from the session
     def edit
-      @order = current_order || Order.incomplete.
-               includes(line_items: [variant: [:images, :product, option_values: :option_type]]).
-               find_or_initialize_by(token: cookies.signed[:token])
+      @order = current_order || Order.incomplete
+        .includes(line_items: [variant: [:images, :product, option_values: :option_type]])
+        .find_or_initialize_by(token: cookies.signed[:token])
       associate_user
     end
 
@@ -80,7 +80,7 @@ module Spree
       @order = current_order(lock: true)
       unless @order
         flash[:error] = Spree.t(:order_not_found)
-        redirect_to root_path and return
+        redirect_to(root_path) && return
       end
     end
 

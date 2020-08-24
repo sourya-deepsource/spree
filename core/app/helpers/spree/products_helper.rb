@@ -17,9 +17,9 @@ module Spree
       product_amount = variant.product.amount_in(current_currency)
       return if variant_amount == product_amount || product_amount.nil?
 
-      diff   = variant.amount_in(current_currency) - product_amount
+      diff = variant.amount_in(current_currency) - product_amount
       amount = Spree::Money.new(diff.abs, currency: current_currency).to_html
-      label  = diff > 0 ? :add : :subtract
+      label = diff > 0 ? :add : :subtract
       "(#{Spree.t(label)}: #{amount})".html_safe
     end
 
@@ -42,16 +42,16 @@ module Spree
     # converts line breaks in product description into <p> tags (for html display purposes)
     def product_description(product)
       description = if Spree::Config[:show_raw_product_description]
-                      product.description
-                    else
-                      product.description.to_s.gsub(/(.*?)\r?\n\r?\n/m, '<p>\1</p>')
-                    end
+        product.description
+      else
+        product.description.to_s.gsub(/(.*?)\r?\n\r?\n/m, '<p>\1</p>')
+      end
       description.blank? ? Spree.t(:product_has_no_description) : description
     end
 
     def line_item_description_text(description_text)
       if description_text.present?
-        truncate(strip_tags(description_text.gsub('&nbsp;', ' ').squish), length: 100)
+        truncate(strip_tags(description_text.gsub("&nbsp;", " ").squish), length: 100)
       else
         Spree.t(:product_has_no_description)
       end
@@ -59,8 +59,8 @@ module Spree
 
     def cache_key_for_products(products = @products, additional_cache_key = nil)
       max_updated_at = (products.maximum(:updated_at) || Date.today).to_s(:number)
-      products_cache_keys = "spree/products/#{products.map(&:id).join('-')}-#{params[:page]}-#{params[:sort_by]}-#{max_updated_at}-#{@taxon&.id}"
-      (common_product_cache_keys + [products_cache_keys] + [additional_cache_key]).compact.join('/')
+      products_cache_keys = "spree/products/#{products.map(&:id).join("-")}-#{params[:page]}-#{params[:sort_by]}-#{max_updated_at}-#{@taxon&.id}"
+      (common_product_cache_keys + [products_cache_keys] + [additional_cache_key]).compact.join("/")
     end
 
     def cache_key_for_product(product = @product)
@@ -70,13 +70,13 @@ module Spree
         product.possible_promotions.map(&:cache_key)
       ]
 
-      cache_key_elements.compact.join('/')
+      cache_key_elements.compact.join("/")
     end
 
     def limit_descritpion(string)
       return string if string.length <= 450
 
-      string.slice(0..449) + '...'
+      string.slice(0..449) + "..."
     end
 
     # will return a human readable string
@@ -117,16 +117,16 @@ module Spree
     def related_products
       return [] unless @product.respond_to?(:has_related_products?) && @product.has_related_products?(:related_products)
 
-      @related_products ||= @product.
-                            related_products.
-                            includes(
-                              :tax_category,
-                              master: [
-                                :prices,
-                                images: { attachment_attachment: :blob },
-                              ]
-                            ).
-                            limit(Spree::Config[:products_per_page])
+      @related_products ||= @product
+        .related_products
+        .includes(
+          :tax_category,
+          master: [
+            :prices,
+            images: {attachment_attachment: :blob}
+          ]
+        )
+        .limit(Spree::Config[:products_per_page])
     end
 
     def product_available_in_currency?

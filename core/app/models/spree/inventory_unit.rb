@@ -1,30 +1,30 @@
 module Spree
   class InventoryUnit < Spree::Base
     with_options inverse_of: :inventory_units do
-      belongs_to :variant, class_name: 'Spree::Variant'
-      belongs_to :order, class_name: 'Spree::Order'
-      belongs_to :shipment, class_name: 'Spree::Shipment', touch: true, optional: true
+      belongs_to :variant, class_name: "Spree::Variant"
+      belongs_to :order, class_name: "Spree::Order"
+      belongs_to :shipment, class_name: "Spree::Shipment", touch: true, optional: true
       has_many :return_items
-      has_many :return_authorizations, class_name: 'Spree::ReturnAuthorization', through: :return_items
-      belongs_to :line_item, class_name: 'Spree::LineItem'
+      has_many :return_authorizations, class_name: "Spree::ReturnAuthorization", through: :return_items
+      belongs_to :line_item, class_name: "Spree::LineItem"
     end
 
-    belongs_to :original_return_item, class_name: 'Spree::ReturnItem'
+    belongs_to :original_return_item, class_name: "Spree::ReturnItem"
 
-    scope :backordered, -> { where state: 'backordered' }
-    scope :on_hand, -> { where state: 'on_hand' }
-    scope :on_hand_or_backordered, -> { where state: ['backordered', 'on_hand'] }
-    scope :shipped, -> { where state: 'shipped' }
-    scope :returned, -> { where state: 'returned' }
+    scope :backordered, -> { where state: "backordered" }
+    scope :on_hand, -> { where state: "on_hand" }
+    scope :on_hand_or_backordered, -> { where state: ["backordered", "on_hand"] }
+    scope :shipped, -> { where state: "shipped" }
+    scope :returned, -> { where state: "returned" }
     scope :backordered_per_variant, ->(stock_item) do
-      includes(:shipment, :order).
-        where.not(spree_shipments: { state: 'canceled' }).
-        where(variant_id: stock_item.variant_id).
-        where.not(spree_orders: { completed_at: nil }).
-        backordered.order('spree_orders.completed_at ASC')
+      includes(:shipment, :order)
+        .where.not(spree_shipments: {state: "canceled"})
+        .where(variant_id: stock_item.variant_id)
+        .where.not(spree_orders: {completed_at: nil})
+        .backordered.order("spree_orders.completed_at ASC")
     end
 
-    validates :quantity, numericality: { greater_than: 0 }
+    validates :quantity, numericality: {greater_than: 0}
 
     # state machine (see http://github.com/pluginaweek/state_machine/tree/master for details)
     state_machine initial: :on_hand do
@@ -105,10 +105,10 @@ module Spree
       return @required_quantity unless @required_quantity.nil?
 
       @required_quantity = if exchanged_unit?
-                             original_return_item.return_quantity
-                           else
-                             line_item.quantity
-                           end
+        original_return_item.return_quantity
+      else
+        line_item.quantity
+      end
     end
 
     def exchanged_unit?

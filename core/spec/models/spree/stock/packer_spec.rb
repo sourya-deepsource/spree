@@ -1,4 +1,4 @@
-require 'spec_helper'
+require "spec_helper"
 
 module Spree
   module Stock
@@ -8,29 +8,29 @@ module Spree
       let(:inventory_units) { [InventoryUnit.new(variant: create(:variant))] }
       let(:stock_location) { create(:stock_location) }
 
-      context 'packages' do
-        it 'builds an array of packages' do
+      context "packages" do
+        it "builds an array of packages" do
           packages = subject.packages
           expect(packages).to be_a Array
           expect(packages.first).to be_a Package
         end
 
-        it 'allows users to set splitters to an empty array' do
+        it "allows users to set splitters to an empty array" do
           packer = Packer.new(StockLocation.new, [], [])
           expect(packer).not_to receive(:build_splitter)
           packer.packages
         end
       end
 
-      context 'default_package' do
+      context "default_package" do
         let!(:inventory_units) { Array.new(2) { InventoryUnit.new variant: create(:variant) } }
 
-        it 'contains all the items' do
+        it "contains all the items" do
           package = subject.default_package
           expect(package.contents.size).to eq 2
         end
 
-        it 'variants are added as backordered without enough on_hand' do
+        it "variants are added as backordered without enough on_hand" do
           expect(stock_location).to receive(:fill_status).twice.and_return(
             *(Array.new(1, [1, 0]) + Array.new(1, [0, 1]))
           )
@@ -45,7 +45,7 @@ module Spree
           let(:inventory_units) { [InventoryUnit.new(variant: create(:variant))] }
           let(:packer) { Packer.new(stock_location, inventory_units) }
 
-          it 'builds an empty package' do
+          it "builds an empty package" do
             expect(packer.default_package.contents).to be_empty
           end
         end
@@ -60,7 +60,7 @@ module Spree
             subject.default_package
           end
 
-          it 'still creates package with proper quantity' do
+          it "still creates package with proper quantity" do
             expect(subject.default_package.quantity).to eq 2
           end
         end

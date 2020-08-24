@@ -39,35 +39,35 @@ module Spree
     has_many :classifications, dependent: :delete_all, inverse_of: :product
     has_many :taxons, through: :classifications, before_remove: :remove_taxon
 
-    has_many :product_promotion_rules, class_name: 'Spree::ProductPromotionRule'
-    has_many :promotion_rules, through: :product_promotion_rules, class_name: 'Spree::PromotionRule'
+    has_many :product_promotion_rules, class_name: "Spree::ProductPromotionRule"
+    has_many :promotion_rules, through: :product_promotion_rules, class_name: "Spree::PromotionRule"
 
-    has_many :promotions, through: :promotion_rules, class_name: 'Spree::Promotion'
+    has_many :promotions, through: :promotion_rules, class_name: "Spree::Promotion"
 
     has_many :possible_promotions, -> { advertised.active }, through: :promotion_rules,
-                                                             class_name: 'Spree::Promotion',
+                                                             class_name: "Spree::Promotion",
                                                              source: :promotion
 
-    belongs_to :tax_category, class_name: 'Spree::TaxCategory'
-    belongs_to :shipping_category, class_name: 'Spree::ShippingCategory', inverse_of: :products
+    belongs_to :tax_category, class_name: "Spree::TaxCategory"
+    belongs_to :shipping_category, class_name: "Spree::ShippingCategory", inverse_of: :products
 
     has_one :master,
-            -> { where is_master: true },
-            inverse_of: :product,
-            class_name: 'Spree::Variant'
+      -> { where is_master: true },
+      inverse_of: :product,
+      class_name: "Spree::Variant"
 
     has_many :variants,
-             -> { where(is_master: false).order(:position) },
-             inverse_of: :product,
-             class_name: 'Spree::Variant'
+      -> { where(is_master: false).order(:position) },
+      inverse_of: :product,
+      class_name: "Spree::Variant"
 
     has_many :variants_including_master,
-             -> { order(:position) },
-             inverse_of: :product,
-             class_name: 'Spree::Variant',
-             dependent: :destroy
+      -> { order(:position) },
+      inverse_of: :product,
+      class_name: "Spree::Variant",
+      dependent: :destroy
 
-    has_many :prices, -> { order('spree_variants.position, spree_variants.id, currency') }, through: :variants
+    has_many :prices, -> { order("spree_variants.position, spree_variants.id, currency") }, through: :variants
 
     has_many :stock_items, through: :variants_including_master
 
@@ -93,7 +93,7 @@ module Spree
     before_validation :normalize_slug, on: :update
     before_validation :validate_master
 
-    with_options length: { maximum: 255 }, allow_blank: true do
+    with_options length: {maximum: 255}, allow_blank: true do
       validates :meta_keywords
       validates :meta_title
     end
@@ -102,7 +102,7 @@ module Spree
       validates :price, if: proc { Spree::Config[:require_master_price] }
     end
 
-    validates :slug, presence: true, uniqueness: { allow_blank: true, case_sensitive: false }
+    validates :slug, presence: true, uniqueness: {allow_blank: true, case_sensitive: false}
     validate :discontinue_on_must_be_later_than_available_on, if: -> { available_on && discontinue_on }
 
     attr_accessor :option_values_hash
@@ -123,7 +123,7 @@ module Spree
     end
 
     delegate :display_amount, :display_price, :has_default_price?,
-             :images, to: :find_or_build_master
+      :images, to: :find_or_build_master
 
     alias master_images images
 
@@ -246,9 +246,9 @@ module Spree
     end
 
     def self.like_any(fields, values)
-      conditions = fields.product(values).map do |(field, value)|
+      conditions = fields.product(values).map { |(field, value)|
         arel_table[field].matches("%#{value}%")
-      end
+      }
       where conditions.inject(:or)
     end
 
@@ -276,7 +276,7 @@ module Spree
     end
 
     def property(property_name)
-      product_properties.joins(:property).find_by(spree_properties: { name: property_name }).try(:value)
+      product_properties.joins(:property).find_by(spree_properties: {name: property_name}).try(:value)
     end
 
     def set_property(property_name, property_value, property_presentation = property_name)
@@ -305,14 +305,14 @@ module Spree
     end
 
     def brand
-      taxons.joins(:taxonomy).find_by(spree_taxonomies: { name: Spree.t(:taxonomy_brands_name) })
+      taxons.joins(:taxonomy).find_by(spree_taxonomies: {name: Spree.t(:taxonomy_brands_name)})
     end
 
     def category
-      taxons.joins(:taxonomy).
-        where(spree_taxonomies: { name: Spree.t(:taxonomy_categories_name) }).
-        order(depth: :desc).
-        first
+      taxons.joins(:taxonomy)
+        .where(spree_taxonomies: {name: Spree.t(:taxonomy_categories_name)})
+        .order(depth: :desc)
+        .first
     end
 
     private
@@ -451,7 +451,7 @@ module Spree
 
     def remove_taxon(taxon)
       removed_classifications = classifications.where(taxon: taxon)
-      removed_classifications.each &:remove_from_list
+      removed_classifications.each(&:remove_from_list)
     end
 
     def discontinue_on_must_be_later_than_available_on

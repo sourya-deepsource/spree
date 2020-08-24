@@ -1,6 +1,6 @@
 class AddIndexToShippingMethodZones < ActiveRecord::Migration[5.0]
   def change
-    duplicates = Spree::ShippingMethodZone.group(:shipping_method_id, :zone_id).having('sum(1) > 1').size
+    duplicates = Spree::ShippingMethodZone.group(:shipping_method_id, :zone_id).having("sum(1) > 1").size
 
     duplicates.each do |f|
       shipping_method_id, zone_id = f.first

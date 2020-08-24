@@ -22,9 +22,9 @@ class SplitPricesFromVariants < ActiveRecord::Migration[4.2]
     add_column :spree_variants, :price, :decimal, after: :sku, scale: 2, precision: 8
 
     prices.each do |price|
-      ApplicationRecord.connection.execute("update spree_variants set price = #{price['amount']} where id = #{price['variant_id']}")
+      ApplicationRecord.connection.execute("update spree_variants set price = #{price["amount"]} where id = #{price["variant_id"]}")
     end
-    
+
     change_column :spree_variants, :price, :decimal, after: :sku, scale: 2, precision: 8, null: false
     drop_table :spree_prices
   end

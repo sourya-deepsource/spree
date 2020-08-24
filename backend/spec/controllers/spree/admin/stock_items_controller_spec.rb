@@ -1,17 +1,17 @@
-require 'spec_helper'
+require "spec_helper"
 
 module Spree
   module Admin
     describe StockItemsController, type: :controller do
       stub_authorization!
 
-      context 'formats' do
+      context "formats" do
         let!(:stock_item) { create(:variant).stock_items.first }
 
-        it 'destroy stock item via js' do
-          expect do
-            delete :destroy, params: { format: :js, id: stock_item }
-          end.to change(StockItem, :count).by(-1)
+        it "destroy stock item via js" do
+          expect {
+            delete :destroy, params: {format: :js, id: stock_item}
+          }.to change(StockItem, :count).by(-1)
         end
       end
     end

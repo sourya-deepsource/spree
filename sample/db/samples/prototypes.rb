@@ -1,17 +1,17 @@
-Spree::Sample.load_sample('properties')
+Spree::Sample.load_sample("properties")
 
 prototypes = [
   {
-    name: 'Shirt',
-    properties: ['Manufacturer', 'Brand', 'Model', 'Lenght', 'Made from', 'Material', 'Fit', 'Gender']
+    name: "Shirt",
+    properties: ["Manufacturer", "Brand", "Model", "Lenght", "Made from", "Material", "Fit", "Gender"]
   },
   {
-    name: 'Bag',
-    properties: ['Type', 'Size', 'Material']
+    name: "Bag",
+    properties: ["Type", "Size", "Material"]
   },
   {
-    name: 'Mugs',
-    properties: ['Size', 'Type']
+    name: "Mugs",
+    properties: ["Size", "Type"]
   }
 ]
 

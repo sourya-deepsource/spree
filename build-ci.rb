@@ -1,21 +1,21 @@
 #!/usr/bin/env ruby
 
-require 'pathname'
+require "pathname"
 
 class Project
   attr_reader :name
 
-  NODE_TOTAL = Integer(ENV.fetch('CIRCLE_NODE_TOTAL', 1))
-  NODE_INDEX = Integer(ENV.fetch('CIRCLE_NODE_INDEX', 0))
+  NODE_TOTAL = Integer(ENV.fetch("CIRCLE_NODE_TOTAL", 1))
+  NODE_INDEX = Integer(ENV.fetch("CIRCLE_NODE_INDEX", 0))
 
-  ROOT          = Pathname.pwd.freeze
-  VENDOR_BUNDLE = ROOT.join('vendor', 'bundle').freeze
-  ROOT_GEMFILE  = ROOT.join('Gemfile').freeze
+  ROOT = Pathname.pwd.freeze
+  VENDOR_BUNDLE = ROOT.join("vendor", "bundle").freeze
+  ROOT_GEMFILE = ROOT.join("Gemfile").freeze
 
-  BUNDLER_JOBS    = 4
+  BUNDLER_JOBS = 4
   BUNDLER_RETRIES = 3
 
-  DEFAULT_MODE = 'test'.freeze
+  DEFAULT_MODE = "test".freeze
 
   def initialize(name)
     @name = name
@@ -32,7 +32,7 @@ class Project
   #   otherwise
   def install
     chdir do
-      bundle_check || bundle_install || raise('Cannot finish gem installation')
+      bundle_check || bundle_install || raise("Cannot finish gem installation")
     end
     self
   end
@@ -60,10 +60,10 @@ class Project
     mode = arguments.fetch(0, DEFAULT_MODE)
 
     case mode
-    when 'install'
+    when "install"
       install
       true
-    when 'test'
+    when "test"
       test
     else
       raise "Unknown mode: #{mode.inspect}"
@@ -91,7 +91,7 @@ class Project
   #
   # @return [undefined]
   def setup_test_app
-    system("bundle exec --gemfile=#{ROOT_GEMFILE} rake test_app") || raise('Failed to setup the test app')
+    system("bundle exec --gemfile=#{ROOT_GEMFILE} rake test_app") || raise("Failed to setup the test app")
   end
 
   # Run tests for subproject
@@ -99,13 +99,13 @@ class Project
   # @return [Boolean]
   #   the success of the tests
   def run_tests
-    system("bundle exec rspec #{rspec_arguments.join(' ')}")
+    system("bundle exec rspec #{rspec_arguments.join(" ")}")
   end
 
   def rspec_arguments(custom_name = name)
     args = []
     args += %w[--order random --format documentation --profile 10]
-    if report_dir = ENV['CIRCLE_TEST_REPORTS']
+    if report_dir = ENV["CIRCLE_TEST_REPORTS"]
       args += %W[-r rspec_junit_formatter --format RspecJunitFormatter -o #{report_dir}/rspec/#{custom_name}.xml]
     end
     args
@@ -136,21 +136,21 @@ class Project
   #   the success of ALL subprojects
   def self.test
     projects = current_projects
-    suffix   = "#{projects.length} projects(s) on node #{NODE_INDEX.succ} / #{NODE_TOTAL}"
+    suffix = "#{projects.length} projects(s) on node #{NODE_INDEX.succ} / #{NODE_TOTAL}"
 
     log("Running #{suffix}")
     projects.each do |project|
       log("- #{project.name}")
     end
 
-    builds = projects.map do |project|
+    builds = projects.map { |project|
       log("Building: #{project.name}")
       project.pass?
-    end
+    }
     log("Finished running #{suffix}")
 
     projects.zip(builds).each do |project, build|
-      log("- #{project.name} #{build ? 'SUCCESS' : 'FAILURE'}")
+      log("- #{project.name} #{build ? "SUCCESS" : "FAILURE"}")
     end
 
     builds.all?

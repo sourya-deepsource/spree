@@ -1,7 +1,7 @@
 module Spree
   class TaxonsController < Spree::StoreController
     include Spree::FrontendHelper
-    helper 'spree/products'
+    helper "spree/products"
 
     before_action :load_taxon
 
@@ -17,7 +17,7 @@ module Spree
       if stale?(etag: carousel_etag, last_modified: last_modified, public: true)
         load_products
         if @products.any?
-          render template: 'spree/taxons/product_carousel', layout: false
+          render template: "spree/taxons/product_carousel", layout: false
         else
           head :no_content
         end

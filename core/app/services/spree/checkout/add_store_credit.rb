@@ -21,7 +21,7 @@ module Spree
 
       def apply_store_credits(remaining_total)
         payment_method = Spree::PaymentMethod::StoreCredit.available.first
-        raise 'Store credit payment method could not be found' unless payment_method
+        raise "Store credit payment method could not be found" unless payment_method
 
         @order.user.store_credits.order_by_priority.each do |credit|
           break if remaining_total.zero?
@@ -38,7 +38,7 @@ module Spree
           source: credit,
           payment_method: payment_method,
           amount: amount,
-          state: 'checkout',
+          state: "checkout",
           response_code: credit.generate_authorization_code
         )
       end

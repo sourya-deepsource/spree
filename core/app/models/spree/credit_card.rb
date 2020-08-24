@@ -4,7 +4,7 @@ module Spree
 
     # to migrate safely from older Spree versions that din't provide safe deletion for CCs
     # we need to ensure that we have a connection to the DB and that the `deleted_at` column exists
-    if !ENV['SPREE_DISABLE_DB_CONNECTION'] &&
+    if !ENV["SPREE_DISABLE_DB_CONNECTION"] &&
         connected? &&
         table_exists? &&
         connection.column_exists?(:spree_credit_cards, :deleted_at)
@@ -12,7 +12,7 @@ module Spree
     end
 
     belongs_to :payment_method
-    belongs_to :user, class_name: Spree.user_class.to_s, foreign_key: 'user_id',
+    belongs_to :user, class_name: Spree.user_class.to_s, foreign_key: "user_id",
                       optional: true
     has_many :payments, as: :source
 
@@ -22,15 +22,15 @@ module Spree
 
     # As of rails 4.2 string columns always return strings, we can override it on model level.
     attribute :month, ActiveRecord::Type::Integer.new
-    attribute :year,  ActiveRecord::Type::Integer.new
+    attribute :year, ActiveRecord::Type::Integer.new
 
     attr_reader :number, :verification_value
     attr_accessor :encrypted_data,
-                  :imported,
-                  :manual_entry
+      :imported,
+      :manual_entry
 
     with_options if: :require_card_numbers?, on: :create do
-      validates :month, :year, numericality: { only_integer: true }
+      validates :month, :year, numericality: {only_integer: true}
       validates :number, :verification_value, presence: true, unless: :imported
       validates :name, presence: true
     end
@@ -68,8 +68,8 @@ module Spree
       return unless expiry.present?
 
       self[:month], self[:year] =
-        if expiry =~ /\d{2}\s?\/\s?\d{2,4}/ # will match mm/yy and mm / yyyy
-          expiry.delete(' ').split('/')
+        if /\d{2}\s?\/\s?\d{2,4}/.match?(expiry) # will match mm/yy and mm / yyyy
+          expiry.delete(" ").split("/")
         elsif match = expiry.match(/(\d{2})(\d{2,4})/) # will match mmyy and mmyyyy
           [match[1], match[2]]
         end
@@ -82,8 +82,8 @@ module Spree
 
     def number=(num)
       @number = begin
-                  num.gsub(/[^0-9]/, '')
-                rescue StandardError
+                  num.gsub(/[^0-9]/, "")
+                rescue
                   nil
                 end
     end
@@ -92,16 +92,16 @@ module Spree
     # types from Active Merchant. Converting them is necessary.
     def cc_type=(type)
       self[:cc_type] = case type
-                       when 'mastercard', 'maestro' then 'master'
-                       when 'amex' then 'american_express'
-                       when 'dinersclub' then 'diners_club'
-                       when '' then try_type_from_number
+                       when "mastercard", "maestro" then "master"
+                       when "amex" then "american_express"
+                       when "dinersclub" then "diners_club"
+                       when "" then try_type_from_number
                        else type
-                       end
+      end
     end
 
     def verification_value=(value)
-      @verification_value = value.to_s.gsub(/\s/, '')
+      @verification_value = value.to_s.gsub(/\s/, "")
     end
 
     def set_last_digits
@@ -109,8 +109,8 @@ module Spree
     end
 
     def try_type_from_number
-      numbers = number.delete(' ') if number
-      CARD_TYPES.find { |type, pattern| return type.to_s if numbers =~ pattern }.to_s
+      numbers = number.delete(" ") if number
+      CARD_TYPES.find { |type, pattern| return type.to_s if numbers&.match?(pattern) }.to_s
     end
 
     def verification_value?
@@ -123,7 +123,7 @@ module Spree
     end
 
     def actions
-      %w{capture void credit}
+      %w[capture void credit]
     end
 
     # Indicates whether its possible to capture the payment
@@ -176,8 +176,8 @@ module Spree
 
     def ensure_one_default
       if user_id && default
-        CreditCard.where(default: true, user_id: user_id).where.not(id: id).
-          update_all(default: false)
+        CreditCard.where(default: true, user_id: user_id).where.not(id: id)
+          .update_all(default: false)
       end
     end
   end

@@ -1,31 +1,31 @@
-require_dependency 'spree/payment/processing'
+require_dependency "spree/payment/processing"
 
 module Spree
   class Payment < Spree::Base
-    include Spree::Core::NumberGenerator.new(prefix: 'P', letters: true, length: 7)
+    include Spree::Core::NumberGenerator.new(prefix: "P", letters: true, length: 7)
 
     include Spree::Payment::Processing
 
     include NumberAsParam
 
-    NON_RISKY_AVS_CODES = ['B', 'D', 'H', 'J', 'M', 'Q', 'T', 'V', 'X', 'Y'].freeze
-    RISKY_AVS_CODES     = ['A', 'C', 'E', 'F', 'G', 'I', 'K', 'L', 'N', 'O', 'P', 'R', 'S', 'U', 'W', 'Z'].freeze
-    INVALID_STATES      = %w(failed invalid).freeze
+    NON_RISKY_AVS_CODES = ["B", "D", "H", "J", "M", "Q", "T", "V", "X", "Y"].freeze
+    RISKY_AVS_CODES = ["A", "C", "E", "F", "G", "I", "K", "L", "N", "O", "P", "R", "S", "U", "W", "Z"].freeze
+    INVALID_STATES = %w[failed invalid].freeze
 
     with_options inverse_of: :payments do
-      belongs_to :order, class_name: 'Spree::Order', touch: true
-      belongs_to :payment_method, class_name: 'Spree::PaymentMethod'
+      belongs_to :order, class_name: "Spree::Order", touch: true
+      belongs_to :payment_method, class_name: "Spree::PaymentMethod"
     end
     belongs_to :source, polymorphic: true
 
-    has_many :offsets, -> { offset_payment }, class_name: 'Spree::Payment', foreign_key: :source_id
+    has_many :offsets, -> { offset_payment }, class_name: "Spree::Payment", foreign_key: :source_id
     has_many :log_entries, as: :source
     has_many :state_changes, as: :stateful
-    has_many :capture_events, class_name: 'Spree::PaymentCaptureEvent'
+    has_many :capture_events, class_name: "Spree::PaymentCaptureEvent"
     has_many :refunds, inverse_of: :payment
 
     validates :payment_method, presence: true
-    validates :number, uniqueness: { case_sensitive: true }
+    validates :number, uniqueness: {case_sensitive: true}
     validates :source, presence: true, if: -> { payment_method&.source_required? }
 
     before_validation :validate_source
@@ -46,19 +46,19 @@ module Spree
     validates :amount, numericality: true
 
     delegate :store_credit?, to: :payment_method, allow_nil: true
-    delegate :name,          to: :payment_method, allow_nil: true, prefix: true
+    delegate :name, to: :payment_method, allow_nil: true, prefix: true
     default_scope { order(:created_at) }
 
-    scope :from_credit_card, -> { where(source_type: 'Spree::CreditCard') }
+    scope :from_credit_card, -> { where(source_type: "Spree::CreditCard") }
     scope :with_state, ->(s) { where(state: s.to_s) }
     # "offset" is reserved by activerecord
     scope :offset_payment, -> { where("source_type = 'Spree::Payment' AND amount < 0 AND state = 'completed'") }
 
-    scope :checkout, -> { with_state('checkout') }
-    scope :completed, -> { with_state('completed') }
-    scope :pending, -> { with_state('pending') }
-    scope :processing, -> { with_state('processing') }
-    scope :failed, -> { with_state('failed') }
+    scope :checkout, -> { with_state("checkout") }
+    scope :completed, -> { with_state("completed") }
+    scope :pending, -> { with_state("pending") }
+    scope :processing, -> { with_state("processing") }
+    scope :failed, -> { with_state("failed") }
 
     scope :risky, -> { where("avs_response IN (?) OR (cvv_response_code IS NOT NULL and cvv_response_code != 'M') OR state = 'failed'", RISKY_AVS_CODES) }
     scope :valid, -> { where.not(state: INVALID_STATES) }
@@ -107,7 +107,7 @@ module Spree
         payment.state_changes.create!(
           previous_state: transition.from,
           next_state: transition.to,
-          name: 'payment'
+          name: "payment"
         )
       end
     end
@@ -121,8 +121,8 @@ module Spree
       self[:amount] =
         case amount
         when String
-          separator = I18n.t('number.currency.format.separator')
-          number    = amount.delete("^0-9-#{separator}\.").tr(separator, '.')
+          separator = I18n.t("number.currency.format.separator")
+          number = amount.delete("^0-9-#{separator}\.").tr(separator, ".")
           number.to_d if number.present?
         end || amount
     end
@@ -168,7 +168,7 @@ module Spree
     end
 
     def is_cvv_risky?
-      return false if cvv_response_code == 'M'
+      return false if cvv_response_code == "M"
       return false if cvv_response_code.nil?
       return false if cvv_response_message.present?
 
@@ -226,7 +226,7 @@ module Spree
           amount: uncaptured_amount,
           payment_method: payment_method,
           source: source,
-          state: 'pending',
+          state: "pending",
           capture_on_dispatch: true
         ).authorize!
         update(amount: captured_amount)
@@ -255,15 +255,15 @@ module Spree
 
       # creates the store credit event
       source.update!(action: Spree::StoreCredit::ELIGIBLE_ACTION,
-                                action_amount: amount,
-                                action_authorization_code: response_code)
+                     action_amount: amount,
+                     action_authorization_code: response_code)
     end
 
     def invalidate_old_payments
       # invalid payment or store_credit payment shouldn't invalidate other payment types
       return if has_invalid_state? || store_credit?
 
-      order.payments.with_state('checkout').where.not(id: id).each do |payment|
+      order.payments.with_state("checkout").where.not(id: id).each do |payment|
         payment.invalidate! unless payment.store_credit?
       end
     end

@@ -4,15 +4,15 @@
 # but we disable database persistence in testing to speed up tests
 #
 
-require 'singleton'
+require "singleton"
 
 DB_EXCEPTIONS = if defined? PG
-                  [PG::ConnectionBad, ActiveRecord::NoDatabaseError]
-                elsif defined? Mysql2
-                  [Mysql2::Error::ConnectionError, ActiveRecord::NoDatabaseError]
-                else
-                  [ActiveRecord::ConnectionNotEstablished, ActiveRecord::NoDatabaseError]
-                end
+  [PG::ConnectionBad, ActiveRecord::NoDatabaseError]
+elsif defined? Mysql2
+  [Mysql2::Error::ConnectionError, ActiveRecord::NoDatabaseError]
+else
+  [ActiveRecord::ConnectionNotEstablished, ActiveRecord::NoDatabaseError]
+end
 
 module Spree::Preferences
   class StoreInstance
@@ -48,18 +48,18 @@ module Spree::Preferences
 
         # does it exist in the database?
         val = if preference = Spree::Preference.find_by(key: key)
-                # it does exist
-                preference.value
-              else
-                # use the fallback value
-                yield
-              end
+          # it does exist
+          preference.value
+        else
+          # use the fallback value
+          yield
+        end
 
         # Cache either the value from the db or the fallback value.
         # This avoids hitting the db with subsequent queries.
         @cache.write(key, val)
 
-        return val
+        val
       else
         yield
       end

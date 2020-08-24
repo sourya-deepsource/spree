@@ -13,7 +13,7 @@ module Spree
         Spree::Preferences::Store.instance.clear_cache
 
         config = Rails.application.config.spree.preferences
-        configure_spree_preferences &config_block if block_given?
+        configure_spree_preferences(&config_block) if block_given?
       end
 
       def configure_spree_preferences
@@ -22,7 +22,7 @@ module Spree
       end
 
       def assert_preference_unset(preference)
-        find("#preferences_#{preference}")['checked'].should be false
+        find("#preferences_#{preference}")["checked"].should be false
         Spree::Config[preference].should be false
       end
     end

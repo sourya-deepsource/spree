@@ -29,7 +29,7 @@ module Spree
       end
 
       def calculate_shipping_rates(package, ui_filter)
-        shipping_methods(package, ui_filter).map do |shipping_method|
+        shipping_methods(package, ui_filter).map { |shipping_method|
           cost = shipping_method.calculator.compute(package)
 
           next unless cost
@@ -38,7 +38,7 @@ module Spree
             cost: gross_amount(cost, taxation_options_for(shipping_method)),
             tax_rate: first_tax_rate_for(shipping_method.tax_category)
           )
-        end.compact
+        }.compact
       end
 
       # Override this if you need the prices for shipping methods to be handled just like the
@@ -54,8 +54,8 @@ module Spree
       def first_tax_rate_for(tax_category)
         return unless @order.tax_zone && tax_category
 
-        Spree::TaxRate.for_tax_category(tax_category).
-          potential_rates_for_zone(@order.tax_zone).first
+        Spree::TaxRate.for_tax_category(tax_category)
+          .potential_rates_for_zone(@order.tax_zone).first
       end
 
       def shipping_methods(package, display_filter)

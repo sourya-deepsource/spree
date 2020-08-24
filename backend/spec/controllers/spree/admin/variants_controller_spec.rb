@@ -1,37 +1,37 @@
-require 'spec_helper'
+require "spec_helper"
 
 module Spree
   module Admin
     describe VariantsController, type: :controller do
       stub_authorization!
 
-      describe '#index' do
+      describe "#index" do
         let(:product) { create(:product) }
         let!(:variant_1) { create(:variant, product: product) }
         let!(:variant_2) { create(:variant, product: product) }
 
-        context 'deleted is not requested' do
-          it 'assigns the variants for a requested product' do
-            get :index, params: { product_id: product.slug }
+        context "deleted is not requested" do
+          it "assigns the variants for a requested product" do
+            get :index, params: {product_id: product.slug}
             expect(assigns(:collection)).to include variant_1
             expect(assigns(:collection)).to include variant_2
           end
         end
 
-        context 'deleted is requested' do
+        context "deleted is requested" do
           before { variant_2.destroy }
 
-          it 'assigns only deleted variants for a requested product' do
-            get :index, params: { product_id: product.slug, deleted: 'on' }
+          it "assigns only deleted variants for a requested product" do
+            get :index, params: {product_id: product.slug, deleted: "on"}
             expect(assigns(:collection)).not_to include variant_1
             expect(assigns(:collection)).to include variant_2
           end
         end
       end
 
-      describe '#destroy' do
+      describe "#destroy" do
         subject(:send_request) do
-          delete :destroy, params: { product_id: product, id: variant, format: :js }
+          delete :destroy, params: {product_id: product, id: variant, format: :js}
         end
 
         let(:variant) { mock_model(Spree::Variant) }
@@ -47,7 +47,7 @@ module Spree
           allow(Spree::Variant).to receive(:find).with(variant.id.to_s).and_return(variant)
         end
 
-        describe 'expects to receive' do
+        describe "expects to receive" do
           after { send_request }
 
           it { expect(Spree::Product).to receive(:friendly).and_return(products) }
@@ -56,49 +56,49 @@ module Spree
           it { expect(Spree::Variant).to receive(:find).with(variant.id.to_s).and_return(variant) }
         end
 
-        shared_examples 'correct response' do
+        shared_examples "correct response" do
           it { expect(assigns(:variant)).to eq(variant) }
           it { expect(response).to have_http_status(:ok) }
         end
 
-        context 'will successfully destroy variant' do
+        context "will successfully destroy variant" do
           before { allow(variant).to receive(:destroy).and_return(true) }
 
-          describe 'expects to receive' do
+          describe "expects to receive" do
             after { send_request }
 
             it { expect(variant).to receive(:destroy).and_return(true) }
           end
 
-          describe 'returns response' do
+          describe "returns response" do
             before { send_request }
 
-            it_behaves_like 'correct response'
-            it { expect(flash[:success]).to eq(Spree.t('notice_messages.variant_deleted')) }
+            it_behaves_like "correct response"
+            it { expect(flash[:success]).to eq(Spree.t("notice_messages.variant_deleted")) }
           end
         end
 
-        context 'will not successfully destroy product' do
-          let(:error_msg) { 'Failed to delete' }
+        context "will not successfully destroy product" do
+          let(:error_msg) { "Failed to delete" }
 
           before do
             allow(variant).to receive_message_chain(:errors, :full_messages).and_return([error_msg])
             allow(variant).to receive(:destroy).and_return(false)
           end
 
-          describe 'expects to receive' do
+          describe "expects to receive" do
             after { send_request }
 
             it { expect(variant).to receive_message_chain(:errors, :full_messages).and_return([error_msg]) }
             it { expect(variant).to receive(:destroy).and_return(false) }
           end
 
-          describe 'returns response' do
+          describe "returns response" do
             before { send_request }
 
-            it_behaves_like 'correct response'
+            it_behaves_like "correct response"
 
-            it { expect(flash[:error]).to eq(Spree.t('notice_messages.variant_not_deleted', error: error_msg)) }
+            it { expect(flash[:error]).to eq(Spree.t("notice_messages.variant_not_deleted", error: error_msg)) }
           end
         end
       end

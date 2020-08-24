@@ -1,10 +1,10 @@
-require 'spree/core'
+require "spree/core"
 
-require 'rabl'
+require "rabl"
 
 module Spree
   module Api
   end
 end
 
-require 'spree/api/engine'
+require "spree/api/engine"

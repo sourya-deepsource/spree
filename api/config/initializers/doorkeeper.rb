@@ -11,22 +11,22 @@ Doorkeeper.configure do
   end
 
   admin_authenticator do |routes|
-    current_spree_user&.has_spree_role?('admin') || redirect_to(routes.root_url)
+    current_spree_user&.has_spree_role?("admin") || redirect_to(routes.root_url)
   end
 
-  grant_flows %w(password)
+  grant_flows %w[password]
 
   access_token_methods :from_bearer_authorization, :from_access_token_param
 end
 
 Doorkeeper::AccessGrant.class_eval do
-  self.table_name = 'spree_oauth_access_grants'
+  self.table_name = "spree_oauth_access_grants"
 end
 
 Doorkeeper::AccessToken.class_eval do
-  self.table_name = 'spree_oauth_access_tokens'
+  self.table_name = "spree_oauth_access_tokens"
 end
 
 Doorkeeper::Application.class_eval do
-  self.table_name = 'spree_oauth_applications'
+  self.table_name = "spree_oauth_applications"
 end

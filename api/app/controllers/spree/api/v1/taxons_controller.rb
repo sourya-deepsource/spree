@@ -4,12 +4,12 @@ module Spree
       class TaxonsController < Spree::Api::BaseController
         def index
           @taxons = if taxonomy
-                      taxonomy.root.children
-                    elsif params[:ids]
-                      Spree::Taxon.includes(:children).accessible_by(current_ability).where(id: params[:ids].split(','))
-                    else
-                      Spree::Taxon.includes(:children).accessible_by(current_ability).order(:taxonomy_id, :lft)
-                    end
+            taxonomy.root.children
+          elsif params[:ids]
+            Spree::Taxon.includes(:children).accessible_by(current_ability).where(id: params[:ids].split(","))
+          else
+            Spree::Taxon.includes(:children).accessible_by(current_ability).order(:taxonomy_id, :lft)
+          end
           @taxons = @taxons.ransack(params[:q]).result
           @taxons = @taxons.page(params[:page]).per(params[:per_page])
           respond_with(@taxons)
@@ -24,7 +24,8 @@ module Spree
           show
         end
 
-        def new; end
+        def new
+        end
 
         def create
           authorize! :create, Taxon
@@ -33,8 +34,8 @@ module Spree
           taxonomy = Spree::Taxonomy.find_by(id: params[:taxonomy_id])
 
           if taxonomy.nil?
-            @taxon.errors.add(:taxonomy_id, I18n.t('spree.api.invalid_taxonomy_id'))
-            invalid_resource!(@taxon) and return
+            @taxon.errors.add(:taxonomy_id, I18n.t("spree.api.invalid_taxonomy_id"))
+            invalid_resource!(@taxon) && return
           end
 
           @taxon.parent_id = taxonomy.root.id unless params[:taxon][:parent_id]
@@ -67,7 +68,7 @@ module Spree
           taxon = Spree::Taxon.find(params[:id])
           @products = taxon.products.ransack(params[:q]).result
           @products = @products.page(params[:page]).per(params[:per_page] || 500)
-          render 'spree/api/v1/products/index'
+          render "spree/api/v1/products/index"
         end
 
         private

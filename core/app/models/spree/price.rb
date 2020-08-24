@@ -4,9 +4,9 @@ module Spree
 
     acts_as_paranoid
 
-    MAXIMUM_AMOUNT = BigDecimal('99_999_999.99')
+    MAXIMUM_AMOUNT = BigDecimal("99_999_999.99")
 
-    belongs_to :variant, class_name: 'Spree::Variant', inverse_of: :prices, touch: true
+    belongs_to :variant, class_name: "Spree::Variant", inverse_of: :prices, touch: true
 
     before_validation :ensure_currency
 
@@ -24,7 +24,7 @@ module Spree
     money_methods :amount, :price, :compare_at_amount
     alias display_compare_at_price display_compare_at_amount
 
-    self.whitelisted_ransackable_attributes = ['amount', 'compare_at_amount']
+    self.whitelisted_ransackable_attributes = ["amount", "compare_at_amount"]
 
     def money
       Spree::Money.new(amount || 0, currency: currency)

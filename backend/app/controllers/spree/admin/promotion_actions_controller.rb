@@ -11,7 +11,7 @@ class Spree::Admin::PromotionActionsController < Spree::Admin::BaseController
     end
     respond_to do |format|
       format.html { redirect_to spree.edit_admin_promotion_path(@promotion) }
-      format.js   { render layout: false }
+      format.js { render layout: false }
     end
   end
 
@@ -22,7 +22,7 @@ class Spree::Admin::PromotionActionsController < Spree::Admin::BaseController
     end
     respond_to do |format|
       format.html { redirect_to spree.edit_admin_promotion_path(@promotion) }
-      format.js   { render layout: false }
+      format.js { render layout: false }
     end
   end
 
@@ -38,7 +38,7 @@ class Spree::Admin::PromotionActionsController < Spree::Admin::BaseController
       flash[:error] = Spree.t(:invalid_promotion_action)
       respond_to do |format|
         format.html { redirect_to spree.edit_admin_promotion_path(@promotion) }
-        format.js   { render layout: false }
+        format.js { render layout: false }
       end
     end
   end

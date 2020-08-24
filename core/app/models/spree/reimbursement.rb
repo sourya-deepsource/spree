@@ -1,6 +1,6 @@
 module Spree
   class Reimbursement < Spree::Base
-    include Spree::Core::NumberGenerator.new(prefix: 'RI', length: 9)
+    include Spree::Core::NumberGenerator.new(prefix: "RI", length: 9)
 
     class IncompleteReimbursementError < StandardError; end
 
@@ -11,7 +11,7 @@ module Spree
 
     with_options inverse_of: :reimbursement do
       has_many :refunds
-      has_many :credits, class_name: 'Spree::Reimbursement::Credit'
+      has_many :credits, class_name: "Spree::Reimbursement::Credit"
       has_many :return_items
     end
 
@@ -21,7 +21,7 @@ module Spree
 
     accepts_nested_attributes_for :return_items, allow_destroy: true
 
-    scope :reimbursed, -> { where(reimbursement_status: 'reimbursed') }
+    scope :reimbursed, -> { where(reimbursement_status: "reimbursed") }
 
     # The reimbursement_tax_calculator property should be set to an object that responds to "call"
     # and accepts a reimbursement object. Invoking "call" should update the tax fields on the
@@ -114,7 +114,7 @@ module Spree
       else
         errored!
         reimbursement_failure_hooks.each { |h| h.call self }
-        raise IncompleteReimbursementError, Spree.t('validation.unpaid_amount_not_zero', amount: unpaid_amount)
+        raise IncompleteReimbursementError, Spree.t("validation.unpaid_amount_not_zero", amount: unpaid_amount)
       end
     end
 
@@ -149,14 +149,14 @@ module Spree
     # payments and credits have already been processed, we should allow the
     # reimbursement to show as 'reimbursed' and not 'errored'.
     def unpaid_amount_within_tolerance?
-      reimbursement_count = reimbursement_models.size do |model|
+      reimbursement_count = reimbursement_models.size { |model|
         model.total_amount_reimbursed_for(self) > 0
-      end
+      }
       leniency = if reimbursement_count > 0
-                   (reimbursement_count - 1) * 0.01.to_d
-                 else
-                   0
-                 end
+        (reimbursement_count - 1) * 0.01.to_d
+      else
+        0
+      end
       unpaid_amount.abs.between?(0, leniency)
     end
   end

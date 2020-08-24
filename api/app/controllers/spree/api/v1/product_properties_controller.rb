@@ -6,9 +6,9 @@ module Spree
         before_action :product_property, only: [:show, :update, :destroy]
 
         def index
-          @product_properties = @product.product_properties.accessible_by(current_ability).
-                                ransack(params[:q]).result.
-                                page(params[:page]).per(params[:per_page])
+          @product_properties = @product.product_properties.accessible_by(current_ability)
+            .ransack(params[:q]).result
+            .page(params[:page]).per(params[:per_page])
           respond_with(@product_properties)
         end
 
@@ -16,7 +16,8 @@ module Spree
           respond_with(@product_property)
         end
 
-        def new; end
+        def new
+        end
 
         def create
           authorize! :create, ProductProperty
@@ -57,7 +58,7 @@ module Spree
         def product_property
           if @product
             @product_property ||= @product.product_properties.find_by(id: params[:id])
-            @product_property ||= @product.product_properties.includes(:property).where(spree_properties: { name: params[:id] }).first
+            @product_property ||= @product.product_properties.includes(:property).where(spree_properties: {name: params[:id]}).first
             raise ActiveRecord::RecordNotFound unless @product_property
 
             authorize! :show, @product_property

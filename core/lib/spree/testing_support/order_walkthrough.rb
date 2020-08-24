@@ -23,7 +23,7 @@ class OrderWalkthrough
       end
     end
 
-    order = Spree::Order.create!(email: 'spree@example.com')
+    order = Spree::Order.create!(email: "spree@example.com")
     add_line_item!(order)
     order.next!
 
@@ -59,7 +59,7 @@ class OrderWalkthrough
       amount: order.total
 
     # TODO: maybe look at some way of making this payment_state change automatic
-    order.payment_state = 'paid'
+    order.payment_state = "paid"
     order.next!
   end
 

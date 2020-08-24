@@ -68,15 +68,15 @@ module Spree::Preferences::Preferable
 
   def defined_preferences
     methods.grep(/\Apreferred_.*=\Z/).map do |pref_method|
-      pref_method.to_s.gsub(/\Apreferred_|=\Z/, '').to_sym
+      pref_method.to_s.gsub(/\Apreferred_|=\Z/, "").to_sym
     end
   end
 
   def default_preferences
     Hash[
-      defined_preferences.map do |preference|
+      defined_preferences.map { |preference|
         [preference, preference_default(preference)]
-      end
+      }
     ]
   end
 
@@ -110,18 +110,18 @@ module Spree::Preferences::Preferable
       value.is_a?(Array) ? value : Array.wrap(value)
     when :hash
       case value.class.to_s
-      when 'Hash'
+      when "Hash"
         value
-      when 'String'
+      when "String"
         # only works with hashes whose keys are strings
-        JSON.parse value.gsub('=>', ':')
-      when 'Array'
+        JSON.parse value.gsub("=>", ":")
+      when "Array"
         begin
           value.try(:to_h)
         rescue TypeError
           Hash[*value]
         rescue ArgumentError
-          raise 'An even count is required when passing an array to be converted to a hash'
+          raise "An even count is required when passing an array to be converted to a hash"
         end
       else
         value.class.ancestors.include?(Hash) ? value : {}

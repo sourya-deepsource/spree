@@ -5,7 +5,7 @@ module Spree
       min: -2**31
     }.freeze
 
-    belongs_to :stock_item, class_name: 'Spree::StockItem', inverse_of: :stock_movements
+    belongs_to :stock_item, class_name: "Spree::StockItem", inverse_of: :stock_movements
     belongs_to :originator, polymorphic: true
 
     after_create :update_stock_item_quantity
@@ -21,7 +21,7 @@ module Spree
 
     scope :recent, -> { order(created_at: :desc) }
 
-    self.whitelisted_ransackable_attributes = ['quantity']
+    self.whitelisted_ransackable_attributes = ["quantity"]
 
     def readonly?
       persisted?

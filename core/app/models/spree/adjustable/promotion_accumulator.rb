@@ -34,9 +34,9 @@ module Spree
       end
 
       def promotions_adjustments(promotion_id, adjustments = self.adjustments)
-        where(sources, promotion_id: promotion_id).map do |source|
+        where(sources, promotion_id: promotion_id).map { |source|
           where(adjustments, source_id: source.id)
-        end.flatten
+        }.flatten
       end
 
       def promo_total(*args)
@@ -58,8 +58,8 @@ module Spree
       delegate :amount, :ship_total, to: :order
 
       def all_adjustments
-        order.all_adjustments.promotion.includes(source: [:promotion]).where.
-          not('adjustable_id = ? AND adjustable_type = ?', adjustable.id, adjustable.class.to_s)
+        order.all_adjustments.promotion.includes(source: [:promotion]).where
+          .not("adjustable_id = ? AND adjustable_type = ?", adjustable.id, adjustable.class.to_s)
       end
 
       def add(array, object, id)
@@ -67,7 +67,7 @@ module Spree
       end
 
       def item_adjustments
-        adjustments.reject { |a| a.adjustable_type == 'Spree::Shipment' }
+        adjustments.reject { |a| a.adjustable_type == "Spree::Shipment" }
       end
 
       def where(array, opts = {})

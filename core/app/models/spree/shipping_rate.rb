@@ -1,16 +1,16 @@
 module Spree
   class ShippingRate < Spree::Base
-    belongs_to :shipment, class_name: 'Spree::Shipment'
-    belongs_to :tax_rate, class_name: 'Spree::TaxRate'
-    belongs_to :shipping_method, class_name: 'Spree::ShippingMethod', inverse_of: :shipping_rates
+    belongs_to :shipment, class_name: "Spree::Shipment"
+    belongs_to :tax_rate, class_name: "Spree::TaxRate"
+    belongs_to :shipping_method, class_name: "Spree::ShippingMethod", inverse_of: :shipping_rates
 
     extend Spree::DisplayMoney
 
     money_methods :base_price, :final_price, :tax_amount
 
     delegate :order, :currency, :free?, to: :shipment
-    delegate :name,             to: :shipping_method
-    delegate :code,             to: :shipping_method, prefix: true
+    delegate :name, to: :shipping_method
+    delegate :code, to: :shipping_method, prefix: true
 
     def display_price
       price = display_base_price.to_s
@@ -19,7 +19,7 @@ module Spree
 
       Spree.t(
         tax_rate.included_in_price? ? :including_tax : :excluding_tax,
-        scope: 'shipping_rates.display_price',
+        scope: "shipping_rates.display_price",
         price: price,
         tax_amount: display_tax_amount,
         tax_rate_name: tax_rate.name

@@ -8,12 +8,12 @@ module Spree
         TaxonsHelper is deprecated and will be removed in Spree 4.2.
         Please remove any `helper 'spree/taxons'` from your controllers.
       DEPRECATION
-      products = taxon.active_products.distinct.select('spree_products.*, spree_products_taxons.position').limit(max)
+      products = taxon.active_products.distinct.select("spree_products.*, spree_products_taxons.position").limit(max)
       if products.size < max
         products_arel = Spree::Product.arel_table
         taxon.descendants.each do |child|
           to_get = max - products.length
-          products += child.active_products.distinct.select('spree_products.*, spree_products_taxons.position').where(products_arel[:id].not_in(products.map(&:id))).limit(to_get)
+          products += child.active_products.distinct.select("spree_products.*, spree_products_taxons.position").where(products_arel[:id].not_in(products.map(&:id))).limit(to_get)
           break if products.size >= max
         end
       end

@@ -1,15 +1,15 @@
 FactoryBot.define do
   factory :payment, class: Spree::Payment do
     order
-    amount        { 45.75 }
-    state         { 'checkout' }
-    response_code { '12345' }
+    amount { 45.75 }
+    state { "checkout" }
+    response_code { "12345" }
 
     association(:payment_method, factory: :credit_card_payment_method)
     association(:source, factory: :credit_card)
 
     factory :payment_with_refund do
-      state { 'completed' }
+      state { "completed" }
       after :create do |payment|
         create(:refund, amount: 5, payment: payment)
       end

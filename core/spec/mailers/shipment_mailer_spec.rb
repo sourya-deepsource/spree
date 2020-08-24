@@ -1,5 +1,5 @@
-require 'spec_helper'
-require 'email_spec'
+require "spec_helper"
+require "email_spec"
 
 describe Spree::ShipmentMailer, type: :mailer do
   include EmailSpec::Helpers
@@ -7,21 +7,21 @@ describe Spree::ShipmentMailer, type: :mailer do
 
   let!(:store) { create(:store) }
 
-  let(:order) { stub_model(Spree::Order, number: 'R12345', store: store) }
-  let(:shipping_method) { stub_model(Spree::ShippingMethod, name: 'USPS') }
-  let(:product) { stub_model(Spree::Product, name: %{The "BEST" product}, sku: 'SKU0001') }
+  let(:order) { stub_model(Spree::Order, number: "R12345", store: store) }
+  let(:shipping_method) { stub_model(Spree::ShippingMethod, name: "USPS") }
+  let(:product) { stub_model(Spree::Product, name: %(The "BEST" product), sku: "SKU0001") }
   let(:variant) { stub_model(Spree::Variant, product: product) }
   let(:line_item) { stub_model(Spree::LineItem, variant: variant, order: order, quantity: 1, price: 5) }
   let(:shipment) do
     shipment = stub_model(Spree::Shipment)
     allow(shipment).to receive_messages(line_items: [line_item], order: order)
-    allow(shipment).to receive_messages(tracking_url: 'http://track.com/me')
+    allow(shipment).to receive_messages(tracking_url: "http://track.com/me")
     allow(shipment).to receive_messages(shipping_method: shipping_method)
     shipment
   end
 
-  context ':from not set explicitly' do
-    it 'falls back to spree config' do
+  context ":from not set explicitly" do
+    it "falls back to spree config" do
       message = Spree::ShipmentMailer.shipped_email(shipment)
       expect(message.from).to eq([Spree::Store.current.mail_from_address])
     end
@@ -30,22 +30,22 @@ describe Spree::ShipmentMailer, type: :mailer do
   # Regression test for #2196
   it "doesn't include out of stock in the email body" do
     shipment_email = Spree::ShipmentMailer.shipped_email(shipment)
-    expect(shipment_email.body).not_to include(%q{Out of Stock})
+    expect(shipment_email.body).not_to include("Out of Stock")
   end
 
-  it 'shipment_email accepts an shipment id as an alternative to an Shipment object' do
+  it "shipment_email accepts an shipment id as an alternative to an Shipment object" do
     expect(Spree::Shipment).to receive(:find).with(shipment.id).and_return(shipment)
-    expect do
+    expect {
       Spree::ShipmentMailer.shipped_email(shipment.id).body
-    end.not_to raise_error
+    }.not_to raise_error
   end
 
-  context 'emails must be translatable' do
-    context 'shipped_email' do
-      context 'pt-BR locale' do
+  context "emails must be translatable" do
+    context "shipped_email" do
+      context "pt-BR locale" do
         before do
           I18n.enforce_available_locales = false
-          pt_br_shipped_email = { spree: { shipment_mailer: { shipped_email: { dear_customer: 'Caro Cliente,' } } } }
+          pt_br_shipped_email = {spree: {shipment_mailer: {shipped_email: {dear_customer: "Caro Cliente,"}}}}
           I18n.backend.store_translations :'pt-BR', pt_br_shipped_email
           I18n.locale = :'pt-BR'
         end
@@ -57,13 +57,13 @@ describe Spree::ShipmentMailer, type: :mailer do
 
         specify do
           shipped_email = Spree::ShipmentMailer.shipped_email(shipment)
-          expect(shipped_email).to have_body_text('Caro Cliente,')
+          expect(shipped_email).to have_body_text("Caro Cliente,")
         end
       end
     end
   end
 
-  context 'shipped_email' do
+  context "shipped_email" do
     let(:shipped_email) { Spree::ShipmentMailer.shipped_email(shipment) }
 
     specify do
@@ -79,14 +79,14 @@ describe Spree::ShipmentMailer, type: :mailer do
     end
 
     specify do
-      expect(shipped_email).to have_body_text('Dear Customer')
+      expect(shipped_email).to have_body_text("Dear Customer")
     end
 
-    context 'when order has customer\'s name' do
-      before { allow(order).to receive(:name).and_return('Test User') }
+    context "when order has customer's name" do
+      before { allow(order).to receive(:name).and_return("Test User") }
 
-      specify 'shows order\'s user name in email body' do
-        expect(shipped_email).to have_body_text('Dear Test User')
+      specify "shows order's user name in email body" do
+        expect(shipped_email).to have_body_text("Dear Test User")
       end
     end
   end

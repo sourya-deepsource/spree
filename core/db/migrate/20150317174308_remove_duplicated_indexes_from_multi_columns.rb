@@ -3,7 +3,7 @@ class RemoveDuplicatedIndexesFromMultiColumns < ActiveRecord::Migration[4.2]
     remove_index :spree_adjustments, name: "index_adjustments_on_order_id"
     remove_index :spree_option_types_prototypes, :prototype_id
     add_index :spree_option_types_prototypes, :option_type_id
-    remove_index :spree_option_values_variants, name: 'index_option_values_variants_on_option_value_and_variant'
+    remove_index :spree_option_values_variants, name: "index_option_values_variants_on_option_value_and_variant"
     remove_index :spree_option_values_variants, :variant_id
     add_index :spree_option_values_variants, :option_value_id
     remove_index :spree_orders, :user_id

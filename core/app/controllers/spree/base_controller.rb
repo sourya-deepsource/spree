@@ -1,5 +1,5 @@
-require 'cancan'
-require_dependency 'spree/core/controller_helpers/strong_parameters'
+require "cancan"
+require_dependency "spree/core/controller_helpers/strong_parameters"
 
 class Spree::BaseController < ApplicationController
   include Spree::Core::ControllerHelpers::Auth
@@ -12,4 +12,4 @@ class Spree::BaseController < ApplicationController
   respond_to :html
 end
 
-require 'spree/i18n/initializer'
+require "spree/i18n/initializer"

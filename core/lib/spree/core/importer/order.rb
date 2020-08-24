@@ -21,10 +21,10 @@ module Spree
 
           if completed_at = params.delete(:completed_at)
             order.completed_at = completed_at
-            order.state = 'complete'
+            order.state = "complete"
           end
 
-          params.delete(:user_id) unless user.try(:has_spree_role?, 'admin') && params.key?(:user_id)
+          params.delete(:user_id) unless user.try(:has_spree_role?, "admin") && params.key?(:user_id)
 
           order.update!(params)
 
@@ -48,7 +48,7 @@ module Spree
 
           shipments_hash.each do |s|
             shipment = order.shipments.build
-            shipment.tracking       = s[:tracking]
+            shipment.tracking = s[:tracking]
             shipment.stock_location = Spree::StockLocation.find_by(admin_name: s[:stock_location]) ||
               Spree::StockLocation.find_by!(name: s[:stock_location])
             inventory_units = create_inventory_units_from_order_and_params(order, s[:inventory_units])
@@ -58,7 +58,7 @@ module Spree
 
               if s[:shipped_at].present?
                 inventory_unit.pending = false
-                inventory_unit.state = 'shipped'
+                inventory_unit.state = "shipped"
               end
 
               inventory_unit.save!
@@ -66,7 +66,7 @@ module Spree
 
             if s[:shipped_at].present?
               shipment.shipped_at = s[:shipped_at]
-              shipment.state      = 'shipped'
+              shipment.state = "shipped"
             end
 
             shipment.save!
@@ -145,7 +145,7 @@ module Spree
             payment.amount = p[:amount].to_f
             # Order API should be using state as that's the normal payment field.
             # spree_wombat serializes payment state as status so imported orders should fall back to status field.
-            payment.state = p[:state] || p[:status] || 'completed'
+            payment.state = p[:state] || p[:status] || "completed"
             payment.created_at = p[:created_at] if p[:created_at]
             payment.payment_method = Spree::PaymentMethod.find_by!(name: p[:payment_method])
             payment.source = create_source_payment_from_params(p[:source], payment) if p[:source]
@@ -188,13 +188,13 @@ module Spree
 
           begin
             search = {}
-            if name = address[:country]['name']
+            if name = address[:country]["name"]
               search[:name] = name
-            elsif iso_name = address[:country]['iso_name']
+            elsif iso_name = address[:country]["iso_name"]
               search[:iso_name] = iso_name.upcase
-            elsif iso = address[:country]['iso']
+            elsif iso = address[:country]["iso"]
               search[:iso] = iso.upcase
-            elsif iso3 = address[:country]['iso3']
+            elsif iso3 = address[:country]["iso3"]
               search[:iso3] = iso3.upcase
             end
 
@@ -210,9 +210,9 @@ module Spree
 
           begin
             search = {}
-            if name = address[:state]['name']
+            if name = address[:state]["name"]
               search[:name] = name
-            elsif abbr = address[:state]['abbr']
+            elsif abbr = address[:state]["abbr"]
               search[:abbr] = abbr.upcase
             end
 
@@ -231,9 +231,9 @@ module Spree
 
         def self.source_type_from_adjustment(adjustment)
           if adjustment[:tax]
-            'Spree::TaxRate'
+            "Spree::TaxRate"
           elsif adjustment[:promotion]
-            'Spree::PromotionAction'
+            "Spree::PromotionAction"
           end
         end
       end

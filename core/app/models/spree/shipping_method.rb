@@ -15,11 +15,11 @@ module Spree
     has_many :shipping_rates, inverse_of: :shipping_method
     has_many :shipments, through: :shipping_rates
 
-    has_many :shipping_method_zones, class_name: 'Spree::ShippingMethodZone',
-                                     foreign_key: 'shipping_method_id'
-    has_many :zones, through: :shipping_method_zones, class_name: 'Spree::Zone'
+    has_many :shipping_method_zones, class_name: "Spree::ShippingMethodZone",
+                                     foreign_key: "shipping_method_id"
+    has_many :zones, through: :shipping_method_zones, class_name: "Spree::Zone"
 
-    belongs_to :tax_category, class_name: 'Spree::TaxCategory', optional: true
+    belongs_to :tax_category, class_name: "Spree::TaxCategory", optional: true
 
     validates :name, :display_on, presence: true
 
@@ -40,8 +40,8 @@ module Spree
     end
 
     def self.calculators
-      spree_calculators.send(model_name_without_spree_namespace).
-        select { |c| c.to_s.constantize < Spree::ShippingCalculator }
+      spree_calculators.send(model_name_without_spree_namespace)
+        .select { |c| c.to_s.constantize < Spree::ShippingCalculator }
     end
 
     def tax_category
@@ -57,11 +57,11 @@ module Spree
 
     # Some shipping methods are only meant to be set via backend
     def frontend?
-      display_on.in?(['both', 'front_end'])
+      display_on.in?(["both", "front_end"])
     end
 
     def backend?
-      display_on.in?(['both', 'back_end'])
+      display_on.in?(["both", "back_end"])
     end
 
     def at_least_one_shipping_category

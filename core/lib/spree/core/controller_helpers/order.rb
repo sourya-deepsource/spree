@@ -17,7 +17,7 @@ module Spree
 
           if @simple_current_order
             @simple_current_order.last_ip_address = ip_address
-            return @simple_current_order
+            @simple_current_order
           else
             @simple_current_order = Spree::Order.new
           end
@@ -53,7 +53,7 @@ module Spree
 
         def set_current_order
           if try_spree_current_user && current_order
-            try_spree_current_user.orders.incomplete.where('id != ?', current_order.id).each do |order|
+            try_spree_current_user.orders.incomplete.where("id != ?", current_order.id).each do |order|
               current_order.merge!(order, try_spree_current_user)
             end
           end
@@ -70,27 +70,27 @@ module Spree
         end
 
         def current_order_params
-          { currency: current_currency, token: cookies.signed[:token], store_id: current_store.id, user_id: try_spree_current_user.try(:id) }
+          {currency: current_currency, token: cookies.signed[:token], store_id: current_store.id, user_id: try_spree_current_user.try(:id)}
         end
 
         def find_order_by_token_or_user(options = {}, with_adjustments = false)
           options[:lock] ||= false
 
           includes = if options[:includes]
-                       { line_items: [variant: [:images, :option_values, :product]] }
-                     else
-                       {}
-                     end
+            {line_items: [variant: [:images, :option_values, :product]]}
+          else
+            {}
+          end
 
           # Find any incomplete orders for the token
           incomplete_orders = Spree::Order.incomplete.includes(includes)
 
           token_order_params = current_order_params.except(:user_id)
           order = if with_adjustments
-                    incomplete_orders.includes(:adjustments).lock(options[:lock]).find_by(token_order_params)
-                  else
-                    incomplete_orders.lock(options[:lock]).find_by(token_order_params)
-                  end
+            incomplete_orders.includes(:adjustments).lock(options[:lock]).find_by(token_order_params)
+          else
+            incomplete_orders.lock(options[:lock]).find_by(token_order_params)
+          end
 
           # Find any incomplete orders for the current user
           order = last_incomplete_order(includes) if order.nil? && try_spree_current_user

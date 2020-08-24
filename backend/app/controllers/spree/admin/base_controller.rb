@@ -1,8 +1,8 @@
 module Spree
   module Admin
     class BaseController < Spree::BaseController
-      helper 'spree/admin/navigation'
-      layout 'spree/layouts/admin'
+      helper "spree/admin/navigation"
+      layout "spree/layouts/admin"
 
       before_action :authorize_admin
       before_action :generate_admin_api_key
@@ -15,10 +15,10 @@ module Spree
 
       def authorize_admin
         record = if respond_to?(:model_class, true) && model_class
-                   model_class
-                 else
-                   controller_name.to_sym
-                 end
+          model_class
+        else
+          controller_name.to_sym
+        end
         authorize! :admin, record
         authorize! action, record
       end
@@ -32,13 +32,13 @@ module Spree
       end
 
       def flash_message_for(object, event_sym)
-        resource_desc  = object.class.model_name.human
+        resource_desc = object.class.model_name.human
         resource_desc += " \"#{object.name}\"" if object.respond_to?(:name) && object.name.present?
         Spree.t(event_sym, resource: resource_desc)
       end
 
       def render_js_for_destroy
-        render partial: '/spree/admin/shared/destroy'
+        render partial: "/spree/admin/shared/destroy"
       end
 
       def config_locale

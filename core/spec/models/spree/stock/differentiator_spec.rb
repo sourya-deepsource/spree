@@ -1,4 +1,4 @@
-require 'spec_helper'
+require "spec_helper"
 
 module Spree
   module Stock
@@ -30,7 +30,7 @@ module Spree
 
       it { is_expected.to be_missing }
 
-      it 'calculates the missing items' do
+      it "calculates the missing items" do
         expect(subject.missing[variant1]).to eq 1
         expect(subject.missing[variant2]).to eq 1
       end

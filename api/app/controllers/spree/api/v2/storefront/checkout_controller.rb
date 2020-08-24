@@ -126,7 +126,7 @@ module Spree
             shipping_rates_serializer.new(
               shipments,
               include: [:shipping_rates],
-              params: { show_rates: true }
+              params: {show_rates: true}
             ).serializable_hash
           end
         end

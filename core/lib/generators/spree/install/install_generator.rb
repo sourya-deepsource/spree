@@ -1,28 +1,28 @@
-require 'rails/generators'
-require 'highline/import'
-require 'bundler'
-require 'bundler/cli'
-require 'active_support/core_ext/string/indent'
-require 'spree/core'
+require "rails/generators"
+require "highline/import"
+require "bundler"
+require "bundler/cli"
+require "active_support/core_ext/string/indent"
+require "spree/core"
 
 module Spree
   class InstallGenerator < Rails::Generators::Base
-    class_option :migrate, type: :boolean, default: true, banner: 'Run Spree migrations'
-    class_option :seed, type: :boolean, default: true, banner: 'load seed data (migrations must be run)'
-    class_option :sample, type: :boolean, default: true, banner: 'load sample data (migrations must be run)'
-    class_option :copy_storefront, type: :boolean, default: true, banner: 'copy storefront from spree frontend to your application for easy customization'
+    class_option :migrate, type: :boolean, default: true, banner: "Run Spree migrations"
+    class_option :seed, type: :boolean, default: true, banner: "load seed data (migrations must be run)"
+    class_option :sample, type: :boolean, default: true, banner: "load sample data (migrations must be run)"
+    class_option :copy_storefront, type: :boolean, default: true, banner: "copy storefront from spree frontend to your application for easy customization"
     class_option :auto_accept, type: :boolean
     class_option :user_class, type: :string
     class_option :admin_email, type: :string
     class_option :admin_password, type: :string
-    class_option :lib_name, type: :string, default: 'spree'
+    class_option :lib_name, type: :string, default: "spree"
     class_option :enforce_available_locales, type: :boolean, default: nil
 
     def self.source_paths
       paths = superclass.source_paths
-      paths << File.expand_path('../templates', "../../#{__FILE__}")
-      paths << File.expand_path('../templates', "../#{__FILE__}")
-      paths << File.expand_path('templates', __dir__)
+      paths << File.expand_path("../templates", "../../#{__FILE__}")
+      paths << File.expand_path("../templates", "../#{__FILE__}")
+      paths << File.expand_path("templates", __dir__)
       paths.flatten
     end
 
@@ -39,18 +39,18 @@ module Spree
     end
 
     def add_files
-      template 'config/initializers/spree.rb', 'config/initializers/spree.rb'
+      template "config/initializers/spree.rb", "config/initializers/spree.rb"
 
       if Spree::Core::Engine.frontend_available? || Rails.env.test?
-        template 'config/initializers/spree_storefront.rb', 'config/initializers/spree_storefront.rb'
-        template 'config/spree_storefront.yml', 'config/spree_storefront.yml'
+        template "config/initializers/spree_storefront.rb", "config/initializers/spree_storefront.rb"
+        template "config/spree_storefront.yml", "config/spree_storefront.yml"
       end
     end
 
     def additional_tweaks
-      return unless File.exist? 'public/robots.txt'
+      return unless File.exist? "public/robots.txt"
 
-      append_file 'public/robots.txt', <<-ROBOTS.strip_heredoc
+      append_file "public/robots.txt", <<-ROBOTS.strip_heredoc
         User-agent: *
         Disallow: /checkout
         Disallow: /cart
@@ -66,8 +66,8 @@ module Spree
     end
 
     def setup_assets
-      @lib_name = 'spree'
-      %w{javascripts stylesheets images}.each do |path|
+      @lib_name = "spree"
+      %w[javascripts stylesheets images].each do |path|
         if Spree::Core::Engine.frontend_available? || Rails.env.test?
           empty_directory "vendor/assets/#{path}/spree/frontend"
         end
@@ -77,23 +77,23 @@ module Spree
       end
 
       if Spree::Core::Engine.frontend_available? || Rails.env.test?
-        template 'vendor/assets/javascripts/spree/frontend/all.js'
-        template 'vendor/assets/stylesheets/spree/frontend/all.css'
+        template "vendor/assets/javascripts/spree/frontend/all.js"
+        template "vendor/assets/stylesheets/spree/frontend/all.css"
       end
 
       if Spree::Core::Engine.backend_available? || Rails.env.test?
-        template 'vendor/assets/javascripts/spree/backend/all.js'
-        template 'vendor/assets/stylesheets/spree/backend/all.css'
+        template "vendor/assets/javascripts/spree/backend/all.js"
+        template "vendor/assets/stylesheets/spree/backend/all.css"
       end
     end
 
     def create_overrides_directory
-      empty_directory 'app/overrides'
+      empty_directory "app/overrides"
     end
 
     def copy_storefront
       if @copy_storefront && Spree::Core::Engine.frontend_available?
-        generate 'spree:frontend:copy_storefront'
+        generate "spree:frontend:copy_storefront"
       end
     end
 
@@ -122,7 +122,7 @@ module Spree
     end
 
     def include_seed_data
-      append_file 'db/seeds.rb', <<-SEEDS.strip_heredoc
+      append_file "db/seeds.rb", <<-SEEDS.strip_heredoc
 
         Spree::Core::Engine.load_seed if defined?(Spree::Core)
         Spree::Auth::Engine.load_seed if defined?(Spree::Auth)
@@ -130,27 +130,27 @@ module Spree
     end
 
     def install_migrations
-      say_status :copying, 'migrations'
+      say_status :copying, "migrations"
       silence_stream(STDOUT) do
-        silence_warnings { rake 'railties:install:migrations' }
+        silence_warnings { rake "railties:install:migrations" }
       end
     end
 
     def create_database
-      say_status :creating, 'database'
+      say_status :creating, "database"
       silence_stream(STDOUT) do
         silence_stream(STDERR) do
-          silence_warnings { rake 'db:create' }
+          silence_warnings { rake "db:create" }
         end
       end
     end
 
     def run_migrations
       if @run_migrations
-        say_status :running, 'migrations'
+        say_status :running, "migrations"
         silence_stream(STDOUT) do
           silence_stream(STDERR) do
-            silence_warnings { rake 'db:migrate' }
+            silence_warnings { rake "db:migrate" }
           end
         end
       else
@@ -160,43 +160,43 @@ module Spree
 
     def populate_seed_data
       if @load_seed_data
-        say_status :loading,  'seed data'
+        say_status :loading, "seed data"
         rake_options = []
-        rake_options << 'AUTO_ACCEPT=1' if options[:auto_accept]
+        rake_options << "AUTO_ACCEPT=1" if options[:auto_accept]
         rake_options << "ADMIN_EMAIL=#{options[:admin_email]}" if options[:admin_email]
         rake_options << "ADMIN_PASSWORD=#{options[:admin_password]}" if options[:admin_password]
 
-        cmd = -> { rake("db:seed #{rake_options.join(' ')}") }
+        cmd = -> { rake("db:seed #{rake_options.join(" ")}") }
         if options[:auto_accept] || (options[:admin_email] && options[:admin_password])
           silence_stream(STDOUT) do
             silence_stream(STDERR) do
-              silence_warnings &cmd
+              silence_warnings(&cmd)
             end
           end
         else
           cmd.call
         end
       else
-        say_status :skipping, 'seed data (you can always run rake db:seed)'
+        say_status :skipping, "seed data (you can always run rake db:seed)"
       end
     end
 
     def load_sample_data
       if @load_sample_data
-        say_status :loading, 'sample data'
+        say_status :loading, "sample data"
         silence_stream(STDOUT) do
           silence_stream(STDERR) do
-            silence_warnings { rake 'spree_sample:load' }
+            silence_warnings { rake "spree_sample:load" }
           end
         end
       else
-        say_status :skipping, 'sample data (you can always run rake spree_sample:load)'
+        say_status :skipping, "sample data (you can always run rake spree_sample:load)"
       end
     end
 
     def notify_about_routes
-      insert_into_file(File.join('config', 'routes.rb'),
-                       after: "Rails.application.routes.draw do\n") do
+      insert_into_file(File.join("config", "routes.rb"),
+        after: "Rails.application.routes.draw do\n") do
         <<-ROUTES.strip_heredoc.indent!(2)
           # This line mounts Spree's routes at the root of your application.
           # This means, any requests to URLs such as /products, will go to
@@ -211,31 +211,31 @@ module Spree
       end
 
       unless options[:quiet]
-        puts '*' * 50
+        puts "*" * 50
         puts "We added the following line to your application's config/routes.rb file:"
-        puts ' '
+        puts " "
         puts "    mount Spree::Core::Engine, at: '/'"
       end
     end
 
     def complete
       unless options[:quiet]
-        puts '*' * 50
+        puts "*" * 50
         puts "Spree has been installed successfully. You're all ready to go!"
-        puts ' '
-        puts 'Enjoy!'
+        puts " "
+        puts "Enjoy!"
       end
     end
 
     protected
 
     def javascript_exists?(script)
-      extensions = %w(.js.coffee .js.erb .js.coffee.erb .js)
+      extensions = %w[.js.coffee .js.erb .js.coffee.erb .js]
       file_exists?(extensions, script)
     end
 
     def stylesheet_exists?(stylesheet)
-      extensions = %w(.css.scss .css.erb .css.scss.erb .css)
+      extensions = %w[.css.scss .css.erb .css.scss.erb .css]
       file_exists?(extensions, stylesheet)
     end
 
@@ -249,7 +249,7 @@ module Spree
 
     def silence_stream(stream)
       old_stream = stream.dup
-      stream.reopen(RbConfig::CONFIG['host_os'] =~ /mswin|mingw/ ? 'NUL:' : '/dev/null')
+      stream.reopen(/mswin|mingw/.match?(RbConfig::CONFIG["host_os"]) ? "NUL:" : "/dev/null")
       stream.sync = true
       yield
     ensure

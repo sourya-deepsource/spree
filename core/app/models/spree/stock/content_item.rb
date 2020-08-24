@@ -10,12 +10,12 @@ module Spree
 
       with_options allow_nil: true do
         delegate :line_item,
-                 :quantity,
-                 :variant, to: :inventory_unit
+          :quantity,
+          :variant, to: :inventory_unit
         delegate :price, to: :variant
         delegate :dimension,
-                 :volume,
-                 :weight, to: :variant, prefix: true
+          :volume,
+          :weight, to: :variant, prefix: true
       end
 
       def splittable_by_weight?
@@ -31,11 +31,11 @@ module Spree
       end
 
       def on_hand?
-        state.to_s == 'on_hand'
+        state.to_s == "on_hand"
       end
 
       def backordered?
-        state.to_s == 'backordered'
+        state.to_s == "backordered"
       end
 
       def amount

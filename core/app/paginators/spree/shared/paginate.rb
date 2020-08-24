@@ -3,8 +3,8 @@ module Spree
     class Paginate
       def initialize(collection, params)
         @collection = collection
-        @page       = params[:page]
-        @per_page   = params[:per_page]
+        @page = params[:page]
+        @per_page = params[:per_page]
       end
 
       def call

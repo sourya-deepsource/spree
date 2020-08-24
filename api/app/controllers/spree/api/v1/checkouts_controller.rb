@@ -7,22 +7,22 @@ module Spree
         def next
           authorize! :update, @order, order_token
           @order.next!
-          respond_with(@order, default_template: 'spree/api/v1/orders/show', status: 200)
+          respond_with(@order, default_template: "spree/api/v1/orders/show", status: 200)
         rescue StateMachines::InvalidTransition
-          respond_with(@order, default_template: 'spree/api/v1/orders/could_not_transition', status: 422)
+          respond_with(@order, default_template: "spree/api/v1/orders/could_not_transition", status: 422)
         end
 
         def advance
           authorize! :update, @order, order_token
           while @order.next; end
-          respond_with(@order, default_template: 'spree/api/v1/orders/show', status: 200)
+          respond_with(@order, default_template: "spree/api/v1/orders/show", status: 200)
         end
 
         def update
           authorize! :update, @order, order_token
 
           if @order.update_from_params(params, permitted_checkout_attributes, request.headers.env)
-            if current_api_user.has_spree_role?('admin') && user_id.present?
+            if current_api_user.has_spree_role?("admin") && user_id.present?
               @order.associate_user!(Spree.user_class.find(user_id))
             end
 
@@ -32,9 +32,9 @@ module Spree
 
             if @order.completed? || @order.next
               state_callback(:after)
-              respond_with(@order, default_template: 'spree/api/v1/orders/show')
+              respond_with(@order, default_template: "spree/api/v1/orders/show")
             else
-              respond_with(@order, default_template: 'spree/api/v1/orders/could_not_transition', status: 422)
+              respond_with(@order, default_template: "spree/api/v1/orders/could_not_transition", status: 422)
             end
           else
             invalid_resource!(@order)
@@ -55,7 +55,7 @@ module Spree
 
         def load_order(lock = false)
           @order = Spree::Order.lock(lock).find_by!(number: params[:id])
-          raise_insufficient_quantity and return if @order.insufficient_stock_lines.present?
+          raise_insufficient_quantity && return if @order.insufficient_stock_lines.present?
           @order.state = params[:state] if params[:state]
           state_callback(:before)
         end
@@ -65,7 +65,7 @@ module Spree
         end
 
         def raise_insufficient_quantity
-          respond_with(@order, default_template: 'spree/api/v1/orders/insufficient_quantity', status: 422)
+          respond_with(@order, default_template: "spree/api/v1/orders/insufficient_quantity", status: 422)
         end
 
         def state_callback(before_or_after = :before)
@@ -80,7 +80,7 @@ module Spree
 
             if handler.error.present?
               @coupon_message = handler.error
-              respond_with(@order, default_template: 'spree/api/v1/orders/could_not_apply_coupon', status: 422)
+              respond_with(@order, default_template: "spree/api/v1/orders/could_not_apply_coupon", status: 422)
               return true
             end
           end
@@ -90,7 +90,7 @@ module Spree
         def log_state_changes
           if @order.previous_changes[:state]
             @order.log_state_changes(
-              state_name: 'order',
+              state_name: "order",
               old_state: @order.previous_changes[:state].first,
               new_state: @order.previous_changes[:state].last
             )

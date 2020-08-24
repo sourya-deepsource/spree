@@ -16,9 +16,9 @@ module Spree
         private
 
         def requires_admin
-          return if @current_user_roles.include?('admin')
+          return if @current_user_roles.include?("admin")
 
-          unauthorized and return
+          unauthorized && return
         end
 
         def load_promotion

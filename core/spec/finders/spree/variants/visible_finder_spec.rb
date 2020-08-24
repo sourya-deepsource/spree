@@ -1,8 +1,8 @@
-require 'spec_helper'
+require "spec_helper"
 
 describe Spree::Variants::VisibleFinder do
-  describe '#execute' do
-    let(:currency) { 'USD' }
+  describe "#execute" do
+    let(:currency) { "USD" }
 
     let(:product) { create :product_with_option_types }
     let(:variant_1) { create :variant, product: product, option_values: [option_value_1] }
@@ -18,10 +18,10 @@ describe Spree::Variants::VisibleFinder do
     subject(:visible_variants) { described_class.new(scope: product.variants, current_currency: currency).execute }
 
     before do
-      variant_3.prices.update_all(currency: 'PLN')
+      variant_3.prices.update_all(currency: "PLN")
     end
 
-    it 'returns variants ordered by option value position for passed currency' do
+    it "returns variants ordered by option value position for passed currency" do
       expect(visible_variants).to eq([variant_2, variant_1])
     end
   end

@@ -1,17 +1,17 @@
 module Spree
   class PaymentMethod::Check < ::Spree::PaymentMethod
     def actions
-      %w{capture void}
+      %w[capture void]
     end
 
     # Indicates whether its possible to capture the payment
     def can_capture?(payment)
-      ['checkout', 'pending'].include?(payment.state)
+      ["checkout", "pending"].include?(payment.state)
     end
 
     # Indicates whether its possible to void the payment.
     def can_void?(payment)
-      payment.state != 'void'
+      payment.state != "void"
     end
 
     def capture(*)
@@ -37,7 +37,7 @@ module Spree
     private
 
     def simulated_successful_billing_response
-      ActiveMerchant::Billing::Response.new(true, '', {}, {})
+      ActiveMerchant::Billing::Response.new(true, "", {}, {})
     end
   end
 end

@@ -19,7 +19,7 @@ module Spree
 
           @users = @users.page(params[:page]).per(params[:per_page])
           expires_in 15.minutes, public: true
-          headers['Surrogate-Control'] = "max-age=#{15.minutes}"
+          headers["Surrogate-Control"] = "max-age=#{15.minutes}"
           respond_with(@users)
         end
 
@@ -27,7 +27,8 @@ module Spree
           respond_with(user)
         end
 
-        def new; end
+        def new
+        end
 
         def create
           authorize! :create, Spree.user_class

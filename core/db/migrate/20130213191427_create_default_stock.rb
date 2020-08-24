@@ -6,7 +6,7 @@ class CreateDefaultStock < ActiveRecord::Migration[4.2]
 
     Spree::StockLocation.skip_callback(:create, :after, :create_stock_items)
     Spree::StockLocation.skip_callback(:save, :after, :ensure_one_default)
-    location = Spree::StockLocation.new(name: 'default')
+    location = Spree::StockLocation.new(name: "default")
     location.save(validate: false)
 
     Spree::Variant.find_each do |variant|

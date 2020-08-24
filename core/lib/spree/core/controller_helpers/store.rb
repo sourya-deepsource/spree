@@ -26,7 +26,7 @@ module Spree
         end
 
         def current_store
-          @current_store ||= Spree::Store.current(request.env['SERVER_NAME'])
+          @current_store ||= Spree::Store.current(request.env["SERVER_NAME"])
         end
 
         # Return a Hash of things that influence the prices displayed in your shop.

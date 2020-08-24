@@ -11,8 +11,8 @@ module Spree
 
           def self.styles
             @styles ||= {
-              mini: '32x32>',
-              normal: '128x128>'
+              mini: "32x32>",
+              normal: "128x128>"
             }
           end
 
@@ -21,7 +21,7 @@ module Spree
           end
 
           def accepted_image_types
-            %w(image/jpeg image/jpg image/png image/gif)
+            %w[image/jpeg image/jpg image/png image/gif]
           end
 
           def check_attachment_content_type

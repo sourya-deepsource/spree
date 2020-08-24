@@ -1,7 +1,7 @@
-require 'spec_helper'
+require "spec_helper"
 
 describe Spree::VariantPresenter do
-  describe '#call' do
+  describe "#call" do
     subject { described_class.new(options) }
 
     let(:options) do
@@ -11,14 +11,14 @@ describe Spree::VariantPresenter do
           create(:variant)
         ],
         is_product_available_in_currency: true,
-        current_currency: 'USD',
+        current_currency: "USD",
         current_price_options: {
           tax_zone: create(:zone, default_tax: true)
         }
       }
     end
 
-    it 'returns an array of variant with option_values and images' do
+    it "returns an array of variant with option_values and images" do
       array = subject.call
 
       expect(array).to_not be_empty
@@ -30,7 +30,7 @@ describe Spree::VariantPresenter do
       end
     end
 
-    it 'generates request body without raising any errors' do
+    it "generates request body without raising any errors" do
       expect { subject.call }.not_to raise_error
     end
   end

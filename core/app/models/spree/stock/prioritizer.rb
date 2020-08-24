@@ -46,7 +46,7 @@ module Spree
 
       def hash_item(item)
         shipment = item.inventory_unit.shipment
-        variant  = item.inventory_unit.variant
+        variant = item.inventory_unit.variant
         if shipment.present?
           variant.hash ^ shipment.hash
         else

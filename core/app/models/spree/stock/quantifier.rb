@@ -4,7 +4,7 @@ module Spree
       attr_reader :variant, :stock_location
 
       def initialize(variant, stock_location = nil)
-        @variant        = variant
+        @variant = variant
         @stock_location = stock_location
       end
 

@@ -2,20 +2,20 @@ module Spree
   class FulfilmentChanger
     include ActiveModel::Validations
 
-    validates :quantity, numericality: { greater_than: 0 }
+    validates :quantity, numericality: {greater_than: 0}
     validates :desired_stock_location, presence: true
-    validate  :current_shipment_not_already_shipped
-    validate  :desired_shipment_different_from_current
-    validate  :enough_stock_at_desired_location, if: :handle_stock_counts?
+    validate :current_shipment_not_already_shipped
+    validate :desired_shipment_different_from_current
+    validate :enough_stock_at_desired_location, if: :handle_stock_counts?
 
     def initialize(params = {})
       @current_stock_location = params[:current_stock_location]
       @desired_stock_location = params[:desired_stock_location]
-      @current_shipment       = params[:current_shipment]
-      @desired_shipment       = params[:desired_shipment]
-      @variant                = params[:variant]
-      @quantity               = params[:quantity]
-      @available_quantity     = [
+      @current_shipment = params[:current_shipment]
+      @desired_shipment = params[:desired_shipment]
+      @variant = params[:variant]
+      @quantity = params[:quantity]
+      @available_quantity = [
         desired_stock_location.try(:count_on_hand, variant).to_i,
         current_quantity
       ].max
@@ -76,12 +76,12 @@ module Spree
     end
 
     def update_current_shipment_inventory_units(quantity, state)
-      current_shipment.
-        inventory_units.
-        where(variant: variant).
-        order(state: :asc).
-        limit(quantity).
-        update_all(shipment_id: desired_shipment.id, state: state)
+      current_shipment
+        .inventory_units
+        .where(variant: variant)
+        .order(state: :asc)
+        .limit(quantity)
+        .update_all(shipment_id: desired_shipment.id, state: state)
     end
 
     def reload_shipment_inventory_units

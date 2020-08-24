@@ -46,9 +46,9 @@ module Spree
 
         def render_error_payload(error, status = 422)
           if error.is_a?(Struct)
-            render json: { error: error.to_s, errors: error.to_h }, status: status, content_type: content_type
+            render json: {error: error.to_s, errors: error.to_h}, status: status, content_type: content_type
           elsif error.is_a?(String)
-            render json: { error: error }, status: status, content_type: content_type
+            render json: {error: error}, status: status, content_type: content_type
           end
         end
 
@@ -75,7 +75,7 @@ module Spree
           if params[:include]&.blank?
             []
           elsif params[:include].present?
-            params[:include].split(',')
+            params[:include].split(",")
           end
         end
 
@@ -96,14 +96,14 @@ module Spree
           return unless params[:fields]&.respond_to?(:each)
 
           fields = {}
-          params[:fields].
-            select { |_, v| v.is_a?(String) }.
-            each { |type, values| fields[type.intern] = values.split(',').map(&:intern) }
+          params[:fields]
+            .select { |_, v| v.is_a?(String) }
+            .each { |type, values| fields[type.intern] = values.split(",").map(&:intern) }
           fields.presence
         end
 
         def record_not_found
-          render_error_payload(I18n.t(:resource_not_found, scope: 'spree.api'), 404)
+          render_error_payload(I18n.t(:resource_not_found, scope: "spree.api"), 404)
         end
 
         def access_denied(exception)

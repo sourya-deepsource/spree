@@ -1,13 +1,13 @@
-require 'spec_helper'
+require "spec_helper"
 
 module Spree
   module Admin
     describe AdjustmentsController, type: :controller do
       stub_authorization!
 
-      describe '#index' do
+      describe "#index" do
         subject do
-          get :index, params: { order_id: order.to_param }
+          get :index, params: {order_id: order.to_param}
         end
 
         let!(:order) { create(:order) }
@@ -18,15 +18,15 @@ module Spree
           subject
         end
 
-        it 'returns 200 status' do
+        it "returns 200 status" do
           expect(response.status).to eq 200
         end
 
-        it 'loads the order' do
+        it "loads the order" do
           expect(assigns(:order)).to eq order
         end
 
-        it 'returns only eligible adjustments' do
+        it "returns only eligible adjustments" do
           expect(assigns(:adjustments)).to match_array([adjustment_1])
         end
       end

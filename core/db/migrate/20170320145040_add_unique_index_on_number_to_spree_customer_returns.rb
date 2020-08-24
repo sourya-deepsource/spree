@@ -1,7 +1,7 @@
 class AddUniqueIndexOnNumberToSpreeCustomerReturns < ActiveRecord::Migration[5.0]
   def change
     unless index_exists?(:spree_customer_returns, :number, unique: true)
-      numbers = Spree::CustomerReturn.group(:number).having('sum(1) > 1').pluck(:number)
+      numbers = Spree::CustomerReturn.group(:number).having("sum(1) > 1").pluck(:number)
       returns = Spree::CustomerReturn.where(number: numbers)
 
       returns.find_each do |r|

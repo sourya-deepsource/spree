@@ -38,8 +38,8 @@ module Spree
 
         case callback_type.to_sym
         when :before then callbacks[action].before_methods.each { |method| send method }
-        when :after  then callbacks[action].after_methods.each  { |method| send method }
-        when :fails  then callbacks[action].fails_methods.each  { |method| send method }
+        when :after then callbacks[action].after_methods.each { |method| send method }
+        when :fails then callbacks[action].fails_methods.each { |method| send method }
         end
       end
     end

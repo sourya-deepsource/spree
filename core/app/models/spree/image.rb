@@ -12,16 +12,16 @@ module Spree
 
     def styles
       self.class.styles.map do |_, size|
-        width, height = size.chop.split('x')
+        width, height = size.chop.split("x")
 
         {
           url: polymorphic_path(attachment.variant(combine_options: {
-                                                     gravity: 'center',
-                                                     resize: size,
-                                                     extent: size,
-                                                     background: 'snow2',
-                                                     quality: 80
-                                                   }), only_path: true),
+            gravity: "center",
+            resize: size,
+            extent: size,
+            background: "snow2",
+            quality: 80
+          }), only_path: true),
           width: width,
           height: height
         }
@@ -32,16 +32,16 @@ module Spree
       size = self.class.styles[name]
       return unless size
 
-      width, height = size.chop.split('x')
+      width, height = size.chop.split("x")
 
       {
         url: polymorphic_path(attachment.variant(combine_options: {
-                                                   gravity: 'center',
-                                                   resize: size,
-                                                   extent: size,
-                                                   background: 'snow2',
-                                                   quality: 80
-                                                 }), only_path: true),
+          gravity: "center",
+          resize: size,
+          extent: size,
+          background: "snow2",
+          quality: 80
+        }), only_path: true),
         size: size,
         width: width,
         height: height
@@ -50,7 +50,7 @@ module Spree
 
     def style_dimensions(name)
       size = self.class.styles[name]
-      width, height = size.chop.split('x')
+      width, height = size.chop.split("x")
 
       {
         width: width,
@@ -61,10 +61,10 @@ module Spree
     def plp_url
       size = self.class.styles[:plp_and_carousel]
       variant = attachment.variant(
-        gravity: 'center',
+        gravity: "center",
         resize: size,
         extent: size,
-        background: 'snow2',
+        background: "snow2",
         quality: 80
       )
 

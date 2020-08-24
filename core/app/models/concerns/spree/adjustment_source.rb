@@ -30,9 +30,9 @@ module Spree
     end
 
     def create_unique_adjustments(order, adjustables)
-      adjustables.where.not(id: already_adjusted_ids(order)).map do |adjustable|
+      adjustables.where.not(id: already_adjusted_ids(order)).map { |adjustable|
         create_adjustment(order, adjustable) if !block_given? || yield(adjustable)
-      end.any?
+      }.any?
     end
 
     private

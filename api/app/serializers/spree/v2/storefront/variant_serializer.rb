@@ -5,10 +5,10 @@ module Spree
         set_type :variant
 
         attributes :sku, :price, :currency, :display_price, :weight, :height,
-                   :width, :depth, :is_master, :options_text
+          :width, :depth, :is_master, :options_text
 
-        attribute :purchasable,   &:purchasable?
-        attribute :in_stock,      &:in_stock?
+        attribute :purchasable, &:purchasable?
+        attribute :in_stock, &:in_stock?
         attribute :backorderable, &:backorderable?
 
         belongs_to :product

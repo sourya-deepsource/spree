@@ -1,4 +1,4 @@
-require 'spec_helper'
+require "spec_helper"
 
 module Spree
   module Stock
@@ -11,7 +11,7 @@ module Spree
 
         let(:packages) { [] }
 
-        describe 'continues to splitter chain' do
+        describe "continues to splitter chain" do
           after { splitter2.split(packages) }
 
           it { expect(splitter1).to receive(:split).with(packages) }

@@ -1,7 +1,7 @@
 module Spree
   module Stock
     class Coordinator
-      attr_reader   :order, :inventory_units
+      attr_reader :order, :inventory_units
       attr_accessor :unallocated_inventory_units
 
       def initialize(order, inventory_units = nil)
@@ -33,8 +33,8 @@ module Spree
       private
 
       def stock_locations_with_requested_variants
-        Spree::StockLocation.active.joins(:stock_items).
-          where(spree_stock_items: { variant_id: requested_variant_ids }).distinct
+        Spree::StockLocation.active.joins(:stock_items)
+          .where(spree_stock_items: {variant_id: requested_variant_ids}).distinct
       end
 
       def requested_variant_ids

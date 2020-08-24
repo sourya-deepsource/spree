@@ -27,7 +27,7 @@ module Spree
       :variant_attributes
     ]
 
-    mattr_reader *ATTRIBUTES
+    mattr_reader(*ATTRIBUTES)
 
     @@address_attributes = [
       :id, :firstname, :lastname, :first_name, :last_name,
@@ -97,11 +97,11 @@ module Spree
     ]
 
     @@store_attributes = [:name, :url, :seo_title, :code, :meta_keywords, :logo,
-                          :meta_description, :default_currency, :mail_from_address,
-                          :customer_support_email, :facebook, :twitter, :instagram,
-                          :description, :address, :contact_email, :contact_phone,
-                          :default_locale, :default_country_id, :supported_currencies,
-                          :new_order_notifications_email]
+      :meta_description, :default_currency, :mail_from_address,
+      :customer_support_email, :facebook, :twitter, :instagram,
+      :description, :address, :contact_email, :contact_phone,
+      :default_locale, :default_country_id, :supported_currencies,
+      :new_order_notifications_email]
 
     @@store_credit_attributes = %i[amount currency category_id memo]
 

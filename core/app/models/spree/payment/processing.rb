@@ -1,4 +1,4 @@
-require_dependency 'spree/payment/gateway_options'
+require_dependency "spree/payment/gateway_options"
 
 module Spree
   class Payment < Spree::Base
@@ -52,13 +52,13 @@ module Spree
         return true if void?
 
         protect_from_connection_error do
-          if payment_method.payment_profiles_supported?
+          response = if payment_method.payment_profiles_supported?
             # Gateways supporting payment profiles will need access to credit card object because this stores the payment profile information
             # so supply the authorization itself as well as the credit card, rather than just the authorization code
-            response = payment_method.void(response_code, source, gateway_options)
+            payment_method.void(response_code, source, gateway_options)
           else
             # Standard ActiveMerchant void usage
-            response = payment_method.void(response_code, gateway_options)
+            payment_method.void(response_code, gateway_options)
           end
           record_response(response)
 
@@ -97,7 +97,7 @@ module Spree
 
       def handle_payment_preconditions
         unless block_given?
-          raise ArgumentError, 'handle_payment_preconditions must be called with a block'
+          raise ArgumentError, "handle_payment_preconditions must be called with a block"
         end
 
         if payment_method&.source_required?
@@ -119,8 +119,8 @@ module Spree
       def gateway_action(source, action, success_state)
         protect_from_connection_error do
           response = payment_method.send(action, money.amount_in_cents,
-                                         source,
-                                         gateway_options)
+            source,
+            gateway_options)
           handle_response(response, success_state, :failure)
         end
       end
@@ -131,11 +131,11 @@ module Spree
         if response.success?
           unless response.authorization.nil?
             self.response_code = response.authorization
-            self.avs_response = response.avs_result['code']
+            self.avs_response = response.avs_result["code"]
 
             if response.cvv_result
-              self.cvv_response_code = response.cvv_result['code']
-              self.cvv_response_message = response.cvv_result['message']
+              self.cvv_response_code = response.cvv_result["code"]
+              self.cvv_response_message = response.cvv_result["message"]
             end
           end
           send("#{success_state}!")
@@ -157,12 +157,12 @@ module Spree
 
       def gateway_error(error)
         text = if error.is_a? ActiveMerchant::Billing::Response
-                 error.params['message'] || error.params['response_reason_text'] || error.message
-               elsif error.is_a? ActiveMerchant::ConnectionError
-                 Spree.t(:unable_to_connect_to_gateway)
-               else
-                 error.to_s
-               end
+          error.params["message"] || error.params["response_reason_text"] || error.message
+        elsif error.is_a? ActiveMerchant::ConnectionError
+          Spree.t(:unable_to_connect_to_gateway)
+        else
+          error.to_s
+        end
         logger.error(Spree.t(:gateway_error))
         logger.error("  #{error.to_yaml}")
         raise Core::GatewayError, text

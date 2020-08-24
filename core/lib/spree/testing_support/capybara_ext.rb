@@ -2,7 +2,7 @@ module CapybaraExt
   # https://bugs.chromium.org/p/chromedriver/issues/detail?id=1771
   def delayed_fill_in(selector, text)
     field = find_field(selector)
-    text.to_s.split('').each do |char|
+    text.to_s.split("").each do |char|
       sleep 0.05
       field.send_keys(char)
     end
@@ -20,7 +20,7 @@ module CapybaraExt
     if RSpec.current_example.metadata[:js]
       within("table.table tbody tr:nth-child(#{num})", match: :first, &block)
     else
-      within(all('table.table tbody tr')[num - 1], &block)
+      within(all("table.table tbody tr")[num - 1], &block)
     end
   end
 
@@ -28,7 +28,7 @@ module CapybaraExt
     if RSpec.current_example.metadata[:js]
       find("td:nth-child(#{num})").text
     else
-      all('td')[num - 1].text
+      all("td")[num - 1].text
     end
   end
 
@@ -56,7 +56,7 @@ module CapybaraExt
 end
 
 def wait_for(options = {})
-  default_options = { error: nil, seconds: 5 }.merge(options)
+  default_options = {error: nil, seconds: 5}.merge(options)
 
   Selenium::WebDriver::Wait.new(timeout: default_options[:seconds]).until { yield }
 rescue Selenium::WebDriver::Error::TimeOutError

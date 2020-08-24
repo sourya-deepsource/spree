@@ -1,10 +1,10 @@
-require 'rails/engine'
+require "rails/engine"
 
 module Spree
   module Api
     class Engine < Rails::Engine
       isolate_namespace Spree
-      engine_name 'spree_api'
+      engine_name "spree_api"
 
       Rabl.configure do |config|
         config.include_json_root = false
@@ -17,23 +17,23 @@ module Spree
       end
 
       # sets the manifests / assets to be precompiled, even when initialize_on_precompile is false
-      initializer 'spree.assets.precompile', group: :all do |app|
+      initializer "spree.assets.precompile", group: :all do |app|
         app.config.assets.precompile += %w[
           spree/api/all*
         ]
       end
 
-      initializer 'spree.api.environment', before: :load_config_initializers do |_app|
+      initializer "spree.api.environment", before: :load_config_initializers do |_app|
         Spree::Api::Config = Spree::ApiConfiguration.new
         Spree::Api::Dependencies = Spree::ApiDependencies.new
       end
 
-      initializer 'spree.api.checking_migrations' do
+      initializer "spree.api.checking_migrations" do
         Migrations.new(config, engine_name).check
       end
 
       def self.root
-        @root ||= Pathname.new(File.expand_path('../../..', __dir__))
+        @root ||= Pathname.new(File.expand_path("../../..", __dir__))
       end
     end
   end

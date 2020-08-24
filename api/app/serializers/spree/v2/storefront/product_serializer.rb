@@ -5,13 +5,13 @@ module Spree
         set_type :product
 
         attributes :name, :description, :price, :currency, :display_price,
-                   :available_on, :slug, :meta_description, :meta_keywords,
-                   :updated_at
+          :available_on, :slug, :meta_description, :meta_keywords,
+          :updated_at
 
-        attribute :purchasable,   &:purchasable?
-        attribute :in_stock,      &:in_stock?
+        attribute :purchasable, &:purchasable?
+        attribute :in_stock, &:in_stock?
         attribute :backorderable, &:backorderable?
-        attribute :available,     &:available?
+        attribute :available, &:available?
 
         has_many :variants
         has_many :option_types
@@ -25,7 +25,7 @@ module Spree
           record_type: :image,
           serializer: :image
 
-        has_one  :default_variant,
+        has_one :default_variant,
           object_method_name: :default_variant,
           id_method_name: :default_variant_id,
           record_type: :variant,

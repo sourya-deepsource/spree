@@ -6,7 +6,7 @@ FactoryBot.define do
     created_by { create(:user) }
     category { create(:store_credit_category) }
     amount { 150.00 }
-    currency { 'USD' }
+    currency { "USD" }
     credit_type { create(:primary_credit_type) }
   end
 

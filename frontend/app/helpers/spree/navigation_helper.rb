@@ -1,4 +1,4 @@
-require 'digest'
+require "digest"
 
 module Spree
   module NavigationHelper
@@ -10,15 +10,15 @@ module Spree
       []
     end
 
-    def spree_nav_cache_key(section = 'header')
+    def spree_nav_cache_key(section = "header")
       @spree_nav_cache_key = begin
         keys = base_cache_key + [current_store, spree_navigation_data_cache_key, Spree::Config[:logo], stores&.cache_key, section]
-        Digest::MD5.hexdigest(keys.join('-'))
+        Digest::MD5.hexdigest(keys.join("-"))
       end
     end
 
-    def main_nav_image(image_path, title = '')
-      image_url = asset_path(asset_exists?(image_path) ? image_path : 'noimage/plp.png')
+    def main_nav_image(image_path, title = "")
+      image_url = asset_path(asset_exists?(image_path) ? image_path : "noimage/plp.png")
 
       lazy_image(
         src: image_url,

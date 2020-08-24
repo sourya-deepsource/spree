@@ -1,8 +1,8 @@
 module Spree
   class Store < Spree::Base
-    has_many :orders, class_name: 'Spree::Order'
-    has_many :payment_methods, class_name: 'Spree::PaymentMethod'
-    belongs_to :default_country, class_name: 'Spree::Country'
+    has_many :orders, class_name: "Spree::Order"
+    has_many :payment_methods, class_name: "Spree::PaymentMethod"
+    belongs_to :default_country, class_name: "Spree::Country"
 
     with_options presence: true do
       validates :name, :url, :mail_from_address, :default_currency, :code
@@ -10,11 +10,11 @@ module Spree
 
     validates :code, uniqueness: true
 
-    if !ENV['SPREE_DISABLE_DB_CONNECTION'] &&
+    if !ENV["SPREE_DISABLE_DB_CONNECTION"] &&
         connected? &&
         table_exists? &&
         connection.column_exists?(:spree_stores, :new_order_notifications_email)
-      validates :new_order_notifications_email, email: { allow_blank: true }
+      validates :new_order_notifications_email, email: {allow_blank: true}
     end
 
     has_one_attached :logo
@@ -22,7 +22,7 @@ module Spree
     before_save :ensure_default_exists_and_is_unique
     before_destroy :validate_not_default
 
-    scope :by_url, ->(url) { where('url like ?', "%#{url}%") }
+    scope :by_url, ->(url) { where("url like ?", "%#{url}%") }
 
     after_commit :clear_cache
 
@@ -32,15 +32,15 @@ module Spree
     end
 
     def self.default
-      Rails.cache.fetch('default_store') do
+      Rails.cache.fetch("default_store") do
         where(default: true).first_or_initialize
       end
     end
 
     def supported_currencies_list
-      (read_attribute(:supported_currencies).to_s.split(',') << default_currency).map(&:to_s).map do |code|
+      (read_attribute(:supported_currencies).to_s.split(",") << default_currency).map(&:to_s).map { |code|
         ::Money::Currency.find(code.strip)
-      end.uniq.compact
+      }.uniq.compact
     end
 
     private
@@ -61,7 +61,7 @@ module Spree
     end
 
     def clear_cache
-      Rails.cache.delete('default_store')
+      Rails.cache.delete("default_store")
     end
   end
 end

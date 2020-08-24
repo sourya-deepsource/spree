@@ -1,6 +1,6 @@
-require 'i18n'
-require 'active_support/core_ext/array/extract_options'
-require 'spree/i18n/base'
+require "i18n"
+require "active_support/core_ext/array/extract_options"
+require "spree/i18n/base"
 
 module Spree
   extend ActionView::Helpers::TranslationHelper
@@ -26,9 +26,9 @@ module Spree
 
     def virtual_path
       if context
-        path = context.instance_variable_get('@virtual_path')
+        path = context.instance_variable_get("@virtual_path")
 
-        path&.gsub(/spree/, '')
+        path&.gsub(/spree/, "")
       end
     end
   end

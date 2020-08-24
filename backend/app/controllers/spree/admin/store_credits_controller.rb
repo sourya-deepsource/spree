@@ -25,7 +25,7 @@ module Spree
           redirect_to admin_user_store_credits_path(@user)
         else
           load_categories
-          flash[:error] = Spree.t('store_credit.errors.unable_to_create')
+          flash[:error] = Spree.t("store_credit.errors.unable_to_create")
           render :new
         end
       end
@@ -39,7 +39,7 @@ module Spree
           redirect_to admin_user_store_credits_path(@user)
         else
           load_categories
-          flash[:error] = Spree.t('store_credit.errors.unable_to_update')
+          flash[:error] = Spree.t("store_credit.errors.unable_to_update")
           render :edit
         end
       end
@@ -55,7 +55,7 @@ module Spree
             format.js { render_js_for_destroy }
           end
         else
-          render plain: Spree.t('store_credit.errors.unable_to_delete'), status: :unprocessable_entity
+          render plain: Spree.t("store_credit.errors.unable_to_delete"), status: :unprocessable_entity
         end
       end
 
@@ -86,7 +86,7 @@ module Spree
 
       def ensure_unused_store_credit
         unless @store_credit.amount_used.zero?
-          raise StoreCreditError, Spree.t('store_credit.errors.cannot_change_used_store_credit')
+          raise StoreCreditError, Spree.t("store_credit.errors.cannot_change_used_store_credit")
         end
       end
     end

@@ -3,11 +3,11 @@ module Spree
     acts_as_paranoid
     acts_as_list scope: :product
 
-    belongs_to :product, touch: true, class_name: 'Spree::Product', inverse_of: :variants
-    belongs_to :tax_category, class_name: 'Spree::TaxCategory', optional: true
+    belongs_to :product, touch: true, class_name: "Spree::Product", inverse_of: :variants
+    belongs_to :tax_category, class_name: "Spree::TaxCategory", optional: true
 
     delegate :name, :name=, :description, :slug, :available_on, :shipping_category_id,
-             :meta_description, :meta_keywords, :shipping_category, to: :product
+      :meta_description, :meta_keywords, :shipping_category, to: :product
 
     # we need to have this callback before any dependent: :destroy associations
     # https://github.com/rails/rails/issues/3458
@@ -28,15 +28,15 @@ module Spree
       has_many :stock_movements
     end
 
-    has_many :option_value_variants, class_name: 'Spree::OptionValueVariant'
-    has_many :option_values, through: :option_value_variants, class_name: 'Spree::OptionValue'
+    has_many :option_value_variants, class_name: "Spree::OptionValueVariant"
+    has_many :option_values, through: :option_value_variants, class_name: "Spree::OptionValue"
 
-    has_many :images, -> { order(:position) }, as: :viewable, dependent: :destroy, class_name: 'Spree::Image'
+    has_many :images, -> { order(:position) }, as: :viewable, dependent: :destroy, class_name: "Spree::Image"
 
     has_many :prices,
-             class_name: 'Spree::Price',
-             dependent: :destroy,
-             inverse_of: :variant
+      class_name: "Spree::Price",
+      dependent: :destroy,
+      inverse_of: :variant
 
     before_validation :set_cost_currency
 
@@ -44,11 +44,11 @@ module Spree
 
     validates :option_values, presence: true, unless: :is_master?
 
-    with_options numericality: { greater_than_or_equal_to: 0, allow_nil: true } do
+    with_options numericality: {greater_than_or_equal_to: 0, allow_nil: true} do
       validates :cost_price
       validates :price
     end
-    validates :sku, uniqueness: { conditions: -> { where(deleted_at: nil) }, case_sensitive: false },
+    validates :sku, uniqueness: {conditions: -> { where(deleted_at: nil) }, case_sensitive: false},
                     allow_blank: true, unless: :disable_sku_validation?
 
     after_create :create_stock_items
@@ -56,8 +56,8 @@ module Spree
 
     after_touch :clear_in_stock_cache
 
-    scope :in_stock, -> { joins(:stock_items).where('count_on_hand > ? OR track_inventory = ?', 0, false) }
-    scope :backorderable, -> { joins(:stock_items).where(spree_stock_items: { backorderable: true }) }
+    scope :in_stock, -> { joins(:stock_items).where("count_on_hand > ? OR track_inventory = ?", 0, false) }
+    scope :backorderable, -> { joins(:stock_items).where(spree_stock_items: {backorderable: true}) }
     scope :in_stock_or_backorderable, -> { in_stock.or(backorderable) }
 
     scope :eligible, -> {
@@ -86,14 +86,14 @@ module Spree
 
     scope :for_currency_and_available_price_amount, ->(currency = nil) do
       currency ||= Spree::Config[:currency]
-      joins(:prices).where('spree_prices.currency = ?', currency).where('spree_prices.amount IS NOT NULL').distinct
+      joins(:prices).where("spree_prices.currency = ?", currency).where("spree_prices.amount IS NOT NULL").distinct
     end
 
     scope :active, ->(currency = nil) do
-      not_discontinued.not_deleted.
-        for_currency_and_available_price_amount(currency)
+      not_discontinued.not_deleted
+        .for_currency_and_available_price_amount(currency)
     end
-    LOCALIZED_NUMBERS = %w(cost_price weight depth width height)
+    LOCALIZED_NUMBERS = %w[cost_price weight depth width height]
 
     LOCALIZED_NUMBERS.each do |m|
       define_method("#{m}=") do |argument|
@@ -103,7 +103,7 @@ module Spree
 
     self.whitelisted_ransackable_associations = %w[option_values product prices default_price]
     self.whitelisted_ransackable_attributes = %w[weight sku]
-    self.whitelisted_ransackable_scopes = %i(product_name_or_sku_cont search_by_product_name_or_sku)
+    self.whitelisted_ransackable_scopes = %i[product_name_or_sku_cont search_by_product_name_or_sku]
 
     def self.product_name_or_sku_cont(query)
       joins(:product).where("LOWER(#{Product.table_name}.name) LIKE LOWER(:query) OR LOWER(sku) LIKE LOWER(:query)", query: "%#{query}%")
@@ -112,7 +112,7 @@ module Spree
     def self.search_by_product_name_or_sku(query)
       if defined?(SpreeGlobalize)
         joins(product: :translations).where("LOWER(#{Product::Translation.table_name}.name) LIKE LOWER(:query) OR LOWER(sku) LIKE LOWER(:query)",
-                                            query: "%#{query}%")
+          query: "%#{query}%")
       else
         product_name_or_sku_cont(query)
       end
@@ -140,7 +140,7 @@ module Spree
     end
 
     def descriptive_name
-      is_master? ? name + ' - Master' : name + ' - ' + options_text
+      is_master? ? name + " - Master" : name + " - " + options_text
     end
 
     # use deleted? rather than checking the attribute directly. this
@@ -167,10 +167,10 @@ module Spree
       # no option values on master
       return if is_master
 
-      option_type = Spree::OptionType.where(name: opt_name).first_or_initialize do |o|
+      option_type = Spree::OptionType.where(name: opt_name).first_or_initialize { |o|
         o.presentation = opt_name
         o.save!
-      end
+      }
 
       current_value = option_values.detect { |o| o.option_type.name == opt_name }
 
@@ -185,10 +185,10 @@ module Spree
         option_values.delete(current_value)
       end
 
-      option_value = Spree::OptionValue.where(option_type_id: option_type.id, name: opt_value).first_or_initialize do |o|
+      option_value = Spree::OptionValue.where(option_type_id: option_type.id, name: opt_value).first_or_initialize { |o|
         o.presentation = opt_value
         o.save!
-      end
+      }
 
       option_values << option_value
       save
@@ -209,27 +209,27 @@ module Spree
     def price_modifier_amount_in(currency, options = {})
       return 0 unless options.present?
 
-      options.keys.map do |key|
+      options.keys.map { |key|
         m = "#{key}_price_modifier_amount_in".to_sym
         if respond_to? m
           send(m, currency, options[key])
         else
           0
         end
-      end.sum
+      }.sum
     end
 
     def price_modifier_amount(options = {})
       return 0 unless options.present?
 
-      options.keys.map do |key|
+      options.keys.map { |key|
         m = "#{key}_price_modifier_amount".to_sym
         if respond_to? m
           send(m, options[key])
         else
           0
         end
-      end.sum
+      }.sum
     end
 
     def compare_at_price
@@ -315,7 +315,7 @@ module Spree
     # Ensures a new variant takes the product master price when price is not supplied
     def check_price
       if price.nil? && Spree::Config[:require_master_price]
-        return errors.add(:base, :no_master_variant_found_to_infer_price)  unless product&.master
+        return errors.add(:base, :no_master_variant_found_to_infer_price) unless product&.master
         return errors.add(:base, :must_supply_price_for_variant_or_master) if self == product.master
 
         self.price = product.master.price

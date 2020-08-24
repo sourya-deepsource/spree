@@ -4,10 +4,10 @@ module Spree
     has_many :stock_items, dependent: :delete_all, inverse_of: :stock_location
     has_many :stock_movements, through: :stock_items
 
-    belongs_to :state, class_name: 'Spree::State', optional: true
-    belongs_to :country, class_name: 'Spree::Country'
+    belongs_to :state, class_name: "Spree::State", optional: true
+    belongs_to :country, class_name: "Spree::Country"
 
-    validates :name, presence: true, uniqueness: { allow_blank: true, case_sensitive: false }
+    validates :name, presence: true, uniqueness: {allow_blank: true, case_sensitive: false}
 
     scope :active, -> { where(active: true) }
     scope :order_default, -> { order(default: :desc, name: :asc) }
@@ -107,15 +107,15 @@ module Spree
 
     def create_stock_items
       variants_scope = Spree::Variant
-      prepared_stock_items = variants_scope.ids.map do |variant_id|
+      prepared_stock_items = variants_scope.ids.map { |variant_id|
         Hash[
-          'stock_location_id', id,
-          'variant_id', variant_id,
-          'backorderable', backorderable_default,
-          'created_at', Time.current,
-          'updated_at', Time.current
+          "stock_location_id", id,
+          "variant_id", variant_id,
+          "backorderable", backorderable_default,
+          "created_at", Time.current,
+          "updated_at", Time.current
         ]
-      end
+      }
       if prepared_stock_items.any?
         stock_items.insert_all(prepared_stock_items)
         variants_scope.touch_all

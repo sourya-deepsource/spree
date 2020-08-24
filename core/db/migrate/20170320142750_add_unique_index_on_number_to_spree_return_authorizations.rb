@@ -1,7 +1,7 @@
 class AddUniqueIndexOnNumberToSpreeReturnAuthorizations < ActiveRecord::Migration[5.0]
   def change
     unless index_exists?(:spree_return_authorizations, :number, unique: true)
-      numbers = Spree::ReturnAuthorization.group(:number).having('sum(1) > 1').pluck(:number)
+      numbers = Spree::ReturnAuthorization.group(:number).having("sum(1) > 1").pluck(:number)
       authorizations = Spree::ReturnAuthorization.where(number: numbers)
 
       authorizations.find_each do |authorization|

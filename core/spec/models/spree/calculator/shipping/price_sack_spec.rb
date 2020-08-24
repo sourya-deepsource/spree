@@ -1,4 +1,4 @@
-require 'spec_helper'
+require "spec_helper"
 
 module Spree
   module Calculator::Shipping
@@ -14,14 +14,14 @@ module Spree
       let(:variant) { build(:variant, price: 2) }
 
       let(:normal_package) do
-        build(:stock_package, variants_contents: { variant => 2 })
+        build(:stock_package, variants_contents: {variant => 2})
       end
 
       let(:discount_package) do
-        build(:stock_package, variants_contents: { variant => 4 })
+        build(:stock_package, variants_contents: {variant => 4})
       end
 
-      it 'computes the correct amount' do
+      it "computes the correct amount" do
         expect(calculator.compute(normal_package)).to eq(calculator.preferred_normal_amount)
         expect(calculator.compute(discount_package)).to eq(calculator.preferred_discount_amount)
       end

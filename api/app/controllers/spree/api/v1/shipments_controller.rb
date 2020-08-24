@@ -7,14 +7,14 @@ module Spree
 
         def mine
           if current_api_user.persisted?
-            @shipments = Spree::Shipment.
-                         reverse_chronological.
-                         joins(:order).
-                         where(spree_orders: { user_id: current_api_user.id }).
-                         includes(mine_includes).
-                         ransack(params[:q]).result.page(params[:page]).per(params[:per_page])
+            @shipments = Spree::Shipment
+              .reverse_chronological
+              .joins(:order)
+              .where(spree_orders: {user_id: current_api_user.id})
+              .includes(mine_includes)
+              .ransack(params[:q]).result.page(params[:page]).per(params[:per_page])
           else
-            render 'spree/api/errors/unauthorized', status: :unauthorized
+            render "spree/api/errors/unauthorized", status: :unauthorized
           end
         end
 
@@ -28,7 +28,7 @@ module Spree
           @line_item = Spree::Dependencies.cart_add_item_service.constantize.call(order: @order,
                                                                                   variant: variant,
                                                                                   quantity: quantity,
-                                                                                  options: { shipment: @shipment }).value
+                                                                                  options: {shipment: @shipment}).value
 
           respond_with(@shipment.reload, default_template: :show)
         end
@@ -45,7 +45,7 @@ module Spree
             if @shipment.can_ready?
               @shipment.ready!
             else
-              render 'spree/api/v1/shipments/cannot_ready_shipment', status: 422 and return
+              render("spree/api/v1/shipments/cannot_ready_shipment", status: 422) && return
             end
           end
           respond_with(@shipment, default_template: :show)
@@ -62,22 +62,22 @@ module Spree
           Spree::Dependencies.cart_add_item_service.constantize.call(order: @shipment.order,
                                                                      variant: variant,
                                                                      quantity: quantity,
-                                                                     options: { shipment: @shipment })
+                                                                     options: {shipment: @shipment})
 
           respond_with(@shipment, default_template: :show)
         end
 
         def remove
           quantity = if params.key?(:quantity)
-                       params[:quantity].to_i
-                     else
-                       @shipment.inventory_units_for(variant).sum(:quantity)
-                     end
+            params[:quantity].to_i
+          else
+            @shipment.inventory_units_for(variant).sum(:quantity)
+          end
 
           Spree::Dependencies.cart_remove_item_service.constantize.call(order: @shipment.order,
                                                                         variant: variant,
                                                                         quantity: quantity,
-                                                                        options: { shipment: @shipment })
+                                                                        options: {shipment: @shipment})
 
           if @shipment.inventory_units.any?
             @shipment.reload
@@ -92,12 +92,12 @@ module Spree
           @stock_location = Spree::StockLocation.find(params[:stock_location_id])
 
           unless @quantity > 0
-            unprocessable_entity("#{Spree.t(:shipment_transfer_errors_occured, scope: 'api')} \n #{Spree.t(:negative_quantity, scope: 'api')}")
+            unprocessable_entity("#{Spree.t(:shipment_transfer_errors_occured, scope: "api")} \n #{Spree.t(:negative_quantity, scope: "api")}")
             return
           end
 
           @original_shipment.transfer_to_location(@variant, @quantity, @stock_location)
-          render json: { success: true, message: Spree.t(:shipment_transfer_success) }, status: 201
+          render json: {success: true, message: Spree.t(:shipment_transfer_success)}, status: 201
         end
 
         def transfer_to_shipment
@@ -105,27 +105,27 @@ module Spree
 
           error =
             if @quantity < 0 && @target_shipment == @original_shipment
-              "#{Spree.t(:negative_quantity, scope: 'api')}, \n#{Spree.t('wrong_shipment_target', scope: 'api')}"
+              "#{Spree.t(:negative_quantity, scope: "api")}, \n#{Spree.t("wrong_shipment_target", scope: "api")}"
             elsif @target_shipment == @original_shipment
-              Spree.t(:wrong_shipment_target, scope: 'api')
+              Spree.t(:wrong_shipment_target, scope: "api")
             elsif @quantity < 0
-              Spree.t(:negative_quantity, scope: 'api')
+              Spree.t(:negative_quantity, scope: "api")
             end
 
           if error
-            unprocessable_entity("#{Spree.t(:shipment_transfer_errors_occured, scope: 'api')} \n#{error}")
+            unprocessable_entity("#{Spree.t(:shipment_transfer_errors_occured, scope: "api")} \n#{error}")
           else
             @original_shipment.transfer_to_shipment(@variant, @quantity, @target_shipment)
-            render json: { success: true, message: Spree.t(:shipment_transfer_success) }, status: 201
+            render json: {success: true, message: Spree.t(:shipment_transfer_success)}, status: 201
           end
         end
 
         private
 
         def load_transfer_params
-          @original_shipment         = Spree::Shipment.find_by!(number: params[:original_shipment_number])
-          @variant                   = Spree::Variant.find(params[:variant_id])
-          @quantity                  = params[:quantity].to_i
+          @original_shipment = Spree::Shipment.find_by!(number: params[:original_shipment_number])
+          @variant = Spree::Variant.find(params[:variant_id])
+          @quantity = params[:quantity].to_i
           authorize! :show, @original_shipment
           authorize! :create, Shipment
         end

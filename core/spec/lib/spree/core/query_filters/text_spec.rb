@@ -1,4 +1,4 @@
-require 'spec_helper'
+require "spec_helper"
 
 module Spree
   module Core
@@ -7,33 +7,33 @@ module Spree
         described_class.new(attribute: Spree::DummyModel.arel_table[:name])
       end
 
-      let!(:dummy1) { Spree::DummyModel.create(name: 'TestName', position: 3) }
-      let!(:dummy2) { Spree::DummyModel.create(name: 'Test', position: 10) }
-      let!(:dummy3) { Spree::DummyModel.create(name: 'Something', position: 4) }
+      let!(:dummy1) { Spree::DummyModel.create(name: "TestName", position: 3) }
+      let!(:dummy2) { Spree::DummyModel.create(name: "Test", position: 10) }
+      let!(:dummy3) { Spree::DummyModel.create(name: "Something", position: 4) }
       let(:scope) { Spree::DummyModel.all }
 
-      context 'with eq matcher' do
+      context "with eq matcher" do
         let(:filter) do
           {
-            position: { eq: 'TestName' }
+            position: {eq: "TestName"}
           }
         end
 
-        it 'returns correct dummies' do
+        it "returns correct dummies" do
           result = subject.call(scope: scope, filter: filter[:position])
           expect(result).to include(dummy1)
           expect(result).not_to include(dummy2, dummy3)
         end
       end
 
-      context 'with contains matcher' do
+      context "with contains matcher" do
         let(:filter) do
           {
-            position: { contains: 'Test' }
+            position: {contains: "Test"}
           }
         end
 
-        it 'returns correct dummies' do
+        it "returns correct dummies" do
           result = subject.call(scope: scope, filter: filter[:position])
           expect(result).to include(dummy1, dummy2)
           expect(result).not_to include(dummy3)

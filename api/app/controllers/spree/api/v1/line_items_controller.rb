@@ -6,7 +6,8 @@ module Spree
 
         self.line_item_options = []
 
-        def new; end
+        def new
+        end
 
         def create
           variant = Spree::Variant.find(params[:line_item][:variant_id])
@@ -49,16 +50,16 @@ module Spree
 
         def find_line_item
           id = params[:id].to_i
-          order.line_items.detect { |line_item| line_item.id == id } or
-            raise ActiveRecord::RecordNotFound
+          order.line_items.detect { |line_item| line_item.id == id } ||
+            raise(ActiveRecord::RecordNotFound)
         end
 
         def line_items_attributes
-          { line_items_attributes: {
+          {line_items_attributes: {
             id: params[:id],
             quantity: params[:line_item][:quantity],
             options: line_item_params[:options] || {}
-          } }
+          }}
         end
 
         def line_item_params

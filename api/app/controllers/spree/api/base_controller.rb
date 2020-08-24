@@ -1,4 +1,4 @@
-require_dependency 'spree/api/controller_setup'
+require_dependency "spree/api/controller_setup"
 
 module Spree
   module Api
@@ -25,7 +25,7 @@ module Spree
 
       # users should be able to set price when importing orders via api
       def permitted_line_item_attributes
-        if @current_user_roles.include?('admin')
+        if @current_user_roles.include?("admin")
           super + [:price, :variant_id, :sku]
         else
           super
@@ -34,17 +34,17 @@ module Spree
 
       def content_type
         case params[:format]
-        when 'json'
-          'application/json; charset=utf-8'
-        when 'xml'
-          'text/xml; charset=utf-8'
+        when "json"
+          "application/json; charset=utf-8"
+        when "xml"
+          "text/xml; charset=utf-8"
         end
       end
 
       private
 
       def set_content_type
-        headers['Content-Type'] = content_type
+        headers["Content-Type"] = content_type
       end
 
       def load_user
@@ -55,9 +55,9 @@ module Spree
         return if @current_api_user
 
         if requires_authentication? && api_key.blank? && order_token.blank?
-          must_specify_api_key and return
+          must_specify_api_key && return
         elsif order_token.blank? && (requires_authentication? || api_key.present?)
-          invalid_api_key and return
+          invalid_api_key && return
         else
           # An anonymous user
           @current_api_user = Spree.user_class.new
@@ -65,11 +65,11 @@ module Spree
       end
 
       def invalid_api_key
-        render 'spree/api/errors/invalid_api_key', status: 401
+        render "spree/api/errors/invalid_api_key", status: 401
       end
 
       def must_specify_api_key
-        render 'spree/api/errors/must_specify_api_key', status: 401
+        render "spree/api/errors/must_specify_api_key", status: 401
       end
 
       def load_user_roles
@@ -77,7 +77,7 @@ module Spree
       end
 
       def unauthorized
-        render 'spree/api/errors/unauthorized', status: 401 and return
+        render("spree/api/errors/unauthorized", status: 401) && return
       end
 
       def error_during_processing(exception)
@@ -88,7 +88,7 @@ module Spree
       end
 
       def unprocessable_entity(message)
-        render plain: { exception: message }.to_json, status: 422
+        render plain: {exception: message}.to_json, status: 422
       end
 
       def gateway_error(exception)
@@ -101,7 +101,7 @@ module Spree
       end
 
       def not_found
-        render 'spree/api/errors/not_found', status: 404 and return
+        render("spree/api/errors/not_found", status: 404) && return
       end
 
       def current_ability
@@ -110,16 +110,16 @@ module Spree
 
       def invalid_resource!(resource)
         @resource = resource
-        render 'spree/api/errors/invalid_resource', status: 422
+        render "spree/api/errors/invalid_resource", status: 422
       end
 
       def api_key
-        request.headers['X-Spree-Token'] || params[:token]
+        request.headers["X-Spree-Token"] || params[:token]
       end
       helper_method :api_key
 
       def order_token
-        request.headers['X-Spree-Order-Token'] || params[:order_token]
+        request.headers["X-Spree-Order-Token"] || params[:order_token]
       end
 
       def find_product(id)
@@ -130,7 +130,7 @@ module Spree
       end
 
       def product_scope
-        if @current_user_roles.include?('admin')
+        if @current_user_roles.include?("admin")
           scope = Product.with_deleted.accessible_by(current_ability, :show).includes(*product_includes)
 
           scope = scope.not_deleted unless params[:show_deleted]
@@ -143,7 +143,7 @@ module Spree
       end
 
       def variants_associations
-        [{ option_values: :option_type }, :default_price, :images]
+        [{option_values: :option_type}, :default_price, :images]
       end
 
       def product_includes

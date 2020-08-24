@@ -3,7 +3,7 @@ module Spree
     extend ActiveSupport::Concern
 
     included do
-      has_one :calculator, class_name: 'Spree::Calculator', as: :calculable, inverse_of: :calculable, dependent: :destroy, autosave: true
+      has_one :calculator, class_name: "Spree::Calculator", as: :calculable, inverse_of: :calculable, dependent: :destroy, autosave: true
       accepts_nested_attributes_for :calculator
       validates :calculator, presence: true
       delegate :compute, to: :calculator
@@ -24,7 +24,7 @@ module Spree
       private
 
       def self.model_name_without_spree_namespace
-        to_s.tableize.tr('/', '_').sub('spree_', '')
+        to_s.tableize.tr("/", "_").sub("spree_", "")
       end
 
       def self.spree_calculators

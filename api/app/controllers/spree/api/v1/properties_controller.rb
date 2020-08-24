@@ -8,10 +8,10 @@ module Spree
           @properties = Spree::Property.accessible_by(current_ability)
 
           @properties = if params[:ids]
-                          @properties.where(id: params[:ids].split(',').flatten)
-                        else
-                          @properties.ransack(params[:q]).result
-                        end
+            @properties.where(id: params[:ids].split(",").flatten)
+          else
+            @properties.ransack(params[:q]).result
+          end
 
           @properties = @properties.page(params[:page]).per(params[:per_page])
           respond_with(@properties)
@@ -21,7 +21,8 @@ module Spree
           respond_with(@property)
         end
 
-        def new; end
+        def new
+        end
 
         def create
           authorize! :create, Property

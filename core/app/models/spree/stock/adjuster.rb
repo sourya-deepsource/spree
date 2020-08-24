@@ -4,7 +4,7 @@ module Spree
   module Stock
     class Adjuster
       attr_accessor :required_quantity, :received_quantity, :backorder_package,
-                    :backorder_item
+        :backorder_item
 
       def initialize(inventory_unit)
         self.required_quantity = inventory_unit.required_quantity

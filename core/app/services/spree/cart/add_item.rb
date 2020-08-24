@@ -20,9 +20,9 @@ module Spree
 
         line_item_created = line_item.nil?
         if line_item.nil?
-          opts = ::Spree::PermittedAttributes.line_item_attributes.flatten.each_with_object({}) do |attribute, result|
+          opts = ::Spree::PermittedAttributes.line_item_attributes.flatten.each_with_object({}) { |attribute, result|
             result[attribute] = options[attribute]
-          end.merge(currency: order.currency).delete_if { |_key, value| value.nil? }
+          }.merge(currency: order.currency).delete_if { |_key, value| value.nil? }
 
           line_item = order.line_items.new(quantity: quantity,
                                            variant: variant,

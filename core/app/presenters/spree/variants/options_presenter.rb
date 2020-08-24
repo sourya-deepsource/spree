@@ -1,7 +1,7 @@
 module Spree
   module Variants
     class OptionsPresenter
-      WORDS_CONNECTOR = ', '.freeze
+      WORDS_CONNECTOR = ", ".freeze
 
       attr_reader :variant
 

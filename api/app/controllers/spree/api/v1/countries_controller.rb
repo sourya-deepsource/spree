@@ -5,10 +5,10 @@ module Spree
         skip_before_action :authenticate_user
 
         def index
-          @countries = Country.accessible_by(current_ability).ransack(params[:q]).result.
-                       order('name ASC').
-                       page(params[:page]).per(params[:per_page])
-          country = Country.order('updated_at ASC').last
+          @countries = Country.accessible_by(current_ability).ransack(params[:q]).result
+            .order("name ASC")
+            .page(params[:page]).per(params[:per_page])
+          country = Country.order("updated_at ASC").last
           respond_with(@countries) if stale?(country)
         end
 

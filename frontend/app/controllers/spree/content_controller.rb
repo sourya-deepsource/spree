@@ -5,7 +5,8 @@ module Spree
 
     respond_to :html
 
-    def test; end
+    def test
+    end
 
     def cvv
       render layout: false

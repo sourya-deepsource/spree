@@ -3,8 +3,8 @@ FactoryBot.define do
     association(:adjustable, factory: :order)
     association(:source, factory: :tax_rate)
 
-    amount   { 100.0 }
-    label    { 'Shipping' }
+    amount { 100.0 }
+    label { "Shipping" }
     eligible { true }
   end
 
@@ -12,8 +12,8 @@ FactoryBot.define do
     association(:adjustable, factory: :line_item)
     association(:source, factory: :tax_rate)
 
-    amount   { 10.0 }
-    label    { 'VAT 5%' }
+    amount { 10.0 }
+    label { "VAT 5%" }
     eligible { true }
 
     after(:create) do |adjustment|

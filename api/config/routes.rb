@@ -1,11 +1,11 @@
-spree_path = Rails.application.routes.url_helpers.try(:spree_path, trailing_slash: true) || '/'
+spree_path = Rails.application.routes.url_helpers.try(:spree_path, trailing_slash: true) || "/"
 
 Rails.application.routes.draw do
   use_doorkeeper scope: "#{spree_path}/spree_oauth"
 end
 
 Spree::Core::Engine.add_routes do
-  namespace :api, defaults: { format: 'json' } do
+  namespace :api, defaults: {format: "json"} do
     namespace :v1 do
       resources :promotions, only: [:show]
 
@@ -66,8 +66,8 @@ Spree::Core::Engine.add_routes do
 
       resources :option_values, only: :index
 
-      get '/orders/mine', to: 'orders#mine', as: 'my_orders'
-      get '/orders/current', to: 'orders#current', as: 'current_order'
+      get "/orders/mine", to: "orders#mine", as: "my_orders"
+      get "/orders/current", to: "orders#current", as: "current_order"
 
       resources :orders, concerns: :order_routes do
         put :remove_coupon_code, on: :member
@@ -80,8 +80,8 @@ Spree::Core::Engine.add_routes do
 
       resources :shipments, only: [:create, :update] do
         collection do
-          post 'transfer_to_location'
-          post 'transfer_to_shipment'
+          post "transfer_to_location"
+          post "transfer_to_shipment"
           get :mine
         end
 
@@ -122,20 +122,20 @@ Spree::Core::Engine.add_routes do
       resources :stock_items, only: [:index, :update, :destroy]
       resources :stores
 
-      put '/classifications', to: 'classifications#update', as: :classifications
-      get '/taxons/products', to: 'taxons#products', as: :taxon_products
+      put "/classifications", to: "classifications#update", as: :classifications
+      get "/taxons/products", to: "taxons#products", as: :taxon_products
     end
 
     namespace :v2 do
       namespace :storefront do
         resource :cart, controller: :cart, only: %i[show create] do
-          post   :add_item
-          patch  :empty
-          delete 'remove_line_item/:line_item_id', to: 'cart#remove_line_item', as: :cart_remove_line_item
-          patch  :set_quantity
-          patch  :apply_coupon_code
-          delete 'remove_coupon_code/:coupon_code', to: 'cart#remove_coupon_code', as: :cart_remove_coupon_code
-          delete 'remove_coupon_code', to: 'cart#remove_coupon_code', as: :cart_remove_coupon_code_without_code
+          post :add_item
+          patch :empty
+          delete "remove_line_item/:line_item_id", to: "cart#remove_line_item", as: :cart_remove_line_item
+          patch :set_quantity
+          patch :apply_coupon_code
+          delete "remove_coupon_code/:coupon_code", to: "cart#remove_coupon_code", as: :cart_remove_coupon_code
+          delete "remove_coupon_code", to: "cart#remove_coupon_code", as: :cart_remove_coupon_code_without_code
           get :estimate_shipping_rates
         end
 
@@ -157,18 +157,18 @@ Spree::Core::Engine.add_routes do
         end
 
         resources :countries, only: %i[index]
-        get '/countries/:iso', to: 'countries#show', as: :country
-        get '/order_status/:number', to: 'order_status#show', as: :order_status
+        get "/countries/:iso", to: "countries#show", as: :country
+        get "/order_status/:number", to: "order_status#show", as: :order_status
         resources :products, only: %i[index show]
-        resources :taxons,   only: %i[index show], id: /.+/
+        resources :taxons, only: %i[index show], id: /.+/
       end
     end
 
-    get '/404', to: 'errors#render_404'
+    get "/404", to: "errors#render_404"
 
-    match 'v:api/*path', to: redirect { |params, request|
+    match "v:api/*path", to: redirect { |params, request|
       format = ".#{params[:format]}" unless params[:format].blank?
-      query  = "?#{request.query_string}" unless request.query_string.blank?
+      query = "?#{request.query_string}" unless request.query_string.blank?
 
       if request.path == "#{spree_path}api/v1/#{params[:path]}#{format}#{query}"
         "#{spree_path}api/404"
@@ -177,9 +177,9 @@ Spree::Core::Engine.add_routes do
       end
     }, via: [:get, :post, :put, :patch, :delete]
 
-    match '*path', to: redirect { |params, request|
+    match "*path", to: redirect { |params, request|
       format = ".#{params[:format]}" unless params[:format].blank?
-      query  = "?#{request.query_string}" unless request.query_string.blank?
+      query = "?#{request.query_string}" unless request.query_string.blank?
 
       if request.path == "#{spree_path}api/v1/#{params[:path]}#{format}#{query}"
         "#{spree_path}api/404"

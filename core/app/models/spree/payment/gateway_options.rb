@@ -71,9 +71,9 @@ module Spree
       end
 
       def to_hash
-        Hash[hash_methods.map do |method|
+        Hash[hash_methods.map { |method|
           [method, send(method)]
-        end]
+        }]
       end
 
       private

@@ -24,7 +24,7 @@ module Spree
               resource,
               include: resource_includes,
               fields: sparse_fields,
-              params: { include_states: true }
+              params: {include_states: true}
             ).serializable_hash
           end
 
@@ -33,7 +33,7 @@ module Spree
           end
 
           def resource
-            return scope.default if params[:iso] == 'default'
+            return scope.default if params[:iso] == "default"
 
             scope.find_by(iso: params[:iso]&.upcase) ||
               scope.find_by(id: params[:iso]&.upcase) ||

@@ -3,13 +3,13 @@ module Spree
     acts_as_paranoid
 
     with_options inverse_of: :stock_items do
-      belongs_to :stock_location, class_name: 'Spree::StockLocation'
-      belongs_to :variant, class_name: 'Spree::Variant'
+      belongs_to :stock_location, class_name: "Spree::StockLocation"
+      belongs_to :variant, class_name: "Spree::Variant"
     end
     has_many :stock_movements, inverse_of: :stock_item
 
     validates :stock_location, :variant, presence: true
-    validates :variant_id, uniqueness: { scope: %i[stock_location_id deleted_at] }
+    validates :variant_id, uniqueness: {scope: %i[stock_location_id deleted_at]}
 
     validates :count_on_hand, numericality: {
       greater_than_or_equal_to: 0,
@@ -26,7 +26,7 @@ module Spree
     after_destroy { variant.touch }
 
     self.whitelisted_ransackable_attributes = %w[count_on_hand stock_location_id variant_id]
-    self.whitelisted_ransackable_associations = ['variant']
+    self.whitelisted_ransackable_associations = ["variant"]
 
     scope :with_active_stock_location, -> { joins(:stock_location).merge(Spree::StockLocation.active) }
 

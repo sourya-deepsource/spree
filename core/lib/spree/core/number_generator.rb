@@ -1,22 +1,22 @@
 module Spree
   module Core
     class NumberGenerator < Module
-      BASE           = 10
+      BASE = 10
       DEFAULT_LENGTH = 9
 
       attr_accessor :prefix, :length
 
       def initialize(options)
-        @prefix     = options.fetch(:prefix)
-        @length     = options.fetch(:length, DEFAULT_LENGTH)
-        @letters    = options[:letters]
+        @prefix = options.fetch(:prefix)
+        @length = options.fetch(:length, DEFAULT_LENGTH)
+        @letters = options[:letters]
       end
 
       def included(host)
         generator_instance = self
 
         host.class_eval do
-          validates(:number, presence: true, uniqueness: { allow_blank: true })
+          validates(:number, presence: true, uniqueness: {allow_blank: true})
 
           before_validation do |instance|
             instance.number ||= generate_permalink(host)
@@ -44,7 +44,7 @@ module Spree
 
       def new_candidate(length)
         characters = @letters ? 36 : 10
-        @prefix + SecureRandom.random_number(characters**length).to_s(characters).rjust(length, '0').upcase
+        @prefix + SecureRandom.random_number(characters**length).to_s(characters).rjust(length, "0").upcase
       end
     end # Permalink
   end # Core

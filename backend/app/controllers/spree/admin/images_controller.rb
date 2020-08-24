@@ -23,26 +23,26 @@ module Spree
 
       def load_edit_data
         @product = Product.friendly.includes(*variant_edit_includes).find(params[:product_id])
-        @variants = @product.variants.map do |variant|
+        @variants = @product.variants.map { |variant|
           [variant.sku_and_options_text, variant.id]
-        end
+        }
         @variants.insert(0, [Spree.t(:all), @product.master.id])
       end
 
       def set_viewable
-        @image.viewable_type = 'Spree::Variant'
+        @image.viewable_type = "Spree::Variant"
         @image.viewable_id = params[:image][:viewable_id]
       end
 
       def variant_index_includes
         [
-          variant_images: [viewable: { option_values: :option_type }]
+          variant_images: [viewable: {option_values: :option_type}]
         ]
       end
 
       def variant_edit_includes
         [
-          variants_including_master: { option_values: :option_type, images: :viewable }
+          variants_including_master: {option_values: :option_type, images: :viewable}
         ]
       end
     end

@@ -8,7 +8,7 @@ module Spree
         before_validation -> { self.calculator ||= Calculator::PercentOnLineItem.new }
 
         def perform(options = {})
-          order     = options[:order]
+          order = options[:order]
           promotion = options[:promotion]
 
           create_unique_adjustments(order, order.line_items) do |line_item|
@@ -20,7 +20,7 @@ module Spree
           return 0 unless promotion.line_item_actionable?(line_item.order, line_item)
 
           amounts = [line_item.amount, compute(line_item)]
-          order   = line_item.order
+          order = line_item.order
 
           # Prevent negative order totals
           amounts << order.amount - order.adjustments.eligible.sum(:amount).abs if order.adjustments.eligible.any?

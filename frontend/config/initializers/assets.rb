@@ -1,4 +1,4 @@
-Rails.application.config.assets.precompile += %w(
+Rails.application.config.assets.precompile += %w[
   favicon.ico
   credit_cards/*
   spree/frontend/checkout/shipment
@@ -10,4 +10,4 @@ Rails.application.config.assets.precompile += %w(
   arrow.svg
   check-mark-circle.svg
   error.svg
-)
+]

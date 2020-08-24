@@ -13,7 +13,7 @@ module Spree
     class NonCallablePassedToRun < StandardError; end
     class IncompatibleParamsPassed < StandardError; end
 
-    Result = Struct.new(:success, :value, :error) do
+    Result = Struct.new(:success, :value, :error) {
       def success?
         success
       end
@@ -21,11 +21,11 @@ module Spree
       def failure?
         !success
       end
-    end
+    }
 
-    ResultError = Struct.new(:value) do
+    ResultError = Struct.new(:value) {
       def to_s
-        return value.full_messages.join(', ') if value&.respond_to?(:full_messages)
+        return value.full_messages.join(", ") if value&.respond_to?(:full_messages)
 
         value.to_s
       end
@@ -35,7 +35,7 @@ module Spree
 
         {}
       end
-    end
+    }
 
     module Base
       def self.prepended(base)
@@ -67,13 +67,13 @@ module Spree
         end
 
         unless callable.respond_to?(:call)
-          raise NonCallablePassedToRun, 'You can pass only symbol with method name or instance of callable class to run method'
+          raise NonCallablePassedToRun, "You can pass only symbol with method name or instance of callable class to run method"
         end
 
         begin
           @_passed_input = callable.call(@_passed_input.value)
         rescue ArgumentError => e
-          if e.message.include? 'missing'
+          if e.message.include? "missing"
             raise IncompatibleParamsPassed, "You didn't pass #{e.message} to callable '#{callable.name}'"
           else
             raise IncompatibleParamsPassed, "You passed #{e.message} to callable '#{callable.name}'"

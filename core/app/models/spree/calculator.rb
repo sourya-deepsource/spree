@@ -21,7 +21,7 @@ module Spree
 
     # overwrite to provide description for your calculators
     def self.description
-      'Base Calculator'
+      "Base Calculator"
     end
 
     # Returns all calculators applicable for kind of work
@@ -30,7 +30,7 @@ module Spree
     end
 
     def to_s
-      self.class.name.titleize.gsub("Calculator\/", '')
+      self.class.name.titleize.gsub("Calculator\/", "")
     end
 
     def description

@@ -21,11 +21,11 @@ module Spree
       def bill_address_id=(id)
         address = Spree::Address.find_by(id: id)
         if address && address.user_id == user_id
-          self['bill_address_id'] = address.id
+          self["bill_address_id"] = address.id
           user.update_attribute(:bill_address_id, address.id)
           bill_address.reload
         else
-          self['bill_address_id'] = nil
+          self["bill_address_id"] = nil
         end
       end
 
@@ -37,11 +37,11 @@ module Spree
       def ship_address_id=(id)
         address = Spree::Address.find_by(id: id)
         if address && address.user_id == user_id
-          self['ship_address_id'] = address.id
+          self["ship_address_id"] = address.id
           user.update_attribute(:ship_address_id, address.id)
           ship_address.reload
         else
-          self['ship_address_id'] = nil
+          self["ship_address_id"] = nil
         end
       end
 

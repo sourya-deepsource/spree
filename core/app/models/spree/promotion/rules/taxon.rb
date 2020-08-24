@@ -2,12 +2,12 @@ module Spree
   class Promotion
     module Rules
       class Taxon < PromotionRule
-        has_many :promotion_rule_taxons, class_name: 'Spree::PromotionRuleTaxon',
-                                         foreign_key: 'promotion_rule_id',
+        has_many :promotion_rule_taxons, class_name: "Spree::PromotionRuleTaxon",
+                                         foreign_key: "promotion_rule_id",
                                          dependent: :destroy
-        has_many :taxons, through: :promotion_rule_taxons, class_name: 'Spree::Taxon'
+        has_many :taxons, through: :promotion_rule_taxons, class_name: "Spree::Taxon"
 
-        MATCH_POLICIES = %w(any all)
+        MATCH_POLICIES = %w[any all]
         preference :match_policy, default: MATCH_POLICIES.first
 
         def applicable?(promotable)
@@ -15,7 +15,7 @@ module Spree
         end
 
         def eligible?(order, _options = {})
-          if preferred_match_policy == 'all'
+          if preferred_match_policy == "all"
             unless (taxons.to_a - taxons_in_order_including_parents(order)).empty?
               eligibility_errors.add(:base, eligibility_error_message(:missing_taxon))
             end
@@ -34,11 +34,11 @@ module Spree
         end
 
         def taxon_ids_string
-          taxons.pluck(:id).join(',')
+          taxons.pluck(:id).join(",")
         end
 
         def taxon_ids_string=(s)
-          ids = s.to_s.split(',').map(&:strip)
+          ids = s.to_s.split(",").map(&:strip)
           self.taxons = Spree::Taxon.find(ids)
         end
 
@@ -46,7 +46,7 @@ module Spree
 
         # All taxons in an order
         def order_taxons(order)
-          Spree::Taxon.joins(products: { variants_including_master: :line_items }).where(spree_line_items: { order_id: order.id }).distinct
+          Spree::Taxon.joins(products: {variants_including_master: :line_items}).where(spree_line_items: {order_id: order.id}).distinct
         end
 
         # ids of taxons rules and taxons rules children
@@ -64,7 +64,7 @@ module Spree
         end
 
         def taxon_product_ids
-          Spree::Product.joins(:taxons).where(spree_taxons: { id: taxons.pluck(:id) }).pluck(:id).uniq
+          Spree::Product.joins(:taxons).where(spree_taxons: {id: taxons.pluck(:id)}).pluck(:id).uniq
         end
       end
     end

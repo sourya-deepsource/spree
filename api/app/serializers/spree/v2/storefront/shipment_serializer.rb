@@ -5,7 +5,7 @@ module Spree
         set_type :shipment
 
         attributes :number, :final_price, :display_final_price,
-                   :state, :shipped_at, :tracking_url
+          :state, :shipped_at, :tracking_url
 
         attribute :free, &:free?
 

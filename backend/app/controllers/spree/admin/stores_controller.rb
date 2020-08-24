@@ -25,7 +25,7 @@ module Spree
           flash[:success] = flash_message_for(@store, :successfully_created)
           redirect_to admin_stores_path
         else
-          flash[:error] = "#{Spree.t('store_errors.unable_to_create')}: #{@store.errors.full_messages.join(', ')}"
+          flash[:error] = "#{Spree.t("store_errors.unable_to_create")}: #{@store.errors.full_messages.join(", ")}"
           render :new
         end
       end
@@ -37,7 +37,7 @@ module Spree
           flash[:success] = flash_message_for(@store, :successfully_updated)
           redirect_to admin_stores_path
         else
-          flash[:error] = "#{Spree.t('store_errors.unable_to_update')}: #{@store.errors.full_messages.join(', ')}"
+          flash[:error] = "#{Spree.t("store_errors.unable_to_update")}: #{@store.errors.full_messages.join(", ")}"
           render :edit
         end
       end
@@ -52,7 +52,7 @@ module Spree
             format.js { render_js_for_destroy }
           end
         else
-          render plain: "#{Spree.t('store_errors.unable_to_delete')}: #{@store.errors.full_messages.join(', ')}", status: :unprocessable_entity
+          render plain: "#{Spree.t("store_errors.unable_to_delete")}: #{@store.errors.full_messages.join(", ")}", status: :unprocessable_entity
         end
       end
 
@@ -68,7 +68,7 @@ module Spree
         if store.errors.empty?
           flash[:success] = Spree.t(:store_set_as_default, store: store.name)
         else
-          flash[:error] = "#{Spree.t(:store_not_set_as_default, store: store.name)} #{store.errors.full_messages.join(', ')}"
+          flash[:error] = "#{Spree.t(:store_not_set_as_default, store: store.name)} #{store.errors.full_messages.join(", ")}"
         end
 
         redirect_to admin_stores_path
@@ -100,7 +100,7 @@ module Spree
 
       def normalize_supported_currencies
         if params[:store][:supported_currencies]&.is_a?(Array)
-          params[:store][:supported_currencies] = params[:store][:supported_currencies].compact.uniq.reject(&:blank?).join(',')
+          params[:store][:supported_currencies] = params[:store][:supported_currencies].compact.uniq.reject(&:blank?).join(",")
         end
       end
 
@@ -112,7 +112,7 @@ module Spree
       # in https://github.com/spree-contrib/spree_i18n/blob/master/app/helpers/spree_i18n/locale_helper.rb#L17
       unless defined?(SpreeI18n)
         def all_locales_options
-          [['English (EN)', :en]]
+          [["English (EN)", :en]]
         end
       end
     end

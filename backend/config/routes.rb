@@ -55,7 +55,7 @@ Spree::Core::Engine.add_routes do
       end
     end
 
-    delete '/option_values/:id', to: 'option_values#destroy', as: :option_value
+    delete "/option_values/:id", to: "option_values#destroy", as: :option_value
 
     resources :properties do
       collection do
@@ -63,7 +63,7 @@ Spree::Core::Engine.add_routes do
       end
     end
 
-    delete '/product_properties/:id', to: 'product_properties#destroy', as: :product_property
+    delete "/product_properties/:id", to: "product_properties#destroy", as: :product_property
 
     resources :prototypes do
       member do
@@ -90,7 +90,7 @@ Spree::Core::Engine.add_routes do
 
       resources :state_changes, only: [:index]
 
-      resource :customer, controller: 'orders/customer_details'
+      resource :customer, controller: "orders/customer_details"
       resources :customer_returns, only: [:index, :new, :edit, :create, :update] do
         member do
           put :refund
@@ -119,8 +119,8 @@ Spree::Core::Engine.add_routes do
       end
     end
 
-    get '/return_authorizations', to: 'return_index#return_authorizations', as: :return_authorizations
-    get '/customer_returns', to: 'return_index#customer_returns', as: :customer_returns
+    get "/return_authorizations", to: "return_index#return_authorizations", as: :return_authorizations
+    get "/customer_returns", to: "return_index#customer_returns", as: :customer_returns
 
     resource :general_settings do
       collection do
@@ -183,6 +183,6 @@ Spree::Core::Engine.add_routes do
     end
   end
 
-  spree_path = Rails.application.routes.url_helpers.try(:spree_path, trailing_slash: true) || '/'
-  get Spree.admin_path, to: redirect((spree_path + Spree.admin_path + '/orders').gsub('//', '/')), as: :admin
+  spree_path = Rails.application.routes.url_helpers.try(:spree_path, trailing_slash: true) || "/"
+  get Spree.admin_path, to: redirect((spree_path + Spree.admin_path + "/orders").gsub("//", "/")), as: :admin
 end
